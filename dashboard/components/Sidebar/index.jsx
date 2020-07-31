@@ -15,14 +15,18 @@ const Sidebar = () => {
   const facilities = pathname.startsWith("/admin/facilities")
   const manage_property = pathname.startsWith("/admin/manage-property")
 
+  const clickHandle = () => {
+    document.location.href = process.env.BASE_URL;
+  }
+
   return (
     <>
       <Navbar className="navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" expand="md" >
         <Container fluid>
-          <Navbar.Brand className="pt-0 pb-0">
+          <Navbar.Brand className="pt-0 pb-0" onClick={clickHandle}>
             <img
               alt="BaliHotProperty"
-              className="navbar-brand-img"
+              className="navbar-brand-img hov_pointer"
               src="/static/images/balihot-property-logo-red.png"
             />
           </Navbar.Brand>
@@ -37,11 +41,9 @@ const Sidebar = () => {
                   <i className="far fa-house-flood" /> Dashboard
                 </Nav.Link>
               </Link>
-              <Link href="/" as="/">
-                <Nav.Link as="a" className="hov_pointer">
-                  <i className="far fa-door-open" /> Home
-                </Nav.Link>
-              </Link>
+              <Nav.Link as="a" onClick={clickHandle} className="hov_pointer">
+                <i className="far fa-door-open" /> Home
+              </Nav.Link>
 
               <h6 className="navbar-heading text-muted nav-link h-6">
                 Administration

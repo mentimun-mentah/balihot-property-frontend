@@ -60,8 +60,8 @@ export const authCheckState = (ctx) => {
         cookies.destroy(ctx, "username");
       }
       else if(access_token && refresh_token && username) {
-        dispatch(getUser(ctx))
         dispatch(authSuccess(access_token, refresh_token, username));
+        dispatch(getUser(ctx))
       }
     } else {
       dispatch(authLogout())
@@ -75,17 +75,16 @@ export const authCheckState = (ctx) => {
 export const getUser = (ctx) => {
   return (dispatch) => {
     const { access_token } = cookies.get(ctx);
+    console.log("GET_USER access_token ============> ", access_token)
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     if (access_token && access_token !== undefined) {
       axios.get('/user', headerCfg)
       .then(res => {
+        console.log("GET_USER TRUE ============> ", res.data)
         dispatch(getUserSuccess(res.data))
       })
       .catch(err => {
-        if(err.response && err.response.status == 422){
-          Router.reload()
-          dispatch(authLogout())
-        }
+        console.log("GET_USER ERROR =============> ", err.response)
       })
     }
   }

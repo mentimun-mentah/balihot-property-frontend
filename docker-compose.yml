@@ -18,6 +18,8 @@ services:
       - "/app/node_modules"
       - "/app/.next"
       - "./dashboard:/app"
+    ports:
+      - "192.168.18.95:3002:3000"
   frontend:
     build:
       context: ./home

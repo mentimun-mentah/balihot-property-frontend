@@ -203,6 +203,7 @@ App.getInitialProps = async ({ Component, ctx }) => {
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
 
   if(access_token && access_token !== undefined){
+    console.log("FROM HOME _APP.JSX", access_token)
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     try{
       const resUser = await axios.get('/user', headerCfg)

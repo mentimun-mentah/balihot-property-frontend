@@ -23,6 +23,8 @@ export const headerCfgFormData = {
   }
 }
 
+console.log('REFRESH TOKEN FROM LIB AXIOS', refresh_token)
+
 const refreshAuthLogic = async (failedRequest) => {
   return instance
     .post('/refresh', null, headerRefresh)

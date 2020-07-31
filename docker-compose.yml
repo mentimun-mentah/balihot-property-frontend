@@ -1,0 +1,30 @@
+version: '3.8'
+services: 
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    restart: unless-stopped
+    ports:
+      - "192.168.18.95:8000:80"
+    depends_on:
+      - frontend
+      - dashboard
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    volumes:
+      - "/app/node_modules"
+      - "/app/.next"
+      - "./dashboard:/app"
+    ports:
+      - "192.168.18.95:3002:3000"
+  frontend:
+    build:
+      context: ./home
+      dockerfile: Dockerfile
+    volumes:
+      - "/app/node_modules"
+      - "/app/.next"
+      - "./home:/app"

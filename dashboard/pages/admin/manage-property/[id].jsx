@@ -441,7 +441,7 @@ const EditProperty = ({dataProperty}) => {
                 <Form>
                   <Form.Row>
 
-                    <Form.Group as={Col}>
+                    <Form.Group as={Col} xs={12} lg={4}>
                       <Form.Label>Name</Form.Label>
                       <Form.Control type="text" name="name"
                         placeholder="Property name"
@@ -488,7 +488,7 @@ const EditProperty = ({dataProperty}) => {
                   </Form.Row>
 
                   <Form.Row>
-                    <Form.Group as={Col}>
+                    <Form.Group as={Col} xs={12} lg={6}>
                       <Form.Label>For</Form.Label>
                       <Select
                         mode="multiple"
@@ -531,7 +531,7 @@ const EditProperty = ({dataProperty}) => {
 
                   <Form.Row>
                     {validator.isIn("Sale", property_for.value) && (
-                      <Form.Group as={Col}>
+                      <Form.Group as={Col} xs={12} lg={6}>
                         <Form.Label>Status</Form.Label>
                         <Select
                           mode={type_id.value == 2 ? "" : "multiple"} // for land

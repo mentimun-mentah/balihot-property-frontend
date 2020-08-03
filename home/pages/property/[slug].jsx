@@ -6,6 +6,7 @@ import { Select } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 
 import cookie from "nookies";
+import moment from "moment";
 import Router from "next/router";
 import axios from "../../lib/axios";
 import Row from "react-bootstrap/Row";
@@ -36,7 +37,10 @@ const Property = () => {
   const { status, freehold_price, leasehold_price, leasehold_period } = propertyData; // For Sale 
   const { period, daily_price, weekly_price, monthly_price, annually_price } = propertyData; // For Rent
   const { facilities, bathroom, bedroom, building_size } = propertyData; // For villa
-  const { location, latitude, longitude, similar_listing } = propertyData; // For Map 
+  const { location, latitude, longitude } = propertyData; // For Map 
+  const { seen, similar_listing, created_at } = propertyData; // For Map 
+
+  console.log()
 
   let img_list = []
   const images = propertyData.images.split(',')
@@ -163,68 +167,49 @@ const Property = () => {
               <div className="divider"></div>
 
               <Card className="shadow-none m-t-25 m-border-0 m-t-0-s">
-              <Card.Body className="p-l-0-s p-r-0-s property-overview">
-                <Card.Title className="fs-16-s">
-                  Property Overview
-                  <Badge pill variant="secondary" 
-                    className="font-weight-light for-sale-badge align-middle fs-13 mx-1 text-capitalize"
-                  >
-                    {pf.length > 0 && pf[0] !== "" && <>{pf.join(" & ")}</>}
-                  </Badge>
-                </Card.Title>
-                <div className="divide-title"></div>
-                <Row>
-                  <Col lg={4} md={6} sm={6} className="mb-2">
-                    <h4 className="fs-14">
-                      Land size:
-                      <span className="font-weight-normal ml-1">
-                        {land_size} are
-                      </span>
-                    </h4>
-                  </Col>
-                  {type_id == 1 && (
-                    <>
-                      <Col lg={4} md={6} sm={6} className="mb-2">
-                        <h4 className="fs-14">
-                          Building size:
-                          <span className="font-weight-normal ml-1">
-                            {building_size} m²
-                          </span>
-                        </h4>
-                      </Col>
-                      <Col lg={4} md={6} sm={6} className="mb-2">
-                        <h4 className="fs-14">
-                          Bedrooms:
-                          <span className="font-weight-normal ml-1">{bedroom}</span>
-                        </h4>
-                      </Col>
-                      <Col lg={4} md={6} sm={6} className="mb-2">
-                        <h4 className="fs-14">
-                          Bathrooms:
-                          <span className="font-weight-normal ml-1">{bathroom}</span>
-                        </h4>
-                      </Col>
-                    </>
-                  )}
-                  <Col lg={4} md={6} sm={6} className="mb-2">
-                    <h4 className="fs-14">
-                      Status:
-                      <span className="font-weight-normal ml-1 status-detail ">
-                        <Select size="small" 
-                          defaultValue="lucy" 
-                          suffixIcon={<i className="fal fa-sm fa-chevron-down ml-1" />}
-                        >
-                          <Option value="lucy">Free Hold</Option>
-                          <Option value="Yiminghe">Lease Hold</Option>
-                        </Select>
-                      </span>
-                      </h4>
-                    </Col>
+                <Card.Body className="p-l-0-s p-r-0-s property-overview">
+                  <Card.Title className="fs-16-s">
+                    Property Overview
+                  </Card.Title>
+                  <div className="divide-title"></div>
+                  <Row>
                     <Col lg={4} md={6} sm={6} className="mb-2">
                       <h4 className="fs-14">
-                        Can lease until:
+                        Land size:
                         <span className="font-weight-normal ml-1">
-                          30 July 2020
+                          {land_size} are
+                        </span>
+                      </h4>
+                    </Col>
+                    {type_id == 1 && (
+                      <>
+                        <Col lg={4} md={6} sm={6} className="mb-2">
+                          <h4 className="fs-14">
+                            Building size:
+                            <span className="font-weight-normal ml-1">
+                              {building_size} m²
+                            </span>
+                          </h4>
+                        </Col>
+                        <Col lg={4} md={6} sm={6} className="mb-2">
+                          <h4 className="fs-14">
+                            Bedrooms:
+                            <span className="font-weight-normal ml-1">{bedroom}</span>
+                          </h4>
+                        </Col>
+                        <Col lg={4} md={6} sm={6} className="mb-2">
+                          <h4 className="fs-14">
+                            Bathrooms:
+                            <span className="font-weight-normal ml-1">{bathroom}</span>
+                          </h4>
+                        </Col>
+                      </>
+                    )}
+                    <Col lg={4} md={6} sm={6} className="mb-2">
+                      <h4 className="fs-14">
+                        Visited:
+                        <span className="font-weight-normal ml-1 status-detail ">
+                          {seen} visitor
                         </span>
                       </h4>
                     </Col>
@@ -369,7 +354,7 @@ const Property = () => {
 
             </Col>
 
-            <Col lg={4} className="mt-4 d-none d-lg-block">
+            <Col lg={4} className="mt-4 d-none ">
               <Card className="property-inquiry text-center rounded-inquiry">
                 <Card.Body>
                   <Card.Title className="fs-18 mb-1 pb-1">
@@ -392,6 +377,75 @@ const Property = () => {
                     <i className="fal fa-envelope-open mr-2"></i>
                     Send Inquiry
                   </Button>
+                </Card.Footer>
+              </Card>
+            </Col>
+
+            <Col lg={4} className="mt-4 d-lg-block">
+              <Card className="property-inquiry text-center rounded-inquiry">
+                <Card.Body className="position-relative overflow-hidden">
+                  {hotdeal && (
+                    <div className="ribbon font-weight-normal fs-11-s">
+                      HOT DEAL
+                    </div>
+                  )}
+
+                  <Card.Title className="fs-18 mb-1 pb-1 text-uppercase">
+                    {type_id == 1 && "Villa" || type_id == 2 && "Land"} Type Property
+                  </Card.Title>
+                  <Card.Subtitle className="fs-14 mt-1 text-muted">
+                    For {pf.length > 0 && pf[0] !== "" && <>{pf.join(" & ")}</>}{" "}
+                  </Card.Subtitle>
+
+                  <hr />
+
+                  <h4 className="fs-14 text-left">
+                    Posted Date:
+                    <span className="font-weight-normal ml-1">
+                      {moment.utc(created_at).format('DD MMMM YYYY')}
+                    </span>
+                  </h4>
+                  <h4 className="fs-14 text-left">
+                    Status:
+                    <span className="font-weight-normal ml-1 status-detail ">
+                      <Select size="small"
+                        defaultValue="lucy"
+                        suffixIcon={<i className="fal fa-sm fa-chevron-down ml-1" />}
+                      >
+                        <Option value="lucy">Free Hold</Option>
+                        <Option value="Yiminghe">Lease Hold</Option>
+                      </Select>
+                    </span>
+                  </h4>
+                  <h4 className="fs-14 text-left">
+                    Price: IDR
+                    <span className="font-weight-normal ml-1">
+                      {monthly_price}
+                    </span>
+                  </h4>
+                  <h4 className="fs-14 text-left">
+                    Can lease until:
+                    <span className="font-weight-normal ml-1">
+                      {leasehold_period}
+                    </span>
+                  </h4>
+                </Card.Body>
+
+                <Card.Footer className="text-muted bg-transparent d-none d-lg-block">
+                  <Row className="">
+                    <Col className="px-1">
+                      <Button className="btn-call fs-14 fs-13-lg" block>
+                        <i className="fal fa-phone-alt mr-2" />
+                        <>Call Agent</>
+                      </Button>
+                    </Col>
+                    <Col className="px-1">
+                      <Button className="btn-red fs-14 fs-13-lg" block>
+                        <i className="fal fa-envelope-open mr-2"></i>
+                        Send Inquiry
+                      </Button>
+                    </Col>
+                  </Row>
                 </Card.Footer>
               </Card>
             </Col>

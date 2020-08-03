@@ -18,6 +18,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import * as actions from "../store/actions";
+import Container from 'react-bootstrap/Container'
 import Pagination from 'react-bootstrap/Pagination'
 import ContainerCardMarker from "../components/Card/ContainerCardMarker";
 import ContainerCardProperty from "../components/Card/ContainerCardProperty";
@@ -85,7 +86,7 @@ const AllProperties = ({ searchQuery }) => {
     getProperty(property.next_num, queryString)
   };
   let pagination = [];
-  let iter_data
+  let iter_data;
   if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.length
   if(property.length === 0) iter_data = property.length
   for (let n = 1; n <= iter_data ; n++) {
@@ -124,19 +125,6 @@ const AllProperties = ({ searchQuery }) => {
 
   const dragEnd = () => {
     if (!mapRef.current) return false;
-    // Router.replace({
-    //   pathname: "/all-properties",
-    //   query: { 
-    //     lat: current_position.lat,
-    //     lng: current_position.lng,
-    //     radius: radius,
-    //     location: location.value, 
-    //     type_id: type_id.value, 
-    //     status: status.value,
-    //     min_price: price.value[0] === 0 ? null : price.value[0],
-    //     max_price: price.value[1] === 0 ? null : price.value[1],
-    //   },
-    // })
   }
 
   const updateData = () => {
@@ -312,7 +300,6 @@ const AllProperties = ({ searchQuery }) => {
     getProperty(active, dataQueryString)
 
     return () => {}
-
   },[searchQuery])
 
   const searchHandler = () => {
@@ -440,22 +427,42 @@ const AllProperties = ({ searchQuery }) => {
             {property.data && property.data.length > 0 ? property.data.length : "0"} results
           </p>
 
-          <div className="d-none d-sm-none d-md-none d-lg-block d-xl-block">
-            <ContainerCardProperty 
-              dataProperty={property} 
-              horizontal={true} 
-              mouseEnter={onHoverWindowHandler} 
-              mouseLeave={() => setIsHover(false)}
-            />
-          </div>
-          <div className="d-block d-sm-block d-md-block d-lg-none d-xl-none">
-            <ContainerCardProperty 
-              dataProperty={property} 
-              horizontal={false} 
-              mouseEnter={onHoverWindowHandler} 
-              mouseLeave={() => setIsHover(false)}
-            />
-          </div>
+          {property.data && property.data.length > 0 ? (
+            <>
+              <div className="d-none d-sm-none d-md-none d-lg-block d-xl-block">
+                <ContainerCardProperty 
+                  dataProperty={property} 
+                  horizontal={true} 
+                  mouseEnter={onHoverWindowHandler} 
+                  mouseLeave={() => setIsHover(false)}
+                />
+              </div>
+              <div className="d-block d-sm-block d-md-block d-lg-none d-xl-none">
+                <ContainerCardProperty 
+                  dataProperty={property} 
+                  horizontal={false} 
+                  mouseEnter={onHoverWindowHandler} 
+                  mouseLeave={() => setIsHover(false)}
+                />
+              </div>
+            </>
+          ) : (
+            // EMPTY PROPERTY
+            <Container> 
+              <Card className="border-0 shadow-none text-muted mt-2 pt-5 pb-5">
+                <Card.Img
+                  variant="top"
+                  src="/static/images/no-result-property.png"
+                  className="img-size mx-auto"
+                />
+                <Card.Body>
+                  <Card.Title className="text-center">
+                    No result
+                  </Card.Title>
+                </Card.Body>
+              </Card>   
+            </Container>
+          )}
 
           <div className="mt-4 mb-4">
             {property.iter_pages && property.iter_pages.length > 0 && property.iter_pages.length > 1 && (
@@ -750,6 +757,14 @@ const AllProperties = ({ searchQuery }) => {
           background: rgb(255, 255, 255) !important;
           border-radius: 8px !important;
         }
+        
+        /*### EMPTY CARD ###*/                                                                                          
+        :global(.img-size) {
+          width: auto;
+          height: 100px;
+          opacity: 0.5;
+        }
+
       `}</style>
     </>
   );
@@ -757,7 +772,8 @@ const AllProperties = ({ searchQuery }) => {
 
 AllProperties.getInitialProps = async ctx => {
   const searchQuery = ctx.query;
-  const resProperty = await axios.get(`/properties`);
+  const dataQueryString = Object.keys(searchQuery).map(key => key + '=' + searchQuery[key]).join('&');
+  const resProperty = await axios.get(`/properties?${dataQueryString}`);
   ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
   const resType = await axios.get('/types');
   ctx.store.dispatch(actions.getTypeSuccess(resType.data));

@@ -271,40 +271,23 @@ const DetailPropertyStyle = css`
     background-color: #ececec !important;
   }
   /*### SHOW ALL PHOTO ###*/
-  /*### AWS SLIDER ###*/
-  :global(.slider-all-photo .awssld__controls button) {
-    position: fixed;
-    top: calc(50%);
-    padding-right: 13px;
-    padding-left: 13px;
-    width: 48px !important;
-    height: 48px !important;
-    border-radius: 50% !important;
-    border-width: 1px !important;
-    border-style: solid !important;
-    border-color: rgb(176, 176, 176) !important;
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-  // Small devices (landscape phones, 576px and up)
-  @media (min-width: 320px) { 
-  }
-  @media (min-width: 576px) { 
-  }
-
-  // Medium devices (tablets, 768px and up)
-  @media (min-width: 768px) {
-
-  }
-
-  // Large devices (desktops, 992px and up)
-  @media (min-width: 992px) {
-
-  }
-
-  // Extra large devices (large desktops, 1200px and up)
-  @media (min-width: 1200px) {
-
-  }
 `;
 export default DetailPropertyStyle;
+
+export const responsiveSimilarListing = {
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 2,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  tablet: {
+    breakpoint: { max: 1023, min: 576},
+    items: 1,
+    slidesToSlide: 1 // optional, default to 1.
+  },
+  mobile: {
+    breakpoint: { max: 576, min: 0 },
+    items: 1,
+    slidesToSlide: 1 // optional, default to 1.
+  }
+};

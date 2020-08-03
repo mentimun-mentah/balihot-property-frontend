@@ -13,7 +13,7 @@ export const responsive = {
   },
   tablet: {
     breakpoint: { max: 1023, min: 576},
-    items: 2,
+    items: 1,
     slidesToSlide: 1 // optional, default to 1.
   },
   mobile: {
@@ -32,7 +32,7 @@ export const responsivePlace = {
   },
   tablet: {
     breakpoint: { max: 1023, min: 576},
-    items: 2,
+    items: 1,
     partialVisibilityGutter: 50
   },
   mobile: {
@@ -40,4 +40,14 @@ export const responsivePlace = {
     items: 1,
     partialVisibilityGutter: 40
   }
+};
+
+export const ButtonGroupPlace = ({ next, previous, goToSlide, ...rest }) => {
+  const { carouselState: { currentSlide } } = rest;
+  return (
+    <div className="carousel-button-group d-none">
+      <button className={currentSlide === 0 ? 'disable' : ''} onClick={() => previous()} />
+      <button onClick={() => next()} />
+    </div>
+  );
 };

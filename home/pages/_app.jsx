@@ -17,7 +17,6 @@ import "react-image-gallery/styles/css/image-gallery.css";
 import "react-responsive-carousel/lib/styles/carousel.css";
 
 const App = ({ Component, pageProps, store }) => {
-
   return (
     <React.Fragment>
       <Head>
@@ -198,12 +197,10 @@ const App = ({ Component, pageProps, store }) => {
 
 App.getInitialProps = async ({ Component, ctx }) => {
   await ctx.store.dispatch(actions.authCheckState(ctx))
-
   const { access_token } = cookie.get(ctx);
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
 
   if(access_token && access_token !== undefined){
-    console.log("FROM HOME _APP.JSX", access_token)
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     try{
       const resUser = await axios.get('/user', headerCfg)

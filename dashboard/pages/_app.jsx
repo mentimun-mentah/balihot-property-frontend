@@ -50,6 +50,12 @@ const App = ({ Component, pageProps, store }) => {
         .bor-rad-btm-left-10 {
           border-bottom-left-radius: 10px !important;
         }
+        .ant-upload-list-picture .ant-upload-list-item-error, .ant-upload-list-picture-card .ant-upload-list-item-error{
+          border: 1px solid #d9d9d9;
+        }
+        .ant-tooltip-placement-bottom{
+          display: none;
+        }
 
         .ant-upload.ant-upload-select-picture-card {
           width: 150px !important;

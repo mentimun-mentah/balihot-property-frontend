@@ -75,12 +75,10 @@ export const authCheckState = (ctx) => {
 export const getUser = (ctx) => {
   return (dispatch) => {
     const { access_token } = cookies.get(ctx);
-    console.log("GET_USER access_token ============> ", access_token)
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     if (access_token && access_token !== undefined) {
       axios.get('/user', headerCfg)
       .then(res => {
-        console.log("GET_USER TRUE ============> ", res.data)
         dispatch(getUserSuccess(res.data))
       })
       .catch(err => {

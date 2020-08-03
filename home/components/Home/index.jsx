@@ -9,20 +9,10 @@ import CardPlace from "../Card/CardPlace";
 import CardTeams from "../Card/CardTeam";
 import Workflow from "./Workflow";
 import ContainerCardProperty from "../Card/ContainerCardProperty";
-import HomeStyle, {responsive, responsivePlace} from "./style";
+import HomeStyle, {responsive, responsivePlace, ButtonGroupPlace} from "./style";
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("Sale");
-
-  const ButtonGroup = ({ next, previous, goToSlide, ...rest }) => {
-    const { carouselState: { currentSlide } } = rest;
-    return (
-      <div className="carousel-button-group d-none">
-        <button className={currentSlide === 0 ? 'disable' : ''} onClick={() => previous()} />
-        <button onClick={() => next()} />
-      </div>
-    );
-  };
 
   const activeTabHandler = useCallback(e => setActiveTab(e), []);
 
@@ -198,11 +188,11 @@ const Home = () => {
               <Carousel 
                 infinite 
                 ssr={true} 
+                centerMode
                 arrows={false}
-                partialVisible
                 responsive={responsivePlace} 
                 renderButtonGroupOutside={true}
-                customButtonGroup={<ButtonGroup />} 
+                customButtonGroup={<ButtonGroupPlace />} 
               >
                 {region && region.map(data => (
                   <Col key={data.id} className="pl-0">

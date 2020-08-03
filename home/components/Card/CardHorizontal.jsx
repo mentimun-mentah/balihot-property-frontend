@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
+import moment from "moment";
 
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
@@ -15,8 +16,8 @@ import { Fade } from "../Transition";
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 
 const CardContainer = ({
-  id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
-  villaPriceList, selectedPrice, landPriceList, hotdeal, location, mouseEnter, mouseLeave
+  slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
+  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, mouseEnter, mouseLeave
 }) => {
   const [selected, setSelected] = useState(selectedPrice)
 
@@ -187,8 +188,7 @@ const CardContainer = ({
                 <Card.Footer className="text-muted bg-white bor-rad-10 footer-edit">
                   <Row className="fs-12">
                     <Col>
-                      <i className="fal fa-lg fa-calendar-check mr-2"></i> 2 Days
-                      ago
+                    <i className="fal fa-lg fa-calendar-check mr-2"></i> {moment(created_at).startOf('hour').fromNow()}
                     </Col>
                     <Col className="text-right">
                       <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">

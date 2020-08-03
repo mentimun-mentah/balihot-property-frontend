@@ -3,7 +3,7 @@ const CardMarkerMemo = React.memo(CardMarker);
 
 const ContainerCardProperty = ({ dataProperty }) => {
   const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = dataProperty;
-  const {status, period, price, hotdeal, location} = dataProperty;
+  const {status, period, price, hotdeal, location, created_at} = dataProperty;
 
   let villaPrice = []
   let landPrice = []
@@ -84,7 +84,7 @@ const ContainerCardProperty = ({ dataProperty }) => {
       type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
       building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
       villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
-      location={location}
+      location={location} created_at={created_at}
     />
   )
 };

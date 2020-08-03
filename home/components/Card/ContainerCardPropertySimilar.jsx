@@ -1,17 +1,47 @@
-import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Carousel from "react-multi-carousel";
 
 import PropertyCard from "./CardProperty";
-import PropertyCardHorizontal from "./CardHorizontal";
+import { responsiveSimilarListing } from "../DetailProperty/style.js";
 
 const PropertyCardMemo = React.memo(PropertyCard)
-const PropertyCardHorizontalMemo = React.memo(PropertyCardHorizontal)
 
-const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeave }) => {
+/*carousel*/
+const ButtonGroup = ({ next, previous, goToSlide, ...rest }) => {
+  const {
+    carouselState: { currentSlide }
+  } = rest;
+  return (
+    <div className="carousel-button-group d-none">
+      <Button
+        id="prevCarouselClick"
+        className={currentSlide === 0 ? "disable" : ""}
+        onClick={() => previous()}
+      >
+        Prev
+      </Button>
+      <Button id="nextCarouselClick" onClick={() => next()}>
+        Next
+      </Button>
+    </div>
+  );
+};
+/*carousel*/
+
+const ContainerCardProperty = ({ dataProperty }) => {
   return (
     <>
-      <Row>
-        {dataProperty && dataProperty.data && dataProperty.data.map(data => {
+      <Carousel
+        responsive={responsiveSimilarListing}
+        ssr={true}
+        infinite
+        centerMode
+        renderButtonGroupOutside={true}
+        customButtonGroup={<ButtonGroup />}
+        arrows={false}
+      >
+        {dataProperty.map(data => {
           const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = data;
           const {status, period, price, hotdeal, location, created_at} = data;
           let villaPrice = []
@@ -87,38 +117,19 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
               })
             }
           }
-          
-          if(horizontal){
-            return(
-              <Col xl={12} lg={12} mb={12} sm={12} xs={12} key={id} 
-                className="mt-2 mb-n2" 
-              >
-                <PropertyCardHorizontalMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
-                  type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
-                  building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
-                  villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
-                  location={location} created_at={created_at} 
-                  mouseEnter={() => mouseEnter(data)} mouseLeave={mouseLeave} 
-                />
-              </Col>
-            )
-          }
-
-          if(!horizontal){
-            return(
-              <Col xl={4} lg={4} mb={4} sm={6} xs={12} key={id}>
-                <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
-                  type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
-                  building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
-                  villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
-                  location={location} created_at={created_at}
-                />
-              </Col>
-            )
-          }
-
+        
+          return(
+            <Col key={id} className="px-1">
+              <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
+                building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
+                villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
+                location={location} created_at={created_at}
+              />
+            </Col>
+          )
         })}
-      </Row>
+      </Carousel>
     </>
   );
 };

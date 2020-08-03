@@ -1,5 +1,4 @@
 import { Provider } from "react-redux";
-import { useRouter } from "next/router";
 
 import Head from "next/head";
 import cookie from "nookies";
@@ -12,19 +11,7 @@ import "../public/static/css/index.css";
 import "antd/dist/antd.css";
 import "react-responsive-carousel/lib/styles/carousel.css";
 
-const App = ({ Component, pageProps, store, admin }) => {
-  const Router = useRouter();
-
-  let ComponetToRender =
-    admin && Router.pathname.startsWith("/") ? (
-      <Provider store={store}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </Provider>
-    ) : (
-      <NotAdmin />
-    );
+const App = ({ Component, pageProps, store }) => {
 
   return (
     <>
@@ -35,7 +22,11 @@ const App = ({ Component, pageProps, store, admin }) => {
         <link rel="stylesheet" href="/static/fontawesome/css/all.css" />
         <link rel="stylesheet" href="/static/css/utility.css" />
       </Head>
-      {ComponetToRender}
+      <Provider store={store}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </Provider>
       <style global jsx>{`
         .bor-rad-10 {
           border-radius: 10px !important;
@@ -108,25 +99,25 @@ const App = ({ Component, pageProps, store, admin }) => {
 };
 
 App.getInitialProps = async ({ Component, ctx }) => {
-  let admin = false;
   await ctx.store.dispatch(actions.authCheckState(ctx))
   const { access_token } = cookie.get(ctx);
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
 
-  console.log("ACCESS TOKEN DASHBOARD ======> ", access_token)
-
-  if(!access_token || access_token === undefined) {
-    admin = false;
-    process.browser
-      ? window.location.replace(process.env.BASE_URL) //Redirec from Client Side
-      : ctx.res.writeHead(302, { Location: process.env.BASE_URL }).end(); //Redirec from Server Side
-  }
   try{
     if(access_token && access_token !== undefined){
       const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
       const resUser = await axios.get('/user', headerCfg)
       await ctx.store.dispatch(actions.getUserSuccess(resUser.data))
-      admin = resUser.data.admin;
+      if(!resUser.data.admin){
+        process.browser
+          ? window.location.replace(process.env.BASE_URL) //Redirec from Client Side
+          : ctx.res.writeHead(302, { Location: process.env.BASE_URL }).end(); //Redirec from Server Side
+      }
+    }
+    if(!access_token || access_token === undefined) {
+      process.browser
+        ? window.location.replace(process.env.BASE_URL) //Redirec from Client Side
+        : ctx.res.writeHead(302, { Location: process.env.BASE_URL }).end(); //Redirec from Server Side
     }
   }
   catch (err) {
@@ -135,7 +126,7 @@ App.getInitialProps = async ({ Component, ctx }) => {
       : ctx.res.writeHead(302, { Location: process.env.BASE_URL }).end(); //Redirec from Server Side
   }
 
-  return { pageProps, admin };
+  return { pageProps };
 };
 
 export default withReduxStore(App);

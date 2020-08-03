@@ -1,3 +1,4 @@
+import { withAuth } from "../../hoc/withAuth"
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -24,4 +25,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default withAuth(App);

@@ -3,6 +3,7 @@ import { GoogleMap, useLoadScript, Marker, InfoWindow  } from "@react-google-map
 import { GMapsOptions, markerOptions, infoOptions } from "../../lib/GMaps-options";
 import { libraries, mapDetailContainerStyle } from "../../lib/GMaps-options";
 import { Select } from 'antd';
+import { useDispatch, useSelector } from "react-redux";
 
 import cookie from "nookies";
 import Router from "next/router";
@@ -13,21 +14,29 @@ import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import * as actions from "../../store/actions";
 import ReactBnbGallery from "react-bnb-gallery";
 import Container from "react-bootstrap/Container";
 import SmoothImage from "render-smooth-image-react";
 import ContainerCardMarker from "../../components/Card/ContainerCardMarker";
+import ContainerCardPropertySimilar from "../../components/Card/ContainerCardPropertySimilar";
 
 import DetailPropertyStyle from "../../components/DetailProperty/style.js";
 
 const { Option } = Select;
 
-const Property = ({ propertyData }) => {
+/*carousel similar listings*/
+const nextCarousel = () => document.getElementById("nextCarouselClick").click();
+const prevCarousel = () => document.getElementById("prevCarouselClick").click();
+/*carousel similar listings*/
+
+const Property = () => {
+  const propertyData = useSelector(state => state.property.slug);
   const { slug, name, type_id, property_for, land_size, youtube, description, hotdeal} = propertyData;
   const { status, freehold_price, leasehold_price, leasehold_period } = propertyData; // For Sale 
   const { period, daily_price, weekly_price, monthly_price, annually_price } = propertyData; // For Rent
   const { facilities, bathroom, bedroom, building_size } = propertyData; // For villa
-  const { location, latitude, longitude } = propertyData; // For Map 
+  const { location, latitude, longitude, similar_listing } = propertyData; // For Map 
 
   let img_list = []
   const images = propertyData.images.split(',')
@@ -394,22 +403,30 @@ const Property = ({ propertyData }) => {
       <section className="pt-1">
         <Container>
           <Row className="mb-4">
-            <Col>
+            <Col className="d-block d-sm-block d-md-block d-lg-none d-xl-none">
+              <h3 className="fs-16">Similar listings</h3>
+            </Col>
+            <Col className="d-none d-sm-none d-md-none d-lg-block d-xl-block">
               <h3 className="fs-20">Other properties for similar listings</h3>
             </Col>
             <Col>
               <Button
+                onClick={nextCarousel}
                 className="float-right rounded-circle w-38  btn-carousel"
               >
                 <i className="far fa-angle-right" />
               </Button>
               <Button
+                onClick={prevCarousel}
                 className="mr-2 float-right rounded-circle w-38 btn-carousel"
               >
                 <i className="far fa-angle-left" />
               </Button>
             </Col>
           </Row>
+
+          <ContainerCardPropertySimilar dataProperty={similar_listing} />
+
         </Container>
       </section>
 
@@ -584,12 +601,18 @@ const Property = ({ propertyData }) => {
 }
 
 Property.getInitialProps = async ctx => {
-  const { slug } = ctx.query;
-  const { access_token } = cookie.get(ctx);
-  const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
-  try {
-    let resProperty = await axios.get(`/property/${slug}`, headerCfgServer)
-    return { propertyData: resProperty.data }
+  try{
+    const { slug } = ctx.query;
+    const { access_token } = cookie.get(ctx);
+    const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
+    if(access_token){
+      let res = await axios.get(`/property/${slug}`, headerCfgServer)
+      ctx.store.dispatch(actions.slugPropertySuccess(res.data));
+    }
+    if(!access_token || access_token === undefined){
+      let res = await axios.get(`/property/${slug}`)
+      ctx.store.dispatch(actions.slugPropertySuccess(res.data));
+    }
   }
   catch (err) {
     if(err.response && err.response.status == 404){

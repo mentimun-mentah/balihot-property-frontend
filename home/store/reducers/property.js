@@ -8,6 +8,7 @@ const initialState = {
   saleProperty: null,
   rentProperty: null,
   landProperty: null,
+  slug: null,
 }
 
 export const getPropertyStart = (state, action) => {
@@ -21,6 +22,23 @@ export const getPropertySuccess = (state, action) => {
   })
 }
 export const getPropertyFail = (state, action) => {
+  return updateObject(state, {
+    loading: false,
+    error: action.error
+  })
+}
+
+export const slugPropertyStart = (state, action) => {
+  return updateObject(state, {loading: true, error: null})
+}
+export const slugPropertySuccess = (state, action) => {
+  return updateObject(state, {
+    slug: action.slug, 
+    loading: false, 
+    error: null
+  })
+}
+export const slugPropertyFail = (state, action) => {
   return updateObject(state, {
     loading: false,
     error: action.error
@@ -55,12 +73,17 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionType.GET_PROPERTY_START:
       return getPropertyStart(state, action)
-
     case actionType.GET_PROPERTY_SUCCESS:
       return getPropertySuccess(state, action)
-      
     case actionType.GET_PROPERTY_FAIL:
       return getPropertyFail(state, action)
+
+    case actionType.SLUG_PROPERTY_START:
+      return slugPropertyStart(state, action)
+    case actionType.SLUG_PROPERTY_SUCCESS:
+      return slugPropertySuccess(state, action)
+    case actionType.SLUG_PROPERTY_FAIL:
+      return slugPropertyFail(state, action)
 
     case actionType.GET_PROPERTY_SALE:
       return getPropertySale(state, action)

@@ -40,6 +40,24 @@ export const getPropertyLandSuccess = (property) => {
   }
 }
 
+export const slugPropertyStart = () => {
+  return { type: actionType.SLUG_PROPERTY_START}
+}
+
+export const slugPropertySuccess = (slug) => {
+  return {
+    type: actionType.SLUG_PROPERTY_SUCCESS,
+    slug:slug 
+  }
+}
+
+export const slugPropertyFail = (error) => {
+  return {
+    type: actionType.SLUG_PROPERTY_FAIL,
+    error: error
+  }
+}
+
 export const getProperty = () => {
   return dispatch => {
     dispatch(getPropertyStart())
@@ -50,6 +68,32 @@ export const getProperty = () => {
       .catch(err => {
         dispatch(getPropertyFail(err.response))
       })
+  }
+}
+
+export const slugProperty = (slug, ctx) => {
+  return dispatch => {
+    const { access_token } = cookies.get(ctx);
+    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+    dispatch(slugPropertyStart())
+    if(!access_token || access_token === undefined){
+      axios.get(`/property/${slug}`)
+        .then(res => {
+          dispatch(slugPropertySuccess(res.data))
+        })
+        .catch(err => {
+          dispatch(slugPropertyFail(err.response))
+        })
+    }
+    if(access_token){
+      axios.get(`/property/${slug}`, headerCfg)
+        .then(res => {
+          dispatch(slugPropertySuccess(res.data))
+        })
+        .catch(err => {
+          dispatch(slugPropertyFail(err.response))
+        })
+    }
   }
 }
 
@@ -91,3 +135,4 @@ export const getPropertyLand = () => {
       })
   }
 }
+

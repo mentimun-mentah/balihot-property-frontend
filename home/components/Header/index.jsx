@@ -99,7 +99,7 @@ const Header = () => {
 
   let auth = (
     <>
-      <Nav.Link className={btnNavbar} name="login" onClick={showModalHandler}>
+      <Nav.Link id="btn-login-navbar" className={btnNavbar} name="login" onClick={showModalHandler}>
         Login
       </Nav.Link>
       <Nav.Link>

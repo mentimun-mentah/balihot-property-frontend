@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { renderArrow } from "./CarouselButton";
 
 import Link from "next/link"
@@ -9,17 +10,22 @@ import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import NoSSR from "react-no-ssr";
 import moment from "moment";
+import * as actions from "../../store/actions";
 
+import { isAuth } from "../../hoc/withAuth";
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
 import { Fade } from "../Transition";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 
+const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
+
 const CardContainer = ({
-  slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
-  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at
+  id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
+  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, love
 }) => {
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
 
   const imageCard = images.split(",");
@@ -33,6 +39,24 @@ const CardContainer = ({
       period: data.period ? data.period : null
     })
   }
+
+  const loveHandler = useCallback(id => {
+    if(!isAuth()){
+      favLoginBtn()
+    } 
+    if(isAuth() && !love) {
+      dispatch(actions.loveProperty(id))
+    } 
+  },[])
+
+  const unLoveHandler = useCallback(id => {
+    if(!isAuth()){
+      favLoginBtn()
+    } 
+    if(isAuth() && love) {
+      dispatch(actions.unLoveProperty(id))
+    } 
+  },[])
 
   let buttonPrice = {};
   if(villaPriceList.length > 0){
@@ -189,9 +213,15 @@ const CardContainer = ({
               </NoSSR>
             </Col>
             <Col className="text-right">
-              <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
-                <i className="fal fa-lg fa-heart"></i>
-              </span>
+              {love ? (
+                <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
+                  <i className="fas fa-lg fa-heart text-bhp" onClick={() => unLoveHandler(id)} />
+                </span>
+              ) : (
+                <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
+                  <i className="fal fa-lg fa-heart" onClick={() => loveHandler(id)} />
+                </span>
+              )}
               <a className="text-decoration-none text-muted hov_pointer">
                 <i className="fal fa-lg fa-share-alt"></i>
               </a>

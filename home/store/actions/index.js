@@ -7,7 +7,9 @@ export {
   slugPropertySuccess, 
   getPropertySaleSuccess, 
   getPropertyRentSuccess, 
-  getPropertyLandSuccess 
+  getPropertyLandSuccess,
+  loveProperty,
+  unLoveProperty,
 } from "./property";
 
 export { getTeam, getTeamSuccess } from "./teams";

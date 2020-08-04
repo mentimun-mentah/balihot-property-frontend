@@ -1,3 +1,5 @@
+import { notification } from 'antd';
+import cookies from "nookies";
 import * as actionType from "./actionTypes";
 import axios from "../../lib/axios";
 
@@ -58,16 +60,53 @@ export const slugPropertyFail = (error) => {
   }
 }
 
-export const getProperty = () => {
+export const lovePropertyStart = () => {
+  return { type: actionType.LOVE_PROPERTY_START }
+}
+
+export const lovePropertySuccess = () => {
+  return { type: actionType.LOVE_PROPERTY_SUCCESS }
+}
+
+export const lovePropertyFail = (error) => {
+  return { type: actionType.LOVE_PROPERTY_FAIL, error: error }
+}
+
+export const unLovePropertyStart = () => {
+  return { type: actionType.UNLOVE_PROPERTY_START }
+}
+
+export const unLovePropertySuccess = () => {
+  return { type: actionType.UNLOVE_PROPERTY_SUCCESS }
+}
+
+export const unLovePropertyFail = (error) => {
+  return { type: actionType.UNLOVE_PROPERTY_FAIL, error: error }
+}
+
+export const getProperty = (ctx) => {
   return dispatch => {
+    const { access_token } = cookies.get(ctx);
+    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     dispatch(getPropertyStart())
-    axios.get('/properties')
-      .then(res => {
-        dispatch(getPropertySuccess(res.data))
-      })
-      .catch(err => {
-        dispatch(getPropertyFail(err.response))
-      })
+    if(!access_token || access_token === undefined){
+      axios.get('/properties')
+        .then(res => {
+          dispatch(getPropertySuccess(res.data))
+        })
+        .catch(err => {
+          dispatch(getPropertyFail(err.response))
+        })
+    }   
+    if(access_token){
+      axios.get(`/properties`, headerCfg)
+        .then(res => {
+          dispatch(getPropertySuccess(res.data))
+        })
+        .catch(err => {
+          dispatch(getPropertyFail(err.response))
+        })
+    }
   }
 }
 
@@ -136,3 +175,54 @@ export const getPropertyLand = () => {
   }
 }
 
+export const loveProperty = (id, ctx) => {
+  return dispatch => {
+    const { access_token } = cookies.get(ctx);
+    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+    dispatch(lovePropertyStart())
+    axios.post(`/wishlist/love/${id}`, null, headerCfg)
+      .then(res => {
+        dispatch(lovePropertySuccess())
+        // dispatch(getProperty(ctx))
+        notification['success']({
+          message: 'Yuhuu!!!',
+          description: res.data.message,
+          placement: 'bottomRight',
+        });
+      })
+      .catch(err => {
+        dispatch(lovePropertyFail(err.response))
+        notification['error']({
+          message: 'Opps...',
+          description: err.response.data.message,
+          placement: 'bottomRight',
+        });
+      })
+  }
+}
+
+export const unLoveProperty = (id, ctx) => {
+  return dispatch => {
+    const { access_token } = cookies.get(ctx);
+    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+    dispatch(unLovePropertyStart())
+    axios.delete(`/wishlist/unlove/${id}`, null, headerCfg)
+      .then(res => {
+        dispatch(unLovePropertySuccess(ctx))
+        // dispatch(getProperty(ctx))
+        notification['success']({
+          message: 'Yuhuu!!!',
+          description: res.data.message,
+          placement: 'bottomRight',
+        });
+      })
+      .catch(err => {
+        dispatch(unLovePropertyFail(err.response))
+        notification['error']({
+          message: 'Opps...',
+          description: err.response.data.message,
+          placement: 'bottomRight',
+        });
+      })
+  }
+}

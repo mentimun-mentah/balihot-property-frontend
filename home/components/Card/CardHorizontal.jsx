@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { renderArrow } from "./CarouselButton";
+import { isAuth } from "../../hoc/withAuth";
 
 import Link from "next/link"
 import validator from "validator";
@@ -8,6 +10,8 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import moment from "moment";
+import NoSSR from "react-no-ssr";
+import * as actions from "../../store/actions";
 
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
@@ -16,9 +20,10 @@ import { Fade } from "../Transition";
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 
 const CardContainer = ({
-  slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
-  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, mouseEnter, mouseLeave
+  id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
+  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, love, mouseEnter, mouseLeave
 }) => {
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
 
   const imageCard = images.split(",");
@@ -32,6 +37,24 @@ const CardContainer = ({
       period: data.period ? data.period : null
     })
   }
+
+  const loveHandler = useCallback(id => {
+    if(!isAuth()){
+      favLoginBtn()
+    } 
+    if(isAuth() && !love) {
+      dispatch(actions.loveProperty(id))
+    } 
+  },[])
+
+  const unLoveHandler = useCallback(id => {
+    if(!isAuth()){
+      favLoginBtn()
+    } 
+    if(isAuth() && love) {
+      dispatch(actions.unLoveProperty(id))
+    } 
+  },[])
 
   let buttonPrice = {};
   if(villaPriceList.length > 0){
@@ -185,23 +208,32 @@ const CardContainer = ({
                     </motion.span>
                   )}
                 </Card.Body>
-                <Card.Footer className="text-muted bg-white bor-rad-10 footer-edit">
-                  <Row className="fs-12">
-                    <Col>
-                    <i className="fal fa-lg fa-calendar-check mr-2"></i> {moment(created_at).startOf('hour').fromNow()}
-                    </Col>
-                    <Col className="text-right">
-                      <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
-                        <i className="fal fa-lg fa-heart"></i>
-                      </span>
-                      <span className="text-decoration-none text-muted hov_pointer">
-                        <i className="fal fa-lg fa-share-alt"></i>
-                      </span>
-                    </Col>
-                  </Row>
-                </Card.Footer>
               </a>
             </Link>
+            <Card.Footer className="text-muted bg-white bor-rad-10 footer-edit">
+              <Row className="fs-12">
+                <Col className="col-auto">
+                  <NoSSR>
+                    <i className="fal fa-lg fa-calendar-check mr-2"></i> 
+                    {moment(created_at).startOf('hour').fromNow()}
+                  </NoSSR>
+                </Col>
+                <Col className="text-right">
+                  {love ? (
+                    <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
+                      <i className="fas fa-lg fa-heart text-bhp" onClick={() => unLoveHandler(id)} />
+                    </span>
+                  ) : (
+                    <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
+                      <i className="fal fa-lg fa-heart" onClick={() => loveHandler(id)} />
+                    </span>
+                  )}
+                  <span className="text-decoration-none text-muted hov_pointer">
+                    <i className="fal fa-lg fa-share-alt"></i>
+                  </span>
+                </Col>
+              </Row>
+            </Card.Footer>
           </Col>
         </Row>
       </Card>

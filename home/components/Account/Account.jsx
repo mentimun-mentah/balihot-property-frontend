@@ -153,7 +153,7 @@ const Account = () => {
 
   return (
     <>
-      <Col md={9} lg={10} className="ml-sm-auto pl-0">
+      <Col md={12} lg={10} className="ml-sm-auto pl-0 p-r-0-s">
         <motion.div initial="initial" animate="in" exit="out" variants={Fade}>
           <Card className="border-0 mt-5 hov_none shadow-none mb-5">
             <Card.Header className="bg-transparent">
@@ -165,7 +165,10 @@ const Account = () => {
             </Card.Header>
             <Card.Body>
               <Row>
-                <Col md={8} className="pr-0 p-l-0-s order-lg-1 order-md-1 order-12">
+                <Col
+                  md={8}
+                  className="pr-0 p-l-0-s order-lg-1 order-md-1 order-12"
+                >
                   <Card className="hov_none rounded-0 shadow-none">
                     <Card.Header className="bg-transparent">
                       <span>Account Details</span>
@@ -309,6 +312,7 @@ const Account = () => {
                         </Form.Row>
                         <Button
                           variant="primary"
+                          className="m-btn-block"
                           onClick={saveChangePasswordHandler}
                         >
                           Update Profile
@@ -318,8 +322,11 @@ const Account = () => {
                   </Card>
                 </Col>
 
-                <Col md={4} className="pl-0 p-r-0-s order-lg-12 order-md-12 order-1">
-                  <Card className="border-left-0 rounded-0 text-center shadow-none hov_none">
+                <Col
+                  md={4}
+                  className="pl-0 p-r-0-s order-lg-12 order-md-12 order-1"
+                >
+                  <Card className="border-left-0 rounded-0 text-center shadow-none hov_none m-border-0">
                     <img
                       src={PROFILE}
                       width="120"
@@ -378,6 +385,13 @@ const Account = () => {
         .bg-upload {
           background-color: whitesmoke;
           color: #4a4a4a;
+        }
+        // Extra small devices (portrait phones, less than 576px)
+        @media (max-width: 575.98px) {
+          :global(.m-btn-block) {
+            display: block;
+            width: 100%;
+          }
         }
       `}</style>
     </>

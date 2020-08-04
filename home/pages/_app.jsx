@@ -197,7 +197,7 @@ const App = ({ Component, pageProps, store }) => {
 
 App.getInitialProps = async ({ Component, ctx }) => {
   await ctx.store.dispatch(actions.authCheckState(ctx))
-  const { access_token } = cookie.get(ctx);
+  const { access_token, refresh_token } = cookie.get(ctx);
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
 
   if(access_token && access_token !== undefined){
@@ -207,9 +207,15 @@ App.getInitialProps = async ({ Component, ctx }) => {
       await ctx.store.dispatch(actions.getUserSuccess(resUser.data))
     }
     catch (err){
-      if(!err.response && !err.response.status) return;
-      if(err.response.status == 422) await ctx.store.dispatch(actions.logout(ctx));
-      if(err.response.status == 403) await ctx.store.dispatch(actions.logout(ctx));
+      if(refresh_token){
+        await ctx.store.dispatch(actions.refreshToken());
+      }
+      if(!refresh_token){
+        await ctx.store.dispatch(actions.logout(ctx));
+      }
+      // if(!err.response && !err.response.status) return;
+      // if(err.response.status == 422) await ctx.store.dispatch(actions.logout(ctx));
+      // if(err.response.status == 403) await ctx.store.dispatch(actions.logout(ctx));
     }
   }
   return { pageProps };

@@ -167,7 +167,6 @@ const Property = () => {
   useEffect(() => {
     setSelected(villaPrice[0])
   },[])
-  console.log(selected)
 
   if(villaPrice.length > 0 && selected !== undefined){
     buttonPrice = villaPrice.map((data, i) => {
@@ -721,7 +720,7 @@ const Property = () => {
             <iframe
               className="embed-responsive-item"
               src={youtube}
-              allowfullscreen
+              allowFullScreen
             ></iframe>
           </div>
         </Modal.Body>

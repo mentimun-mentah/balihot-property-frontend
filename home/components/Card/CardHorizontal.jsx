@@ -162,7 +162,7 @@ const CardContainer = ({
           </Col>
 
           <Col xl={7} lg={7} md={7} sm={7} xs={7}>
-            <Link href="property/[slug]" as={`property/${slug}`}>
+            <Link href="/property/[slug]" as={`/property/${slug}`}>
               <a className="text-decoration-none">
                 <Card.Body className="text-dark">
                   <p className="text-dark font-weight-bold mb-1 hov_pointer fs-18 lh-1 text-truncate">

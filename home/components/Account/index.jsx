@@ -15,7 +15,7 @@ const Account = () => {
           <Row>
             <Nav
               defaultActiveKey={select}
-              className="flex-column col-md-2 d-md-none d-lg-block sidebar pl-0"
+              className="flex-column col-md-2 d-none d-lg-block sidebar pl-0"
               onSelect={selectHandler}
             >
               <div className="sidebar-sticky mt-5">

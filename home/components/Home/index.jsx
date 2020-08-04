@@ -184,7 +184,24 @@ const Home = () => {
         </section>
         {region && region.length > 0 ? (
           <section>
-            <Container className="px-0">
+            <Container className="px-0 d-block d-sm-block d-md-none">
+              <Carousel 
+                infinite 
+                ssr={true} 
+                arrows={false}
+                partialVisible={true}
+                responsive={responsivePlace} 
+                renderButtonGroupOutside={true}
+                customButtonGroup={<ButtonGroupPlace />} 
+              >
+                {region && region.map(data => (
+                  <Col key={data.id} className="pl-0">
+                    <CardPlace id={data.id} name={data.name} image={data.image} listing={data.listing} />
+                  </Col>
+                ))}
+              </Carousel>
+            </Container>
+            <Container className="px-0 d-none d-sm-none d-md-block">
               <Carousel 
                 infinite 
                 ssr={true} 

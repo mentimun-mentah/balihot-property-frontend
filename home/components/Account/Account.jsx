@@ -165,7 +165,7 @@ const Account = () => {
             </Card.Header>
             <Card.Body>
               <Row>
-                <Col md={8} className="pr-0">
+                <Col md={8} className="pr-0 p-l-0-s order-lg-1 order-md-1 order-12">
                   <Card className="hov_none rounded-0 shadow-none">
                     <Card.Header className="bg-transparent">
                       <span>Account Details</span>
@@ -173,7 +173,7 @@ const Account = () => {
                     <Card.Body>
                       <Form>
                         <Form.Row>
-                          <Form.Group as={Col}>
+                          <Form.Group as={Col} md={6}>
                             <Form.Label>Username</Form.Label>
                             <InputGroup className="mb-3">
                               <InputGroup.Prepend>
@@ -188,7 +188,7 @@ const Account = () => {
                               />
                             </InputGroup>
                           </Form.Group>
-                          <Form.Group as={Col}>
+                          <Form.Group as={Col} md={6}>
                             <Form.Label>Email</Form.Label>
                             <InputGroup className="mb-3">
                               <InputGroup.Prepend>
@@ -207,7 +207,7 @@ const Account = () => {
                         </Form.Row>
 
                         <Form.Row>
-                          <Form.Group as={Col}>
+                          <Form.Group as={Col} md={6}>
                             <Form.Label>New Password</Form.Label>
                             <InputGroup className="mb-3">
                               <InputGroup.Prepend>
@@ -222,7 +222,7 @@ const Account = () => {
                               />
                             </InputGroup>
                           </Form.Group>
-                          <Form.Group as={Col}>
+                          <Form.Group as={Col} md={6}>
                             <Form.Label>Confirm Password</Form.Label>
                             <InputGroup className="mb-3">
                               <InputGroup.Prepend>
@@ -240,7 +240,7 @@ const Account = () => {
                         </Form.Row>
 
                         <Form.Row>
-                          <Form.Group as={Col}>
+                          <Form.Group as={Col} md={6} lg={4}>
                             <Form.Label>Old Password</Form.Label>
                             <InputGroup className="mb-0">
                               <InputGroup.Prepend>
@@ -262,7 +262,7 @@ const Account = () => {
                               </small>
                             )}
                           </Form.Group>
-                          <Form.Group as={Col}>
+                          <Form.Group as={Col} md={6} lg={4}>
                             <Form.Label>New Password</Form.Label>
                             <InputGroup className="mb-0">
                               <InputGroup.Prepend>
@@ -284,7 +284,7 @@ const Account = () => {
                               </small>
                             )}
                           </Form.Group>
-                          <Form.Group as={Col}>
+                          <Form.Group as={Col} md={12} lg={4}>
                             <Form.Label>Confirm Password</Form.Label>
                             <InputGroup className="mb-0">
                               <InputGroup.Prepend>
@@ -318,7 +318,7 @@ const Account = () => {
                   </Card>
                 </Col>
 
-                <Col md={4} className="pl-0">
+                <Col md={4} className="pl-0 p-r-0-s order-lg-12 order-md-12 order-1">
                   <Card className="border-left-0 rounded-0 text-center shadow-none hov_none">
                     <img
                       src={PROFILE}

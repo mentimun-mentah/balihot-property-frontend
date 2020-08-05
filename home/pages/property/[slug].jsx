@@ -4,6 +4,7 @@ import { GMapsOptions, markerOptions, infoOptions } from "../../lib/GMaps-option
 import { libraries, mapDetailContainerStyle } from "../../lib/GMaps-options";
 import { Select, Modal } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
+import { isAuth } from "../../hoc/withAuth";
 
 import cookie from "nookies";
 import moment from "moment";
@@ -33,12 +34,15 @@ const prevCarousel = () => document.getElementById("prevCarouselClick").click();
 /*carousel similar listings*/
 
 const showMoreText = () => document.getElementById("show-more-btn").click();
+const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 
 const Property = () => {
+  const dispatch = useDispatch();
   const propertyData = useSelector(state => state.property.slug);
-  const { slug, name, type_id, property_for, land_size, youtube, description, hotdeal, price } = propertyData;
+
+  const { id, slug, name, type_id, property_for, land_size, youtube, description, hotdeal, price, love } = propertyData;
   const { status } = propertyData; // For Sale 
   const { period } = propertyData; // For Rent
   const { facilities, bathroom, bedroom, building_size } = propertyData; // For villa
@@ -64,6 +68,7 @@ const Property = () => {
   const [selected, setSelected] = useState(villaPrice[0])
   const [isMoreText, setIsMoreText] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [fav, setFav] = useState(love)
 
   const onMapClick = () => setMarker_click(false);
   const markerClickHandler = () => setMarker_click(true);
@@ -79,8 +84,20 @@ const Property = () => {
     })
   }
 
-  const textShowHandler = val => {
-    setIsMoreText(val)
+  const textShowHandler = val => { setIsMoreText(val) }
+
+  const loveHandler = id => {
+    if(!isAuth()){
+      favLoginBtn()
+    } 
+    if(isAuth() && !fav) {
+      dispatch(actions.loveProperty(id))
+      setFav(!fav)
+    } 
+    if(isAuth() && fav) {
+      dispatch(actions.unLoveProperty(id))
+      setFav(!fav)
+    } 
   }
 
   // MAP
@@ -266,11 +283,18 @@ const Property = () => {
               <u>Share</u>
             </span>
           </a>
-          <a className="text-decoration-none text-secondary">
-            <span className="btn-share-like">
-              <i className="fal fa-heart mr-1" />
-              <u>Save</u>
-            </span>
+          <a className="text-decoration-none text-secondary" onClick={() => loveHandler(id)}>
+            {fav ? (
+              <span className="btn-share-like">
+                <i className="fas fa-heart mr-1 text-bhp" />
+                <u>Unsave</u>
+              </span>
+            ) : (
+              <span className="btn-share-like" >
+                <i className="fal fa-heart mr-1" />
+                <u>Save</u>
+              </span>
+            )}
           </a>
         </div>
       </Container>
@@ -412,19 +436,19 @@ const Property = () => {
                       {description}
                     </p>
                   </ShowMoreText>
-                {isMoreText ? (
-                  <div className="show-less">
-                    <a onClick={showMoreText}>
-                      Show less
-                    </a>
-                  </div>
-                ) : (
-                  <div className="show-more">
-                    <a onClick={showMoreText}>
-                      Show more
-                    </a>
-                  </div>
-                )}
+                  {isMoreText ? (
+                    <div className="show-less">
+                      <a onClick={showMoreText}>
+                        Show less
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="show-more">
+                      <a onClick={showMoreText}>
+                        Show more
+                      </a>
+                    </div>
+                  )}
                 </Card.Body>
               </Card>
 
@@ -642,13 +666,13 @@ const Property = () => {
                 <Card.Footer className="text-muted bg-transparent d-none d-lg-block">
                   <Row className="">
                     <Col className="px-1">
-                      <Button className="btn-call fs-14 fs-13-lg" block>
+                      <Button className="btn-call fs-14 fs-13-lg fs-13-t" block>
                         <i className="fal fa-phone-alt mr-2" />
                         <>Call Agent</>
                       </Button>
                     </Col>
                     <Col className="px-1">
-                      <Button className="btn-red fs-14 fs-13-lg" block>
+                      <Button className="btn-red fs-14 fs-13-lg fs-13-t" block>
                         <i className="fal fa-envelope-open mr-2"></i>
                         Send Inquiry
                       </Button>
@@ -741,8 +765,6 @@ const Property = () => {
       >
         <ShareModal propertyShareLink={propertyShareLink} />
       </Modal>
-
-      <pre>{JSON.stringify(propertyData, null, 4)}</pre>
 
       <style jsx>{DetailPropertyStyle}</style>
       <style jsx>{`

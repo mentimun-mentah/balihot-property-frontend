@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { renderArrow } from "./CarouselButton";
 import { isAuth } from "../../hoc/withAuth";
+import { Modal } from "antd"
 
 import Link from "next/link"
 import validator from "validator";
@@ -12,6 +13,7 @@ import Badge from "react-bootstrap/Badge";
 import moment from "moment";
 import NoSSR from "react-no-ssr";
 import * as actions from "../../store/actions";
+import ShareModal from "./ShareModal";
 
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
@@ -27,9 +29,11 @@ const CardContainer = ({
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
   const [fav, setFav] = useState(love);
+  const [showModal, setShowModal] = useState(false)
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
+  const propertyShareLink = `${process.env.BASE_URL}/property/${slug}`
 
   const onClickHandler = data => {
     setSelected({
@@ -225,7 +229,7 @@ const CardContainer = ({
                     )}
                   </span>
                   <span className="text-decoration-none text-muted hov_pointer">
-                    <i className="fal fa-lg fa-share-alt"></i>
+                    <i className="fal fa-lg fa-share-alt" onClick={() => setShowModal(true)} />
                   </span>
                 </Col>
               </Row>
@@ -233,6 +237,19 @@ const CardContainer = ({
           </Col>
         </Row>
       </Card>
+
+      <Modal
+        centered
+        footer={null}
+        visible={showModal}
+        onCancel={() => setShowModal(false)}
+        title="Share"
+        closeIcon={ <i className="fas fa-times" /> }
+        bodyStyle={{padding: "10px 0px"}}
+        width="400px"
+      >
+        <ShareModal propertyShareLink={propertyShareLink} />
+      </Modal>
 
       <style jsx>{`
         :global(.footer-edit){

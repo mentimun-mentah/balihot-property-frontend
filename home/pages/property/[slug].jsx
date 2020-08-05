@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, InfoWindow  } from "@react-google-maps/api";
 import { GMapsOptions, markerOptions, infoOptions } from "../../lib/GMaps-options";
 import { libraries, mapDetailContainerStyle } from "../../lib/GMaps-options";
-import { Select } from 'antd';
+import { Select, Modal } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 
 import cookie from "nookies";
@@ -12,7 +12,7 @@ import axios from "../../lib/axios";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
-import Modal from "react-bootstrap/Modal";
+import BootsModal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import * as actions from "../../store/actions";
 import ReactBnbGallery from "react-bnb-gallery";
@@ -21,6 +21,7 @@ import SmoothImage from "render-smooth-image-react";
 import ContainerCardMarker from "../../components/Card/ContainerCardMarker";
 import ContainerCardPropertySimilar from "../../components/Card/ContainerCardPropertySimilar";
 import ShowMoreText from 'react-show-more-text';
+import ShareModal from "../../components/Card/ShareModal";
 
 import DetailPropertyStyle from "../../components/DetailProperty/style.js";
 
@@ -53,6 +54,7 @@ const Property = () => {
     img_list.push({photo: `${process.env.API_URL}/static/properties/${slug}/${images[key]}`}) 
   }
   let pf = property_for.split(",");
+  const propertyShareLink = `${process.env.BASE_URL}/property/${slug}`
 
   const mapRef = useRef(null);
   const [center, setCenter] = useState({lat: latitude, lng: longitude});
@@ -61,6 +63,7 @@ const Property = () => {
   const [showAllPhoto, setShowAllPhoto] = useState(false);
   const [selected, setSelected] = useState(villaPrice[0])
   const [isMoreText, setIsMoreText] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const onMapClick = () => setMarker_click(false);
   const markerClickHandler = () => setMarker_click(true);
@@ -257,13 +260,13 @@ const Property = () => {
           </span>
         </a>
         <div className="float-right pr-3">
-          <a href="#" className="text-decoration-none text-secondary">
+          <a className="text-decoration-none text-secondary" onClick={() => setShowModal(true)}>
             <span className="mr-3 btn-share-like">
               <i className="far fa-share-square mr-1" />
               <u>Share</u>
             </span>
           </a>
-          <a href="#" className="text-decoration-none text-secondary">
+          <a className="text-decoration-none text-secondary">
             <span className="btn-share-like">
               <i className="fal fa-heart mr-1" />
               <u>Save</u>
@@ -714,8 +717,8 @@ const Property = () => {
       />
 
       {/* SHOW VIDEO */}
-      <Modal show={showVideo} onHide={showVideoHandler} size="lg" centered>
-        <Modal.Body style={{ maxHeight: "80vh", overflowY: "hidden" }}>
+      <BootsModal show={showVideo} onHide={showVideoHandler} size="lg" centered>
+        <BootsModal.Body style={{ maxHeight: "80vh", overflowY: "hidden" }}>
           <div className="embed-responsive embed-responsive-16by9">
             <iframe
               className="embed-responsive-item"
@@ -723,7 +726,20 @@ const Property = () => {
               allowFullScreen
             ></iframe>
           </div>
-        </Modal.Body>
+        </BootsModal.Body>
+      </BootsModal>
+
+      <Modal
+        centered
+        footer={null}
+        visible={showModal}
+        onCancel={() => setShowModal(false)}
+        title="Share"
+        closeIcon={ <i className="fas fa-times" /> }
+        bodyStyle={{padding: "10px 0px"}}
+        width="400px"
+      >
+        <ShareModal propertyShareLink={propertyShareLink} />
       </Modal>
 
       <pre>{JSON.stringify(propertyData, null, 4)}</pre>

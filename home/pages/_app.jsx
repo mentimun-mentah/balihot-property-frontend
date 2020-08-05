@@ -10,7 +10,6 @@ import withReduxStore from "../lib/with-redux-store";
 import "antd/dist/antd.css";
 import "rc-slider/assets/index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "react-awesome-slider/dist/styles.css";
 import "react-multi-carousel/lib/styles.css";
 import "render-smooth-image-react/build/style.css";
 import "react-image-gallery/styles/css/image-gallery.css";

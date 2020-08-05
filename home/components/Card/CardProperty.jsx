@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { renderArrow } from "./CarouselButton";
+import { motion } from "framer-motion";
+import { Modal } from 'antd';
 
 import Link from "next/link"
 import validator from "validator";
@@ -11,11 +12,12 @@ import Badge from "react-bootstrap/Badge";
 import NoSSR from "react-no-ssr";
 import moment from "moment";
 import * as actions from "../../store/actions";
+import ShareModal from "./ShareModal";
 
 import { isAuth } from "../../hoc/withAuth";
 import { Carousel } from "react-responsive-carousel";
-import { motion } from "framer-motion";
 import { Fade } from "../Transition";
+import { renderArrow } from "./CarouselButton";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 
@@ -28,9 +30,11 @@ const CardContainer = ({
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
   const [fav, setFav] = useState(love)
+  const [showModal, setShowModal] = useState(false)
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
+  const propertyShareLink = `${process.env.BASE_URL}/property/${slug}`
 
   const onClickHandler = data => {
     setSelected({
@@ -218,13 +222,33 @@ const CardContainer = ({
                 )}
               </span>
               <a className="text-decoration-none text-muted hov_pointer">
-                <i className="fal fa-lg fa-share-alt"></i>
+                <i className="fal fa-lg fa-share-alt" onClick={() => setShowModal(true)} />
               </a>
             </Col>
           </Row>
         </Card.Footer>
       </Card>
+
+      <Modal
+        centered
+        footer={null}
+        visible={showModal}
+        onCancel={() => setShowModal(false)}
+        title="Share"
+        closeIcon={ <i className="fas fa-times" /> }
+        bodyStyle={{padding: "10px 0px"}}
+        width="400px"
+      >
+        <ShareModal propertyShareLink={propertyShareLink} />
+      </Modal>
+
       <style jsx>{`
+        :global(.share-button:hover){
+          background-color: #fafafa;
+        }
+        :global(.share-button:focus){
+          background-color: #efefef;
+        }
         :global(.carousel .slide) {
           min-width: 100%;
           margin: 0;

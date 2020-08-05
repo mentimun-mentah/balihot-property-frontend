@@ -84,6 +84,40 @@ export const unLovePropertyFail = (error) => {
   return { type: actionType.UNLOVE_PROPERTY_FAIL, error: error }
 }
 
+export const getPropertyBy = (home, query, per_page, ctx) => {
+  return dispatch => {
+    let searchQuery = "";
+    if(home){
+      if(query === "Sale" || query === "Rent") searchQuery = `property_for=${query}&per_page=${per_page}`;
+      if(query === "Land") searchQuery = `type_id=2&per_page=${per_page}`;
+    } else {
+      searchQuery = query
+    }
+
+    const { access_token } = cookies.get(ctx);
+    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+    if(access_token){
+      dispatch(getPropertyStart())
+      axios.get(`/properties?${searchQuery}`, headerCfg)
+        .then(res => {
+          dispatch(getPropertySuccess(res.data))
+        })
+        .catch(err => {
+          dispatch(getPropertyFail(err.response))
+        })
+    } else {
+      dispatch(getPropertyStart())
+      axios.get(`/properties?${searchQuery}`)
+        .then(res => {
+          dispatch(getPropertySuccess(res.data))
+        })
+        .catch(err => {
+          dispatch(getPropertyFail(err.response))
+        })
+    }
+  }
+}
+
 export const getProperty = (ctx) => {
   return dispatch => {
     const { access_token } = cookies.get(ctx);

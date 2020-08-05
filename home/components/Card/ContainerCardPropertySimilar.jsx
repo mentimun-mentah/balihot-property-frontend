@@ -1,9 +1,11 @@
+import { useSelector } from "react-redux";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Carousel from "react-multi-carousel";
 
 import PropertyCard from "./CardProperty";
 import { responsiveSimilarListing } from "../DetailProperty/style.js";
+import LoadingCard from "./LoadingCard";
 
 const PropertyCardMemo = React.memo(PropertyCard)
 
@@ -28,6 +30,7 @@ const ButtonGroup = ({ next, previous, goToSlide, ...rest }) => {
 /*carousel*/
 
 const ContainerCardProperty = ({ dataProperty }) => {
+  const loading = useSelector(state => state.property.loading)
   return (
     <>
     <div className="d-block d-sm-block d-md-none">
@@ -119,12 +122,16 @@ const ContainerCardProperty = ({ dataProperty }) => {
         
           return(
             <Col key={id} className="px-1">
-              <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
-                type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
-                building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
-                villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
-                location={location} created_at={created_at} love={love}
-              />
+              {loading ? (
+                <LoadingCard />
+              ) : (
+                <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                  type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
+                  building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
+                  villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
+                  location={location} created_at={created_at} love={love}
+                />
+              )}
             </Col>
           )
         })}
@@ -219,12 +226,16 @@ const ContainerCardProperty = ({ dataProperty }) => {
         
           return(
             <Col key={id} className="px-1">
-              <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
-                type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
-                building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
-                villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
-                location={location} created_at={created_at} love={love}
-              />
+              {loading ? (
+                <LoadingCard />
+              ) : (
+                <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                  type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
+                  building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
+                  villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
+                  location={location} created_at={created_at} love={love}
+                />
+              )}
             </Col>
           )
         })}

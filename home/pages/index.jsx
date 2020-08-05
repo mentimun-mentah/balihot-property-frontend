@@ -38,25 +38,25 @@ Home.getInitialProps = async (ctx) => {
   if(access_token, refresh_token){
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     ctx.store.dispatch(actions.authSuccess(access_token, refresh_token, username));
-    const resProperty = await axios.get('/properties', headerCfg);
-    ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
-    const saleProperty = await axios.get('/properties?property_for=Sale&per_page=3', headerCfg);
-    ctx.store.dispatch(actions.getPropertySaleSuccess(saleProperty.data)); 
-    const rentProperty = await axios.get('/properties?property_for=Rent&per_page=3', headerCfg);
-    ctx.store.dispatch(actions.getPropertyRentSuccess(rentProperty.data)); 
-    const landProperty = await axios.get('/properties?type_id=2&per_page=3', headerCfg);
-    ctx.store.dispatch(actions.getPropertyLandSuccess(landProperty.data)); 
+    // const resProperty = await axios.get('/properties', headerCfg);
+    // ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+    // const saleProperty = await axios.get('/properties?property_for=Sale&per_page=3', headerCfg);
+    // ctx.store.dispatch(actions.getPropertySaleSuccess(saleProperty.data)); 
+    // const rentProperty = await axios.get('/properties?property_for=Rent&per_page=3', headerCfg);
+    // ctx.store.dispatch(actions.getPropertyRentSuccess(rentProperty.data)); 
+    // const landProperty = await axios.get('/properties?type_id=2&per_page=3', headerCfg);
+    // ctx.store.dispatch(actions.getPropertyLandSuccess(landProperty.data)); 
   }
-  if(!access_token || access_token === undefined){
-    const resProperty = await axios.get('/properties');
-    ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
-    const saleProperty = await axios.get('/properties?property_for=Sale&per_page=3');
-    ctx.store.dispatch(actions.getPropertySaleSuccess(saleProperty.data)); 
-    const rentProperty = await axios.get('/properties?property_for=Rent&per_page=3');
-    ctx.store.dispatch(actions.getPropertyRentSuccess(rentProperty.data)); 
-    const landProperty = await axios.get('/properties?type_id=2&per_page=3');
-    ctx.store.dispatch(actions.getPropertyLandSuccess(landProperty.data)); 
-  }
+  // if(!access_token || access_token === undefined){
+  //   const resProperty = await axios.get('/properties');
+  //   ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+  //   const saleProperty = await axios.get('/properties?property_for=Sale&per_page=3');
+  //   ctx.store.dispatch(actions.getPropertySaleSuccess(saleProperty.data)); 
+  //   const rentProperty = await axios.get('/properties?property_for=Rent&per_page=3');
+  //   ctx.store.dispatch(actions.getPropertyRentSuccess(rentProperty.data)); 
+  //   const landProperty = await axios.get('/properties?type_id=2&per_page=3');
+  //   ctx.store.dispatch(actions.getPropertyLandSuccess(landProperty.data)); 
+  // }
 
   return { username, fresh };
 };

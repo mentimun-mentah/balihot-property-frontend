@@ -3,6 +3,7 @@ export { getRegion, getRegionSuccess } from "./region";
 
 export { 
   getProperty, 
+  getPropertyBy, 
   getPropertySuccess, 
   slugPropertySuccess, 
   getPropertySaleSuccess, 

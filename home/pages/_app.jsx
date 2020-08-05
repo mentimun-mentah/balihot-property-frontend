@@ -207,8 +207,9 @@ App.getInitialProps = async ({ Component, ctx }) => {
       await ctx.store.dispatch(actions.getUserSuccess(resUser.data))
     }
     catch (err){
+      console.log("ERR FROM _APP.JSX ====> ", err.response)
       if(refresh_token){
-        await ctx.store.dispatch(actions.refreshToken());
+        await ctx.store.dispatch(actions.refreshToken(ctx));
       }
       if(!refresh_token){
         await ctx.store.dispatch(actions.logout(ctx));

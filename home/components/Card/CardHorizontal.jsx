@@ -18,6 +18,7 @@ import { motion } from "framer-motion";
 import { Fade } from "../Transition";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
+const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
 
 const CardContainer = ({
   id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,

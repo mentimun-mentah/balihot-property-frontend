@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Card, Col, Container, Tabs, Tab, Button, Jumbotron } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Router from "next/router";
 import Carousel from "react-multi-carousel";
@@ -9,18 +9,25 @@ import CardPlace from "../Card/CardPlace";
 import CardTeams from "../Card/CardTeam";
 import Workflow from "./Workflow";
 import ContainerCardProperty from "../Card/ContainerCardProperty";
+import * as actions from "../../store/actions";
 import HomeStyle, {responsive, responsivePlace, ButtonGroupPlace} from "./style";
 
 const Home = () => {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("Sale");
 
-  const activeTabHandler = useCallback(e => setActiveTab(e), []);
+  const activeTabHandler = useCallback(e => {
+    setActiveTab(e)
+    dispatch(actions.getPropertyBy(true, e, 3))
+  }, []);
+
+  useEffect(() => {
+    dispatch(actions.getPropertyBy(true, "Sale"))
+  },[])
 
   const region = useSelector(state => state.region.region)
   const team = useSelector(state => state.team.team)
-  const saleProperty = useSelector(state => state.property.saleProperty)
-  const rentProperty = useSelector(state => state.property.rentProperty)
-  const landProperty = useSelector(state => state.property.landProperty)
+  const property = useSelector(state => state.property.property)
 
   const searchHandler = () => {
     Router.push({
@@ -65,9 +72,9 @@ const Home = () => {
               {activeTab === "Sale" && (
                 <>
                   <Container className="mt-4 px-0">
-                    {saleProperty && saleProperty.data.length > 0 ? (
+                    {property && property.data.length > 0 ? (
                       <>
-                        <ContainerCardProperty dataProperty={saleProperty} horizontal={false} />
+                        <ContainerCardProperty dataProperty={property} horizontal={false} />
                         <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
                           Show All &nbsp;<i className="fas fa-chevron-right"></i>
                         </Button>
@@ -92,9 +99,9 @@ const Home = () => {
               {activeTab === "Rent" && (
                 <>
                   <Container className="mt-4 px-0">
-                    {rentProperty && rentProperty.data.length > 0 ? (
+                    {property && property.data.length > 0 ? (
                       <>
-                        <ContainerCardProperty dataProperty={rentProperty} horizontal={false} />
+                        <ContainerCardProperty dataProperty={property} horizontal={false} />
                         <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
                           Show All &nbsp;<i className="fas fa-chevron-right"></i>
                         </Button>
@@ -119,9 +126,9 @@ const Home = () => {
               {activeTab === "Land" && (
                 <>
                   <Container className="mt-4 px-0">
-                    {landProperty && landProperty.data.length > 0 ? (
+                    {property && property.data.length > 0 ? (
                       <>
-                        <ContainerCardProperty dataProperty={landProperty} horizontal={false} />
+                        <ContainerCardProperty dataProperty={property} horizontal={false} />
                         <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
                           Show All &nbsp;<i className="fas fa-chevron-right"></i>
                         </Button>
@@ -184,7 +191,24 @@ const Home = () => {
         </section>
         {region && region.length > 0 ? (
           <section>
-            <Container className="px-0">
+            <Container className="px-0 d-block d-sm-block d-md-none">
+              <Carousel 
+                infinite 
+                ssr={true} 
+                arrows={false}
+                partialVisible={true}
+                responsive={responsivePlace} 
+                renderButtonGroupOutside={true}
+                customButtonGroup={<ButtonGroupPlace />} 
+              >
+                {region && region.map(data => (
+                  <Col key={data.id} className="pl-0">
+                    <CardPlace id={data.id} name={data.name} image={data.image} listing={data.listing} />
+                  </Col>
+                ))}
+              </Carousel>
+            </Container>
+            <Container className="px-0 d-none d-sm-none d-md-block">
               <Carousel 
                 infinite 
                 ssr={true} 

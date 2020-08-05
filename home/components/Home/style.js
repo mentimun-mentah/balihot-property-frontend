@@ -33,12 +33,12 @@ export const responsivePlace = {
   tablet: {
     breakpoint: { max: 1023, min: 576},
     items: 1,
-    partialVisibilityGutter: 50
+    partialVisibilityGutter: 30
   },
   mobile: {
     breakpoint: { max: 576, min: 0 },
     items: 1,
-    partialVisibilityGutter: 40
+    partialVisibilityGutter: 30
   }
 };
 

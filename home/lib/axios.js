@@ -8,12 +8,8 @@ const instance = axios.create({
 
 const {access_token, refresh_token} = parseCookies()
 
-export const headerRefresh = {
-  headers: { Authorization: `Bearer ${refresh_token}` }
-}
-
 export const headerCfg = {
-  headers: { Authorization: `Bearer ${access_token}`, }
+  headers: { Authorization: `Bearer ${access_token}` }
 }
 
 export const headerCfgFormData = {
@@ -24,6 +20,11 @@ export const headerCfgFormData = {
 }
 
 const refreshAuthLogic = async (failedRequest) => {
+
+  const headerRefresh = {
+    headers: { Authorization: `Bearer ${refresh_token}` }
+  }
+
   return instance
     .post('/refresh', null, headerRefresh)
     .then((res) => {

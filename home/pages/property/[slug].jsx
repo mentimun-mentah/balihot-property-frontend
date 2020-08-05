@@ -167,7 +167,6 @@ const Property = () => {
   useEffect(() => {
     setSelected(villaPrice[0])
   },[])
-  console.log(selected)
 
   if(villaPrice.length > 0 && selected !== undefined){
     buttonPrice = villaPrice.map((data, i) => {
@@ -601,22 +600,40 @@ const Property = () => {
                   <hr />
 
                   <h4 className="fs-14 text-left">
-                    Posted Date:
+                    Posted date:
                     <span className="font-weight-normal ml-1">
                       {moment.utc(created_at).format('DD MMMM YYYY')}
                     </span>
                   </h4>
                   {price_list}
-                  <Select                                                                                            
-                    size="small"
-                    value={selected.name}
-                    onChange={onSelectTagPrice}
-                    suffixIcon={<i className="fal fa-sm fa-chevron-down ml-1" />}
-                    bordered={false}
-                  >
-                    {buttonPrice}
-                  </Select>
-
+                  <h4 className="fs-14 text-left">
+                    Price tag:
+                    <span className="font-weight-normal">
+                      <Select
+                        size="small"
+                        value={selected.name}
+                        onChange={onSelectTagPrice}
+                        suffixIcon={<i className="fal fa-sm fa-chevron-down ml-1" />}
+                        bordered={false}
+                      >
+                        {buttonPrice}
+                      </Select>
+                    </span>
+                  </h4>
+                  <h4 className="fs-14 text-left">
+                    Price:
+                    <span className="font-weight-normal ml-1">
+                      IDR {formatter.format(selected.price)} 
+                    </span>
+                  </h4>
+                  {selected.period && (
+                    <h4 className="fs-14 text-left">
+                      Can lease until:
+                      <span className="font-weight-normal ml-1">
+                        {selected.period}
+                      </span>
+                    </h4>
+                  )}
                 </Card.Body>
 
                 <Card.Footer className="text-muted bg-transparent d-none d-lg-block">
@@ -703,7 +720,7 @@ const Property = () => {
             <iframe
               className="embed-responsive-item"
               src={youtube}
-              allowfullscreen
+              allowFullScreen
             ></iframe>
           </div>
         </Modal.Body>

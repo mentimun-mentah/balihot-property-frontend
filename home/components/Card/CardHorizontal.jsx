@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { renderArrow } from "./CarouselButton";
+import { isAuth } from "../../hoc/withAuth";
 
 import Link from "next/link"
 import validator from "validator";
@@ -8,18 +10,23 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import moment from "moment";
+import NoSSR from "react-no-ssr";
+import * as actions from "../../store/actions";
 
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
 import { Fade } from "../Transition";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
+const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
 
 const CardContainer = ({
-  slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
-  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, mouseEnter, mouseLeave
+  id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
+  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, love, mouseEnter, mouseLeave
 }) => {
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
+  const [fav, setFav] = useState(love);
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
@@ -31,6 +38,20 @@ const CardContainer = ({
       price: data.price,
       period: data.period ? data.period : null
     })
+  }
+
+  const loveHandler = id => {
+    if(!isAuth()){
+      favLoginBtn()
+    } 
+    if(isAuth() && !fav) {
+      dispatch(actions.loveProperty(id))
+      setFav(!fav)
+    } 
+    if(isAuth() && fav) {
+      dispatch(actions.unLoveProperty(id))
+      setFav(!fav)
+    } 
   }
 
   let buttonPrice = {};
@@ -162,7 +183,7 @@ const CardContainer = ({
           </Col>
 
           <Col xl={7} lg={7} md={7} sm={7} xs={7}>
-            <Link href="property/[slug]" as={`property/${slug}`}>
+            <Link href="/property/[slug]" as={`/property/${slug}`}>
               <a className="text-decoration-none">
                 <Card.Body className="text-dark">
                   <p className="text-dark font-weight-bold mb-1 hov_pointer fs-18 lh-1 text-truncate">
@@ -185,23 +206,30 @@ const CardContainer = ({
                     </motion.span>
                   )}
                 </Card.Body>
-                <Card.Footer className="text-muted bg-white bor-rad-10 footer-edit">
-                  <Row className="fs-12">
-                    <Col>
-                    <i className="fal fa-lg fa-calendar-check mr-2"></i> {moment(created_at).startOf('hour').fromNow()}
-                    </Col>
-                    <Col className="text-right">
-                      <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
-                        <i className="fal fa-lg fa-heart"></i>
-                      </span>
-                      <span className="text-decoration-none text-muted hov_pointer">
-                        <i className="fal fa-lg fa-share-alt"></i>
-                      </span>
-                    </Col>
-                  </Row>
-                </Card.Footer>
               </a>
             </Link>
+            <Card.Footer className="text-muted bg-white bor-rad-10 footer-edit">
+              <Row className="fs-12">
+                <Col className="col-auto">
+                  <NoSSR>
+                    <i className="fal fa-lg fa-calendar-check mr-2"></i> 
+                    {moment(created_at).startOf('hour').fromNow()}
+                  </NoSSR>
+                </Col>
+                <Col className="text-right">
+                  <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right"> 
+                    {fav ? (
+                      <i className="fas fa-lg fa-heart text-bhp" onClick={() => loveHandler(id)} />
+                    ) : (
+                      <i className="fal fa-lg fa-heart" onClick={() => loveHandler(id)} />
+                    )}
+                  </span>
+                  <span className="text-decoration-none text-muted hov_pointer">
+                    <i className="fal fa-lg fa-share-alt"></i>
+                  </span>
+                </Col>
+              </Row>
+            </Card.Footer>
           </Col>
         </Row>
       </Card>

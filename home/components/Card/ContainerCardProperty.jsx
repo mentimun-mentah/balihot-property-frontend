@@ -1,19 +1,24 @@
+import { useSelector } from "react-redux";
+
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 import PropertyCard from "./CardProperty";
 import PropertyCardHorizontal from "./CardHorizontal";
+import LoadingCard from "./LoadingCard";
+import LoadingCardHorizontal from "./LoadingCardHorizontal";
 
 const PropertyCardMemo = React.memo(PropertyCard)
 const PropertyCardHorizontalMemo = React.memo(PropertyCardHorizontal)
 
 const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeave }) => {
+  const loading = useSelector(state => state.property.loading)
   return (
     <>
       <Row>
         {dataProperty && dataProperty.data && dataProperty.data.map(data => {
           const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = data;
-          const {status, period, price, hotdeal, location, created_at} = data;
+          const {status, period, price, hotdeal, location, created_at, love} = data;
           let villaPrice = []
           let landPrice = []
           if(type_id == 1){
@@ -93,13 +98,17 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
               <Col xl={12} lg={12} mb={12} sm={12} xs={12} key={id} 
                 className="mt-2 mb-n2" 
               >
-                <PropertyCardHorizontalMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
-                  type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
-                  building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
-                  villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
-                  location={location} created_at={created_at} 
-                  mouseEnter={() => mouseEnter(data)} mouseLeave={mouseLeave} 
-                />
+                {loading ? (
+                  <LoadingCardHorizontal />
+                ) : (
+                  <PropertyCardHorizontalMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                    type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
+                    building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
+                    villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
+                    location={location} created_at={created_at} love={love}
+                    mouseEnter={() => mouseEnter(data)} mouseLeave={mouseLeave} 
+                  />
+                )}
               </Col>
             )
           }
@@ -107,12 +116,16 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
           if(!horizontal){
             return(
               <Col xl={4} lg={4} mb={4} sm={6} xs={12} key={id}>
-                <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
-                  type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
-                  building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
-                  villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
-                  location={location} created_at={created_at}
-                />
+                {loading ? (
+                  <LoadingCard />
+                ) : (
+                  <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                    type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
+                    building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
+                    villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
+                    location={location} created_at={created_at} love={love}
+                  />
+                )}
               </Col>
             )
           }

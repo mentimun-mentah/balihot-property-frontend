@@ -17,8 +17,8 @@ const authenticate = ctx => {
 };
 
 const isAuth = ctx => {
-  const { access_token, refresh_token, username } = cookies.get(ctx);
-  return access_token && refresh_token && username;
+  const { access_token, refresh_token } = cookies.get(ctx);
+  return access_token && refresh_token;
 };
 
 const withAuth = WrappendComponent => {

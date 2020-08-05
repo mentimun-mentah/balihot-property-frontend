@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { renderArrow } from "./CarouselButton";
 
 import Link from "next/link"
@@ -7,19 +8,26 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
+import NoSSR from "react-no-ssr";
 import moment from "moment";
+import * as actions from "../../store/actions";
 
+import { isAuth } from "../../hoc/withAuth";
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
 import { Fade } from "../Transition";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 
+const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
+
 const CardContainer = ({
-  slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
-  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at
+  id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
+  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, love
 }) => {
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
+  const [fav, setFav] = useState(love)
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
@@ -31,6 +39,20 @@ const CardContainer = ({
       price: data.price,
       period: data.period ? data.period : null
     })
+  }
+
+  const loveHandler = id => {
+    if(!isAuth()){
+      favLoginBtn()
+    } 
+    if(isAuth() && !fav) {
+      dispatch(actions.loveProperty(id))
+      setFav(!fav)
+    } 
+    if(isAuth() && fav) {
+      dispatch(actions.unLoveProperty(id))
+      setFav(!fav)
+    } 
   }
 
   let buttonPrice = {};
@@ -51,7 +73,7 @@ const CardContainer = ({
     price_list = landPriceList.map((data, i) => {
     land_total_price = data.price * land_size
     return (
-      <p className="fw-500 fs-16 text-dark mb-1 fs-14-s" key={i}>
+      <p className="fw-500 fs-16 text-dark mb-1 fs-12-s" key={i}>
         IDR {formatter.format(data.price)} 
         <small className="fs-14 fs-12-s">
           {" "}/ are
@@ -63,7 +85,7 @@ const CardContainer = ({
     price_list = landPriceList.map((data, i) => {
     land_total_price = data.price * land_size
     return (
-      <p className="fw-500 fs-16 text-dark mb-1 fs-14-s" key={i}>
+      <p className="fw-500 fs-16 text-dark mb-1 fs-12-s" key={i}>
         IDR {formatter.format(data.price)}
         <small className="fs-14 fs-12-s">
           {" "}/ are / year
@@ -72,7 +94,7 @@ const CardContainer = ({
     )})
     land_leasehold = landPriceList.map((data, i) => (
       <Badge className="font-weight-normal pl-0 mr-1 mb-2" key={i}>
-        <i className="far fa-lg fa-calendar-alt mr-2 fs-14-s" />
+        <i className="far fa-lg fa-calendar-alt mr-2 fs-12-s" />
         <span className="pr-1">Can lease until: {data.period}</span>
       </Badge>
     ))
@@ -80,7 +102,7 @@ const CardContainer = ({
 
   if(type_id === 1){
     price_list = (
-      <p className="fw-500 fs-16 text-dark mb-1 fs-14-s">
+      <p className="fw-500 fs-16 text-dark mb-1 fs-12-s">
         IDR {formatter.format(selected.price)} 
       </p>
     )
@@ -88,19 +110,19 @@ const CardContainer = ({
     amenities = (
       <>
         <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-          <i className="far fa-bed fa-lg mr-2 fs-14-s" />
+          <i className="far fa-bed fa-lg mr-2 fs-12-s" />
           <span className="pr-1">{bedroom}</span>
         </Badge>
         <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-          <i className="far fa-bath fa-lg mr-2 fs-14-s" />
+          <i className="far fa-bath fa-lg mr-2 fs-12-s" />
           <span className="pr-1">{bathroom}</span>
         </Badge>
         <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-          <i className="far fa-expand-arrows fa-lg mr-2 fs-14-s" />
+          <i className="far fa-expand-arrows fa-lg mr-2 fs-12-s" />
           <span className="pr-1">{land_size} are</span>
         </Badge>
         <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-          <i className="far fa-home fa-lg mr-2 fs-14-s" />
+          <i className="far fa-home fa-lg mr-2 fs-12-s" />
           <span className="pr-1">{building_size} m²</span>
         </Badge>
       </>
@@ -110,11 +132,11 @@ const CardContainer = ({
     amenities = (
       <>
         <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-          <i className="far fa-expand-arrows fa-lg mr-2 fs-14-s" />
+          <i className="far fa-expand-arrows fa-lg mr-2 fs-12-s" />
           <span className="pr-1">{land_size} are</span>
         </Badge>
         <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-          <i className="far fa-lg fa-file-certificate mr-2 fs-14-s" />
+          <i className="far fa-lg fa-file-certificate mr-2 fs-12-s" />
           <span className="pr-1">{status}</span>
         </Badge>
       </>
@@ -156,14 +178,14 @@ const CardContainer = ({
             </div>
           )}
         </div>
-        <Link href="property/[slug]" as={`property/${slug}`}>
+        <Link href="/property/[slug]" as={`/property/${slug}`}>
           <a className="text-decoration-none">
             <Card.Body className="text-dark match-height">
-              <Card.Title className="text-dark font-weight-bold mb-1 hov_pointer text-truncate fs-18-s">
+              <Card.Title className="text-dark font-weight-bold mb-1 hov_pointer text-truncate fs-16-s">
                 {name}
               </Card.Title>
               {price_list}
-              <Card.Text className="fs-12 text-secondary text-truncate">
+              <Card.Text className="fs-12 text-secondary text-truncate m-b-5-s">
                 <i className="fal fa-map-marker-alt"></i> {location}
               </Card.Text>
               {amenities}
@@ -173,7 +195,7 @@ const CardContainer = ({
                   animate={selected.period ? "in" : "out"}
                   variants={Fade}
                 >
-                  <i className="far fa-lg fa-calendar-alt mr-2 fs-14-s" />
+                  <i className="far fa-lg fa-calendar-alt mr-2 fs-12-s" />
                   <span className="pr-1">Can lease until: {selected.period}</span>
                 </motion.span>
               )}
@@ -182,12 +204,18 @@ const CardContainer = ({
         </Link>
         <Card.Footer className="text-muted bg-white bor-rad-10">
           <Row className="fs-12">
-            <Col>
-              <i className="fal fa-lg fa-calendar-check mr-2"></i> {moment(created_at).startOf('hour').fromNow()}
+            <Col className="col-auto">
+              <NoSSR>
+                <i className="fal fa-lg fa-calendar-check mr-2"></i> {moment(created_at).startOf('hour').fromNow()}
+              </NoSSR>
             </Col>
             <Col className="text-right">
               <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
-                <i className="fal fa-lg fa-heart"></i>
+                {fav ? (
+                  <i className="fas fa-lg fa-heart text-bhp" onClick={() => loveHandler(id)} />
+                ) : (
+                  <i className="fal fa-lg fa-heart" onClick={() => loveHandler(id)} />
+                )}
               </span>
               <a className="text-decoration-none text-muted hov_pointer">
                 <i className="fal fa-lg fa-share-alt"></i>

@@ -58,15 +58,6 @@ const AllProperties = ({ searchQuery }) => {
 
   const { location, type_id, status, price } = search;
 
-  const getProperty = (page, query) => {
-    // setLoading(true);
-    axios.get(`/properties?&page=${page}&${query}`)
-    .then(res => {
-      // setLoading(false);
-      dispatch(actions.getPropertySuccess(res.data))
-    })
-  }
-
   const showDrawer = () => { setVisible(true); };
   const onClose = () => { setVisible(false); };
   const showChildDrawer = () => { setChildVisible(true); };
@@ -75,15 +66,18 @@ const AllProperties = ({ searchQuery }) => {
   //====== PAGINATION ======//
   const pageHandler = (event) => {
     setActive(+event.target.text);
-    getProperty(+event.target.text, queryString)
+    const searchData = `page=${+event.target.text}&` + queryString
+    dispatch(actions.getPropertyBy(false, searchData, 10))
   };
   const prevHandler = () => {
     setActive(property.prev_num);
-    getProperty(property.prev_num, queryString)
+    const searchData = `page=${+event.target.text}&` + queryString
+    dispatch(actions.getPropertyBy(false, searchData, 10))
   };
   const nextHandler = () => {
     setActive(property.next_num);
-    getProperty(property.next_num, queryString)
+    const searchData = `page=${+event.target.text}&` + queryString
+    dispatch(actions.getPropertyBy(false, searchData, 10))
   };
   let pagination = [];
   let iter_data;
@@ -107,7 +101,6 @@ const AllProperties = ({ searchQuery }) => {
   const { isLoaded, loadError } = useLoadScript({ googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, libraries });
   const onMapLoad = useCallback(map => {
     mapRef.current = map;
-    setCurrent_postition(default_center);
     setRadius(30); // 30 km
   }, []);
 
@@ -142,7 +135,6 @@ const AllProperties = ({ searchQuery }) => {
       if (current_zoom >= 12) setRadius(10); // 10 km
       if (current_zoom >= 13) setRadius(30 / current_zoom);
     }
-    // getProperty(active, queryString)
     Router.replace({
       pathname: "/all-properties",
       query: { 
@@ -198,9 +190,7 @@ const AllProperties = ({ searchQuery }) => {
   //====== MAPS ======//
 
   //====== SEARCH ======//
-  const options = [
-    { value: 'Seminyak', }, { value: 'Kuta', }, { value: 'Nusa Dua', }, { value: 'Sesetan', },
-  ];
+  const options = [ { value: 'Seminyak', }, { value: 'Kuta', }, { value: 'Nusa Dua', }, { value: 'Sesetan', } ];
   const type_list = []; renderOptions(type_list, dataType, true);
   const status_list = []; renderOptions(status_list, status_data)
 
@@ -297,7 +287,8 @@ const AllProperties = ({ searchQuery }) => {
 
     const dataQueryString = Object.keys(searchQuery).map(key => key + '=' + searchQuery[key]).join('&');
     setQueryString(dataQueryString)
-    getProperty(active, dataQueryString)
+    const searchData = `page=${active}&` + dataQueryString
+    dispatch(actions.getPropertyBy(false, searchData, 10))
 
     return () => {}
   },[searchQuery])
@@ -773,8 +764,10 @@ const AllProperties = ({ searchQuery }) => {
 AllProperties.getInitialProps = async ctx => {
   const searchQuery = ctx.query;
   const dataQueryString = Object.keys(searchQuery).map(key => key + '=' + searchQuery[key]).join('&');
+
   const resProperty = await axios.get(`/properties?${dataQueryString}`);
   ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+
   const resType = await axios.get('/types');
   ctx.store.dispatch(actions.getTypeSuccess(resType.data));
   return { searchQuery: searchQuery }

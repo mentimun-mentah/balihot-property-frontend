@@ -3,11 +3,14 @@ export { getRegion, getRegionSuccess } from "./region";
 
 export { 
   getProperty, 
+  getPropertyBy, 
   getPropertySuccess, 
   slugPropertySuccess, 
   getPropertySaleSuccess, 
   getPropertyRentSuccess, 
-  getPropertyLandSuccess 
+  getPropertyLandSuccess,
+  loveProperty,
+  unLoveProperty,
 } from "./property";
 
 export { getTeam, getTeamSuccess } from "./teams";

@@ -82,7 +82,10 @@ export const getUser = (ctx) => {
         dispatch(getUserSuccess(res.data))
       })
       .catch(err => {
-        console.log("GET_USER ERROR =============> ", err.response)
+        if(err.response.status == 401 || err.response.status == 422){
+          dispatch(refreshToken(ctx))
+        }
+        console.log("GET_USER ERROR =============> ", err.response.status)
       })
     }
   }

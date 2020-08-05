@@ -327,13 +327,16 @@ const Account = () => {
                   className="pl-0 p-r-0-s order-lg-12 order-md-12 order-1"
                 >
                   <Card className="border-left-0 rounded-0 text-center shadow-none hov_none m-border-0">
+                      <p className="h6 fs-14 mt-4 mb-0 d-lg-none">
+                        Albert Davis
+                      </p>
                     <img
                       src={PROFILE}
                       width="120"
                       height="120"
                       className="avatar mx-auto mt-5"
                     />
-                    <Card.Body className="pb-33 p-12-pro">
+                    <Card.Body className="pb-33 pb-12-pro">
                       <div className="d-flex justify-content-center">
                         <span className="file-input btn border btn-file btn-sm bg-upload">
                           <i className="fal fa-file-image mr-2" />
@@ -400,7 +403,7 @@ const Account = () => {
           }
         }
         :global(.pb-33) {
-          padding-bottom: 33px !important;
+          padding-bottom: 33px;
         }
       `}</style>
     </>

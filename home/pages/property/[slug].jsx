@@ -958,6 +958,7 @@ Property.getInitialProps = async ctx => {
     }
   }
   catch (err) {
+    console.log("ERROR FROM [SLUG] ====> ", err.response)
     if(err.response && err.response.status == 404){
       process.browser
         ? Router.replace("/", "/") //Redirec from Client Side

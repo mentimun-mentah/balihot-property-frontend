@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { renderArrow } from "./CarouselButton";
 import { isAuth } from "../../hoc/withAuth";
@@ -26,6 +26,7 @@ const CardContainer = ({
 }) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
+  const [fav, setFav] = useState(love);
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
@@ -39,23 +40,19 @@ const CardContainer = ({
     })
   }
 
-  const loveHandler = useCallback(id => {
+  const loveHandler = id => {
     if(!isAuth()){
       favLoginBtn()
     } 
-    if(isAuth() && !love) {
+    if(isAuth() && !fav) {
       dispatch(actions.loveProperty(id))
+      setFav(!fav)
     } 
-  },[])
-
-  const unLoveHandler = useCallback(id => {
-    if(!isAuth()){
-      favLoginBtn()
-    } 
-    if(isAuth() && love) {
+    if(isAuth() && fav) {
       dispatch(actions.unLoveProperty(id))
+      setFav(!fav)
     } 
-  },[])
+  }
 
   let buttonPrice = {};
   if(villaPriceList.length > 0){
@@ -220,15 +217,13 @@ const CardContainer = ({
                   </NoSSR>
                 </Col>
                 <Col className="text-right">
-                  {love ? (
-                    <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
-                      <i className="fas fa-lg fa-heart text-bhp" onClick={() => unLoveHandler(id)} />
-                    </span>
-                  ) : (
-                    <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
+                  <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right"> 
+                    {fav ? (
+                      <i className="fas fa-lg fa-heart text-bhp" onClick={() => loveHandler(id)} />
+                    ) : (
                       <i className="fal fa-lg fa-heart" onClick={() => loveHandler(id)} />
-                    </span>
-                  )}
+                    )}
+                  </span>
                   <span className="text-decoration-none text-muted hov_pointer">
                     <i className="fal fa-lg fa-share-alt"></i>
                   </span>

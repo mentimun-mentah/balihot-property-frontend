@@ -217,7 +217,6 @@ export const loveProperty = (id, ctx) => {
     axios.post(`/wishlist/love/${id}`, null, headerCfg)
       .then(res => {
         dispatch(lovePropertySuccess())
-        // dispatch(getProperty(ctx))
         notification['success']({
           message: 'Yuhuu!!!',
           description: res.data.message,
@@ -243,7 +242,6 @@ export const unLoveProperty = (id, ctx) => {
     axios.delete(`/wishlist/unlove/${id}`, null, headerCfg)
       .then(res => {
         dispatch(unLovePropertySuccess(ctx))
-        // dispatch(getProperty(ctx))
         notification['success']({
           message: 'Yuhuu!!!',
           description: res.data.message,

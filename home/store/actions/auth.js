@@ -82,6 +82,12 @@ export const getUser = (ctx) => {
         dispatch(getUserSuccess(res.data))
       })
       .catch(err => {
+        if(err.response.data.msg === "Token has been revoked"){
+          dispatch(authLogout())
+          cookies.destroy(ctx, "access_token");
+          cookies.destroy(ctx, "refresh_token");
+          cookies.destroy(ctx, "username");
+        }
         if(err.response.status == 401 || err.response.status == 422){
           dispatch(refreshToken(ctx))
         }
@@ -97,6 +103,7 @@ export const logout = (ctx) => {
     const { access_token, refresh_token } = cookies.get(ctx);
     const access_revoke = { headers: { Authorization: `Bearer ${access_token}` } };
     const refresh_revoke = { headers: { Authorization: `Bearer ${refresh_token}` } };
+    console.log("LOGOUNT ACTIONS ======> ")
     if(access_token){
       axios.delete("/access_revoke", access_revoke)
       .then(() => {

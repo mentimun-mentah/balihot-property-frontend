@@ -245,7 +245,7 @@ const Account = () => {
                         <Form.Row>
                           <Form.Group as={Col} md={6} lg={4}>
                             <Form.Label>Old Password</Form.Label>
-                            <InputGroup className="mb-0">
+                            <InputGroup className="mb-3">
                               <InputGroup.Prepend>
                                 <InputGroup.Text className="bg-transparent pr-0">
                                   <i className="fal fa-lock-alt mr-2" />
@@ -267,7 +267,7 @@ const Account = () => {
                           </Form.Group>
                           <Form.Group as={Col} md={6} lg={4}>
                             <Form.Label>New Password</Form.Label>
-                            <InputGroup className="mb-0">
+                            <InputGroup className="mb-3">
                               <InputGroup.Prepend>
                                 <InputGroup.Text className="bg-transparent pr-0">
                                   <i className="fal fa-lock-alt mr-2" />
@@ -289,7 +289,7 @@ const Account = () => {
                           </Form.Group>
                           <Form.Group as={Col} md={12} lg={4}>
                             <Form.Label>Confirm Password</Form.Label>
-                            <InputGroup className="mb-0">
+                            <InputGroup className="mb-3">
                               <InputGroup.Prepend>
                                 <InputGroup.Text className="bg-transparent pr-0">
                                   <i className="fal fa-lock-alt mr-2" />
@@ -333,7 +333,7 @@ const Account = () => {
                       height="120"
                       className="avatar mx-auto mt-5"
                     />
-                    <Card.Body>
+                    <Card.Body className="pb-33 p-12-pro">
                       <div className="d-flex justify-content-center">
                         <span className="file-input btn border btn-file btn-sm bg-upload">
                           <i className="fal fa-file-image mr-2" />
@@ -392,6 +392,15 @@ const Account = () => {
             display: block;
             width: 100%;
           }
+        }
+        // Large devices (ipad pro)
+        @media (max-width: 1024px) {
+          :global(.pb-12-pro) {
+            padding-bottom: 12px !important;
+          }
+        }
+        :global(.pb-33) {
+          padding-bottom: 33px !important;
         }
       `}</style>
     </>

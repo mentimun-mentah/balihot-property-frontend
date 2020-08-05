@@ -30,7 +30,7 @@ const Account = () => {
                   </Col>
                   <Col md={8}>
                     <Card.Body className="px-0 text-truncate">
-                      <Card.Title className="h6 fs-13-pro p-l-2-pro">
+                      <Card.Title className="h6 fs-13-pro p-l-2-pro text-truncate">
                         Albert Davis
                       </Card.Title>
                     </Card.Body>

@@ -45,7 +45,7 @@ const Footer = () => {
           <Row>
             <Col xs={12} sm={6} md={8}>
               <p className="copyright-text">
-                Copyright &copy; 2020 All Rights Reserved by <a href="#">BaliProperty</a>.
+                Copyright &copy; 2020 All Rights Reserved by <a href="#">BaliHotProperty</a>.
               </p>
             </Col>
             <Col xs={12} sm={6} md={4}>

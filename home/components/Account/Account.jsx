@@ -14,7 +14,6 @@ import * as actions from "../../store/actions";
 
 const formUsername = { username: { value: "", isValid: true, message: null }, };
 
-
 const Account = () => {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);

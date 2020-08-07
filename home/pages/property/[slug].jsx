@@ -2,9 +2,11 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import { GMapsOptions, markerOptions, infoOptions } from "../../lib/GMaps-options";
 import { libraries, mapDetailContainerStyle } from "../../lib/GMaps-options";
+import { cur_dis_list, distance_from_list, getDistance } from "../../lib/GMaps-options";
 import { Select, Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { isAuth } from "../../hoc/withAuth";
+import { updateObject } from "../../lib/utility.js";
 
 import Link from "next/link";
 import cookie from "nookies";
@@ -43,19 +45,7 @@ const Property = () => {
   const dispatch = useDispatch();
   const propertyData = useSelector(state => state.property.slug);
 
-  const {
-    id,
-    slug,
-    name,
-    type_id,
-    property_for,
-    land_size,
-    youtube,
-    description,
-    hotdeal,
-    price,
-    love
-  } = propertyData;
+  const { id, slug, name, type_id, property_for, land_size, youtube, description, hotdeal, price, love } = propertyData;
   const { status } = propertyData; // For Sale
   const { period } = propertyData; // For Rent
   const { facilities, bathroom, bedroom, building_size } = propertyData; // For villa
@@ -84,11 +74,14 @@ const Property = () => {
   const [isMoreText, setIsMoreText] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [fav, setFav] = useState(love);
+  const [current_distance, setCurrent_distance] = useState(cur_dis_list);
+  const [distance_from, setDistance_from] = useState(distance_from_list);
 
   const onMapClick = () => setMarker_click(false);
   const markerClickHandler = () => setMarker_click(true);
   const showVideoHandler = () => setShowVideo(!showVideo);
   const showAllPhotoHandler = () => setShowAllPhoto(!showAllPhoto);
+
   const onSelectTagPrice = data => {
     const objData = JSON.parse(data);
     setSelected({
@@ -276,6 +269,118 @@ const Property = () => {
       );
     });
   }
+
+  /** GET DISTANCE **/
+  // Callback
+  const callbackAtm = (results, status) => {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      let last = results[0];
+      current_distance.atm.lat = last.geometry.location.lat();
+      current_distance.atm.lng = last.geometry.location.lng();
+    }
+  };
+  const callbackRestaurant = (results, status) => {
+    if (!mapRef.current) return false;
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      let last = results[0];
+      current_distance.restaurant.lat = last.geometry.location.lat();
+      current_distance.restaurant.lng = last.geometry.location.lng();
+    }
+  };
+  const callbackCafe = (results, status) => {
+    if (!mapRef.current) return false;
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      let last = results[0];
+      current_distance.cafe.lat = last.geometry.location.lat();
+      current_distance.cafe.lng = last.geometry.location.lng();
+    }
+  };
+  const callbackPharmacy = (results, status) => {
+    if (!mapRef.current) return false;
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      let last = results[0];
+      current_distance.pharmacy.lat = last.geometry.location.lat();
+      current_distance.pharmacy.lng = last.geometry.location.lng();
+    }
+  };
+  const callbackConvenienveStore = (results, status) => {
+    if (!mapRef.current) return false;
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      let last = results[0];
+      current_distance.convenience_store.lat = last.geometry.location.lat();
+      current_distance.convenience_store.lng = last.geometry.location.lng();
+    }
+  };
+  // Callback
+  //
+  // Distance
+  const getDistanceTo = () => {
+    if (!mapRef.current) return false;
+    let marker_position = new google.maps.LatLng(center.lat, center.lng);
+    let map = new google.maps.places.PlacesService(mapRef.current);
+
+    // search nearby atm from current cursor
+    map.nearbySearch({
+        location: marker_position, //Add initial lat/lng here
+        rankBy: google.maps.places.RankBy.DISTANCE,
+        type: ["atm"]
+      }, callbackAtm
+    );
+    map.nearbySearch({
+        location: marker_position, //Add initial lat/lng here
+        rankBy: google.maps.places.RankBy.DISTANCE,
+        type: ["restaurant"]
+      }, callbackRestaurant 
+    );
+    map.nearbySearch({
+        location: marker_position, //Add initial lat/lng here
+        rankBy: google.maps.places.RankBy.DISTANCE,
+        type: ["cafe"]
+      }, callbackCafe
+    );
+    map.nearbySearch({
+        location: marker_position, //Add initial lat/lng here
+        rankBy: google.maps.places.RankBy.DISTANCE,
+        type: ["pharmacy"]
+      }, callbackPharmacy
+    );
+    map.nearbySearch({
+        location: marker_position, //Add initial lat/lng here
+        rankBy: google.maps.places.RankBy.DISTANCE,
+        type: ["convenience_store"]
+      }, callbackConvenienveStore
+    );
+
+    let atm = new google.maps.LatLng(current_distance.atm.lat, current_distance.atm.lng);
+    let restaurant = new google.maps.LatLng(current_distance.restaurant.lat, current_distance.restaurant.lng);
+    let cafe = new google.maps.LatLng(current_distance.cafe.lat, current_distance.cafe.lng);
+    let pharmacy = new google.maps.LatLng(current_distance.pharmacy.lat, current_distance.pharmacy.lng);
+    let convenience_store = new google.maps.LatLng(
+      current_distance.convenience_store.lat,
+      current_distance.convenience_store.lng
+    );
+
+    const dAtm = (getDistance(marker_position, atm) / 1000).toFixed(2);
+    const dRestaurant = (getDistance(marker_position, restaurant) / 1000).toFixed(2);
+    const dCafe = (getDistance(marker_position, cafe) / 1000).toFixed(2);
+    const dPharmacy = (getDistance(marker_position, pharmacy) / 1000).toFixed(2);
+    const dConvenience = (getDistance(marker_position, convenience_store) / 1000).toFixed(2);
+
+    const distance = updateObject(distance_from, {
+      atm: dAtm,
+      restaurant: dRestaurant,
+      cafe: dCafe,
+      pharmacy: dPharmacy,
+      convenience_store: dConvenience
+    });
+    setDistance_from(distance);
+  }
+  /** GET DISTANCE **/
+  useEffect(() => {
+    setTimeout(() => {
+      // getDistanceTo()
+    }, 2000)
+  },[])
 
   if (loadError) return "Error";
   if (!isLoaded) return "Loading...";
@@ -547,7 +652,7 @@ const Property = () => {
                       <h4 className="fs-14">
                         <i className="fal fa-credit-card mr-2 fs-16" /> ATM:
                         <span className="font-weight-normal ml-1 text-secondary">
-                          14 Km
+                          {distance_from.atm} Km
                         </span>
                       </h4>
                     </Col>
@@ -555,7 +660,7 @@ const Property = () => {
                       <h4 className="fs-14">
                         <i className="fal fa-utensils mr-2 fs-16" /> Retaurant:
                         <span className="font-weight-normal ml-1 text-secondary">
-                          14 Km
+                          {distance_from.restaurant} Km
                         </span>
                       </h4>
                     </Col>
@@ -563,7 +668,7 @@ const Property = () => {
                       <h4 className="fs-14">
                         <i className="fal fa-mug-hot mr-2 fs-16" /> Cafe:
                         <span className="font-weight-normal ml-1 text-secondary">
-                          14 Km
+                          {distance_from.cafe} Km
                         </span>
                       </h4>
                     </Col>
@@ -571,7 +676,7 @@ const Property = () => {
                       <h4 className="fs-14">
                         <i className="fal fa-capsules mr-2 fs-16" /> Pharmacy:
                         <span className="font-weight-normal ml-1 text-secondary">
-                          14 Km
+                          {distance_from.pharmacy} Km
                         </span>
                       </h4>
                     </Col>
@@ -579,7 +684,7 @@ const Property = () => {
                       <h4 className="fs-14">
                         <i className="fal fa-store mr-2 fs-16" /> Corner Store:
                         <span className="font-weight-normal ml-1 text-secondary">
-                          14 Km
+                          {distance_from.convenience_store} Km
                         </span>
                       </h4>
                     </Col>
@@ -602,6 +707,7 @@ const Property = () => {
                     options={GMapsOptions}
                     onClick={onMapClick}
                     onLoad={onMapLoad}
+                    // onIdle={getDistanceTo}
                     center={center}
                     zoom={16}
                   >
@@ -1008,12 +1114,10 @@ const Property = () => {
 };
 
 Property.getInitialProps = async ctx => {
+  const { slug } = ctx.query;
   try {
-    const { slug } = ctx.query;
     const { access_token } = cookie.get(ctx);
-    const headerCfgServer = {
-      headers: { Authorization: `Bearer ${access_token}` }
-    };
+    const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
     if (access_token) {
       let res = await axios.get(`/property/${slug}`, headerCfgServer);
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
@@ -1023,7 +1127,10 @@ Property.getInitialProps = async ctx => {
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     }
   } catch (err) {
-    console.log("ERROR FROM [SLUG] ====> ", err.response);
+    if (err.response.data.msg === 'Token has expired'){
+      let res = await axios.get(`/property/${slug}`);
+      ctx.store.dispatch(actions.slugPropertySuccess(res.data));
+    }
     if (err.response && err.response.status == 404) {
       process.browser
         ? Router.replace("/", "/") //Redirec from Client Side

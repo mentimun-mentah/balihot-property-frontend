@@ -38,13 +38,21 @@ Home.getInitialProps = async (ctx) => {
         ctx.store.dispatch(actions.getPropertySuccess(res.data)); 
       })
       .catch(err => {
-        if(err.response.data.msg === "Token has expired"){
+        if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
+          ctx.store.dispatch(actions.logout(ctx)) 
+        }
+        if(err.response && err.response.data && err.response.data.msg === "Token has expired"){
           const headerCfgRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } };
           axios.post("/refresh", null, headerCfgRefresh)
             .then(async res => {
               const headerCfgNew = { headers: { Authorization: `Bearer ${res.data.access_token}` } };
               const resProperty = await axios.get(`/properties?property_for=Sale&per_page=3`, headerCfgNew)
               ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+            })
+            .catch(err => {
+              if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
+                ctx.store.dispatch(actions.logout(ctx)) 
+              }
             })
         }
       })

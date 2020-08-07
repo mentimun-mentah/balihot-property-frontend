@@ -98,6 +98,14 @@ export const getUser = (ctx) => {
             });
             dispatch(refreshTokenSuccess(res.data.access_token));
           })
+          .catch(err => {
+            if(err.response.data.msg === "Token has been revoked"){
+              dispatch(authLogout())
+              cookies.destroy(ctx, "access_token");
+              cookies.destroy(ctx, "refresh_token");
+              cookies.destroy(ctx, "username");
+            }
+          })
           dispatch(getUser())
         }
       })

@@ -16,6 +16,8 @@ Account.getInitialProps = async ctx => {
   ctx.store.dispatch(actions.getTypeSuccess(resType.data));
   const resWishlist = await axios.get('/wishlist/user', headerCfg);
   ctx.store.dispatch(actions.getWishlistSuccess(resWishlist.data));
+  const resUser = await axios.get('/user', headerCfg);
+  ctx.store.dispatch(actions.getUserSuccess(resUser.data));
 }
 
 export default withAuth(Account);

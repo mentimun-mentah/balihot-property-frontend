@@ -1,5 +1,6 @@
 import axios from "axios";
-import {parseCookies, setCookie} from "nookies";
+import Router from "next/router";
+import {parseCookies, setCookie, destroyCookie} from "nookies";
 
 const instance = axios.create({
   baseURL: process.env.API_URL,
@@ -23,6 +24,7 @@ instance.interceptors.request.use(function (config) {
     return config;
   }, function (error) {
     // Do something with request error
+    console.log("========== REQUEST ============", error.response)
     return Promise.reject(error);
   });
 
@@ -38,14 +40,29 @@ instance.interceptors.response.use(function (response) {
       headers: { Authorization: `Bearer ${refresh_token}` }
     }
 
+    if(error.response.data.msg === "Token has been revoked"){
+      destroyCookie(null, "access_token")
+      destroyCookie(null, "refresh_token")
+      destroyCookie(null, "username")
+      Router.reload("/")
+    }
+
     if(error.response.data.msg === "Token has expired"){
       instance.post('/refresh', null, headerRefresh)
         .then(res => {
           setCookie(null, "access_token", res.data.access_token, {
             maxAge: 30 * 24 * 60 * 60,
             path: "/",
-          });
+          })
           return Promise.resolve()
+        })
+        .catch(err => {
+          if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
+            destroyCookie(null, "access_token")
+            destroyCookie(null, "refresh_token")
+            destroyCookie(null, "username")
+            Router.reload("/")
+          }
         })
     }
     return Promise.reject(error);

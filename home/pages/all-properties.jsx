@@ -42,6 +42,7 @@ const AllProperties = ({ searchQuery }) => {
   const dispatch = useDispatch();
   const property = useSelector(state => state.property.property)
   const dataType = useSelector((state) => state.types.types);
+  const listLocation = useSelector(state => state.property.location);
 
   const [search, setSearch] = useState(formSearch);
   const [radius, setRadius] = useState();
@@ -79,8 +80,7 @@ const AllProperties = ({ searchQuery }) => {
     const searchData = `page=${+event.target.text}&` + queryString
     dispatch(actions.getPropertyBy(false, searchData, 10))
   };
-  let pagination = [];
-  let iter_data;
+  let pagination = []; let iter_data;
   if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.length
   if(property.length === 0) iter_data = property.length
   for (let n = 1; n <= iter_data ; n++) {
@@ -190,7 +190,6 @@ const AllProperties = ({ searchQuery }) => {
   //====== MAPS ======//
 
   //====== SEARCH ======//
-  const options = [ { value: 'Seminyak', }, { value: 'Kuta', }, { value: 'Nusa Dua', }, { value: 'Sesetan', } ];
   const type_list = []; renderOptions(type_list, dataType, true);
   const status_list = []; renderOptions(status_list, status_data)
 
@@ -293,6 +292,11 @@ const AllProperties = ({ searchQuery }) => {
     return () => {}
   },[searchQuery])
 
+  useEffect(() => {
+    const query = `type_id=${type_id.value}&q=${location.value}`
+    dispatch(actions.getLocation(query))
+  },[location.value, type_id.value])
+
   const searchHandler = () => {
     Router.replace({
       pathname: "/all-properties",
@@ -334,7 +338,7 @@ const AllProperties = ({ searchQuery }) => {
               <Form.Label className="h1 fs-18">Location</Form.Label>
               <AutoComplete 
                 className="search-input"
-                options={options}
+                options={listLocation}
                 filterOption={(inputValue, option) =>
                   option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                 }

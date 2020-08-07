@@ -24,6 +24,12 @@ app.prepare().then(() => {
     });
   });
 
+  //Login Google
+  server.get("/login/google/:token", async (req, res) => {
+    console.log("====================================> ", req.originalUrl)
+    res.redirect(302, process.env.BASE_URL);
+  })
+
   //Reset Password
   server.get("/password/reset/:token", async (req, res) => {
     const { token } = req.params;

@@ -10,6 +10,7 @@ export {
   unLoveProperty,
   getWishlist,
   getWishlistSuccess,
+  getLocation,
 } from "./property";
 
 export { getTeam, getTeamSuccess } from "./teams";

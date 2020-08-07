@@ -79,6 +79,18 @@ export const getWishlistFail = (error) => {
 }
 /* WISHLIST */
 
+/* GET LOCATION */
+export const getLocationStart = () => {
+  return { type: actionType.GET_LOCATION_START }
+}
+export const getLocationSuccess = (location) => {
+  return { type: actionType.GET_LOCATION_SUCCESS, location: location }
+}
+export const getLocationFail = (error) => {
+  return { type: actionType.GET_LOCATION_FAIL, error: error }
+}
+/* GET LOCATION */
+
 export const getPropertyBy = (home, query, per_page, ctx) => {
   return dispatch => {
     let searchQuery = "";
@@ -226,6 +238,24 @@ export const getWishlist = (query, ctx) => {
       })
       .catch(err => {
         dispatch(getWishlistFail(err.response))
+      })
+  }
+}
+
+export const getLocation = (query) => {
+  return dispatch => {
+    dispatch(getLocationStart())
+    axios.get(`/property/search-by-location?${query}`)
+      .then(res => {
+        let loct = res.data.map(obj => {
+          obj['value'] = obj['location']
+          delete obj['location']
+          return obj 
+        })
+        dispatch(getLocationSuccess(loct))
+      })
+      .catch(err => {
+        dispatch(getLocationFail(err.response))
       })
   }
 }

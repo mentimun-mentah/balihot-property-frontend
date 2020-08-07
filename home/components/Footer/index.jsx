@@ -40,13 +40,13 @@ const Footer = () => {
               <h6>Quick Links</h6>
               <ul className="footer-links mt-3 fs-14-s">
                 <Link href="/#about-us" as="/#about-us">
-                  <li className="mb-2">About Us</li>
+                  <li className="mb-2 hov_pointer">About Us</li>
                 </Link>
                 <Link href="/#contact-us" as="/#contact-us">
-                  <li className="mb-2">Contact Us</li>
+                  <li className="mb-2 hov_pointer">Contact Us</li>
                 </Link>
                 <Link href="/#property" as="/#property">
-                  <li>Property</li>
+                  <li className="hov_pointer">Property</li>
                 </Link>
               </ul>
             </Col>

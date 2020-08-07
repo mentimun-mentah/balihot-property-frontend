@@ -186,7 +186,7 @@ const SearchBox = ({ searchType }) => {
   );
 
   const priceMenu = (
-    <Menu style={{ width: "40vh" }}>
+    <Menu style={{ width: "50vh" }}>
       <div
         className="col-12 justify-content-center px-0"
         onClick={e => e.stopPropagation()}

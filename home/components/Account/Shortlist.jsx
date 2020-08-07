@@ -50,6 +50,10 @@ const Shortlist = () => {
     }
   }
 
+  const resetFilterHandler = () => {
+    setFilter(formFilter);
+  }
+
   const { type_id, status } = filter;
 
   useEffect(() => {
@@ -122,7 +126,7 @@ const Shortlist = () => {
                     </Select>
                   </Col>
                   <Col className="col-auto">
-                    <Button variant="link">Clear</Button>
+                    <Button variant="link" className="text-reset fs-14" onClick={resetFilterHandler}>Clear</Button>
                   </Col>
                 </Form.Row>
               </Form>

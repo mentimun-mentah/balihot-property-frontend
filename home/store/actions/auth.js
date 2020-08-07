@@ -1,9 +1,7 @@
 import * as actionType from "./actionTypes";
-import * as actions from "./index";
 import cookies from "nookies";
 import Router from "next/router";
 import axios from "../../lib/axios";
-import { getProperty } from "./property";
 
 /*** AUTH ***/
 export const authStart = () => {
@@ -113,7 +111,6 @@ export const logout = (ctx) => {
     const { access_token, refresh_token } = cookies.get(ctx);
     const access_revoke = { headers: { Authorization: `Bearer ${access_token}` } };
     const refresh_revoke = { headers: { Authorization: `Bearer ${refresh_token}` } };
-    console.log("LOGOUNT ACTIONS ======> ")
     if(access_token){
       axios.delete("/access_revoke", access_revoke)
       .then(() => {

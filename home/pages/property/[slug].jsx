@@ -1,11 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { GoogleMap, useLoadScript, Marker, InfoWindow  } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import { GMapsOptions, markerOptions, infoOptions } from "../../lib/GMaps-options";
 import { libraries, mapDetailContainerStyle } from "../../lib/GMaps-options";
-import { Select, Modal } from 'antd';
+import { Select, Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { isAuth } from "../../hoc/withAuth";
 
+import Link from "next/link";
 import cookie from "nookies";
 import moment from "moment";
 import Router from "next/router";
@@ -21,7 +22,7 @@ import Container from "react-bootstrap/Container";
 import SmoothImage from "render-smooth-image-react";
 import ContainerCardMarker from "../../components/Card/ContainerCardMarker";
 import ContainerCardPropertySimilar from "../../components/Card/ContainerCardPropertySimilar";
-import ShowMoreText from 'react-show-more-text';
+import ShowMoreText from "react-show-more-text";
 import ShareModal from "../../components/Card/ShareModal";
 
 import DetailPropertyStyle from "../../components/DetailProperty/style.js";
@@ -36,39 +37,53 @@ const prevCarousel = () => document.getElementById("prevCarouselClick").click();
 const showMoreText = () => document.getElementById("show-more-btn").click();
 const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
 
-const formatter = new Intl.NumberFormat(['ban', 'id'])
+const formatter = new Intl.NumberFormat(["ban", "id"]);
 
 const Property = () => {
   const dispatch = useDispatch();
   const propertyData = useSelector(state => state.property.slug);
 
-  const { id, slug, name, type_id, property_for, land_size, youtube, description, hotdeal, price, love } = propertyData;
-  const { status } = propertyData; // For Sale 
+  const {
+    id,
+    slug,
+    name,
+    type_id,
+    property_for,
+    land_size,
+    youtube,
+    description,
+    hotdeal,
+    price,
+    love
+  } = propertyData;
+  const { status } = propertyData; // For Sale
   const { period } = propertyData; // For Rent
   const { facilities, bathroom, bedroom, building_size } = propertyData; // For villa
-  const { location, latitude, longitude } = propertyData; // For Map 
-  const { seen, similar_listing, created_at } = propertyData; // For Map 
+  const { location, latitude, longitude } = propertyData; // For Map
+  const { seen, similar_listing, created_at } = propertyData; // For Map
 
-  let villaPrice = []
-  let landPrice = []
+  let villaPrice = [];
+  let landPrice = [];
   let buttonPrice;
-  let img_list = []
-  const images = propertyData.images.split(',')
-  for(let key in images){ 
-    img_list.push({photo: `${process.env.API_URL}/static/properties/${slug}/${images[key]}`}) 
+  let img_list = [];
+  const images = propertyData.images.split(",");
+  for (let key in images) {
+    img_list.push({
+      photo: `${process.env.API_URL}/static/properties/${slug}/${images[key]}`
+    });
   }
   let pf = property_for.split(",");
-  const propertyShareLink = `${process.env.BASE_URL}/property/${slug}`
+  const propertyShareLink = `${process.env.BASE_URL}/property/${slug}`;
 
   const mapRef = useRef(null);
-  const [center, setCenter] = useState({lat: latitude, lng: longitude});
+  const [center, setCenter] = useState({ lat: latitude, lng: longitude });
   const [marker_click, setMarker_click] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [showAllPhoto, setShowAllPhoto] = useState(false);
-  const [selected, setSelected] = useState(villaPrice[0])
+  const [selected, setSelected] = useState(villaPrice[0]);
   const [isMoreText, setIsMoreText] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [fav, setFav] = useState(love)
+  const [fav, setFav] = useState(love);
 
   const onMapClick = () => setMarker_click(false);
   const markerClickHandler = () => setMarker_click(true);
@@ -81,24 +96,26 @@ const Property = () => {
       name: objData.name,
       price: objData.price,
       period: objData.period ? objData.period : null
-    })
-  }
+    });
+  };
 
-  const textShowHandler = val => { setIsMoreText(val) }
+  const textShowHandler = val => {
+    setIsMoreText(val);
+  };
 
   const loveHandler = id => {
-    if(!isAuth()){
-      favLoginBtn()
-    } 
-    if(isAuth() && !fav) {
-      dispatch(actions.loveProperty(id))
-      setFav(!fav)
-    } 
-    if(isAuth() && fav) {
-      dispatch(actions.unLoveProperty(id))
-      setFav(!fav)
-    } 
-  }
+    if (!isAuth()) {
+      favLoginBtn();
+    }
+    if (isAuth() && !fav) {
+      dispatch(actions.loveProperty(id));
+      setFav(!fav);
+    }
+    if (isAuth() && fav) {
+      dispatch(actions.unLoveProperty(id));
+      setFav(!fav);
+    }
+  };
 
   // MAP
   const { isLoaded, loadError } = useLoadScript({
@@ -111,153 +128,153 @@ const Property = () => {
   }, []);
   // MAP
 
-  if(type_id == 1){
-    let tmp = []
-    for(let key in price){
-      if(price[key]){
-        let name = key.split('_')[0]
-        if(name == 'leasehold'){
-          tmp.push(price[key])
+  if (type_id == 1) {
+    let tmp = [];
+    for (let key in price) {
+      if (price[key]) {
+        let name = key.split("_")[0];
+        if (name == "leasehold") {
+          tmp.push(price[key]);
         }
-        if(name == 'freehold'){
+        if (name == "freehold") {
           villaPrice.push({
             name: "Free Hold",
             price: price[key]
-          })
+          });
         }
-        if(name != 'freehold' && name != 'leasehold'){
+        if (name != "freehold" && name != "leasehold") {
           villaPrice.push({
             name: name.charAt(0).toUpperCase() + name.slice(1),
             price: price[key]
-          })
+          });
         }
       }
     }
-    if(tmp.length > 0){
+    if (tmp.length > 0) {
       villaPrice.push({
-        name: 'Lease Hold',
-        price: typeof(tmp[0]) === "number" ? tmp[0] : tmp[1],
-        period: typeof(tmp[1]) === "string" ? tmp[1] : tmp[0]
-      })
+        name: "Lease Hold",
+        price: typeof tmp[0] === "number" ? tmp[0] : tmp[1],
+        period: typeof tmp[1] === "string" ? tmp[1] : tmp[0]
+      });
     }
   }
-  if(villaPrice.length > 1){
-    for(let key in villaPrice){
-      let tmp = []
-      if(villaPrice[key].name == "Free Hold" && key !== 0){
-        tmp.push(villaPrice[0])
-        villaPrice[0] = villaPrice[key]
-        villaPrice[key] = tmp[0]
-        tmp = []
+  if (villaPrice.length > 1) {
+    for (let key in villaPrice) {
+      let tmp = [];
+      if (villaPrice[key].name == "Free Hold" && key !== 0) {
+        tmp.push(villaPrice[0]);
+        villaPrice[0] = villaPrice[key];
+        villaPrice[key] = tmp[0];
+        tmp = [];
       }
-      if(villaPrice[key].name == "Lease Hold" && key !== 1){
-        tmp.push(villaPrice[1])
-        villaPrice[1] = villaPrice[key]
-        villaPrice[key] = tmp[0]
-        tmp = []
+      if (villaPrice[key].name == "Lease Hold" && key !== 1) {
+        tmp.push(villaPrice[1]);
+        villaPrice[1] = villaPrice[key];
+        villaPrice[key] = tmp[0];
+        tmp = [];
       }
-    } 
+    }
   }
 
-  if(type_id == 2){
-    let tmp = []
-    for(let key in price){
-      if(price[key]){
-        let name = key.split('_')[0]
-        if(name == 'leasehold'){
-          tmp.push(price[key])
+  if (type_id == 2) {
+    let tmp = [];
+    for (let key in price) {
+      if (price[key]) {
+        let name = key.split("_")[0];
+        if (name == "leasehold") {
+          tmp.push(price[key]);
         }
-        if(name == 'freehold'){
+        if (name == "freehold") {
           landPrice.push({
             name: "Free Hold",
             price: price[key]
-          })
+          });
         }
       }
     }
-    if(tmp.length > 0){
+    if (tmp.length > 0) {
       landPrice.push({
-        name: 'Lease Hold',
-        price: typeof(tmp[0]) === "number" ? tmp[0] : tmp[1],
-        period: typeof(tmp[1]) === "string" ? tmp[1] : tmp[0]
-      })
+        name: "Lease Hold",
+        price: typeof tmp[0] === "number" ? tmp[0] : tmp[1],
+        period: typeof tmp[1] === "string" ? tmp[1] : tmp[0]
+      });
     }
   }
 
   useEffect(() => {
-    setSelected(villaPrice[0])
-  },[])
+    setSelected(villaPrice[0]);
+  }, []);
 
-  if(villaPrice.length > 0 && selected !== undefined){
+  if (villaPrice.length > 0 && selected !== undefined) {
     buttonPrice = villaPrice.map((data, i) => {
       return (
         <Option value={JSON.stringify(data)} key={i}>
           {data.name}
         </Option>
-      )
-    })
+      );
+    });
   }
 
   let price_list, land_total_price;
-  if(type_id === 2 && status === "Free Hold"){
+  if (type_id === 2 && status === "Free Hold") {
     price_list = landPrice.map((data, i) => {
-    land_total_price = data.price * land_size
-    return (
-      <div key={i}>
-        <h4 className="fs-14 text-left">
-          Status:
-          <span className="font-weight-normal ml-1 status-detail ">{data.name}</span>
-        </h4>
-        <h4 className="fs-14 text-left">
-          Price: 
-          <span className="font-weight-normal ml-1">
-            IDR {formatter.format(data.price)} 
-            <small className="fs-14 fs-12-s">
-              {" "}/ are
-            </small>
-          </span>
-        </h4>
-        <h4 className="fs-14 text-left">
-          Total Price: 
-          <span className="font-weight-normal ml-1">
-            IDR {formatter.format(land_total_price)} 
-          </span>
-        </h4>
-      </div>
-    )})
+      land_total_price = data.price * land_size;
+      return (
+        <div key={i}>
+          <h4 className="fs-14 text-left">
+            Status:
+            <span className="font-weight-normal ml-1 status-detail ">
+              {data.name}
+            </span>
+          </h4>
+          <h4 className="fs-14 text-left">
+            Price:
+            <span className="font-weight-normal ml-1">
+              IDR {formatter.format(data.price)}
+              <small className="fs-14 fs-12-s"> / are</small>
+            </span>
+          </h4>
+          <h4 className="fs-14 text-left">
+            Total Price:
+            <span className="font-weight-normal ml-1">
+              IDR {formatter.format(land_total_price)}
+            </span>
+          </h4>
+        </div>
+      );
+    });
   }
-  if(type_id === 2 && status === "Lease Hold"){
+  if (type_id === 2 && status === "Lease Hold") {
     price_list = landPrice.map((data, i) => {
-    land_total_price = data.price * land_size
-    return (
-      <div key={i}>
-        <h4 className="fs-14 text-left">
-          Status:
-          <span className="font-weight-normal ml-1 status-detail ">{data.name}</span>
-        </h4>
-        <h4 className="fs-14 text-left">
-          Price: 
-          <span className="font-weight-normal ml-1">
-            IDR {formatter.format(data.price)} 
-            <small className="fs-14 fs-12-s">
-              {" "}/ are / year
-            </small>
-          </span>
-        </h4>
-        <h4 className="fs-14 text-left">
-          Total Price: 
-          <span className="font-weight-normal ml-1">
-            IDR {formatter.format(land_total_price)} 
-          </span>
-        </h4>
-        <h4 className="fs-14 text-left">
-          Can lease until:
-          <span className="font-weight-normal ml-1">
-            {data.period}
-          </span>
-        </h4>
-      </div>
-    )})
+      land_total_price = data.price * land_size;
+      return (
+        <div key={i}>
+          <h4 className="fs-14 text-left">
+            Status:
+            <span className="font-weight-normal ml-1 status-detail ">
+              {data.name}
+            </span>
+          </h4>
+          <h4 className="fs-14 text-left">
+            Price:
+            <span className="font-weight-normal ml-1">
+              IDR {formatter.format(data.price)}
+              <small className="fs-14 fs-12-s"> / are / year</small>
+            </span>
+          </h4>
+          <h4 className="fs-14 text-left">
+            Total Price:
+            <span className="font-weight-normal ml-1">
+              IDR {formatter.format(land_total_price)}
+            </span>
+          </h4>
+          <h4 className="fs-14 text-left">
+            Can lease until:
+            <span className="font-weight-normal ml-1">{data.period}</span>
+          </h4>
+        </div>
+      );
+    });
   }
 
   if (loadError) return "Error";
@@ -267,9 +284,10 @@ const Property = () => {
     <>
       <Container className="mt-4k2rem pt-5">
         <h1 className="fs-24 fs-18-s text-truncate">{name}</h1>
-        <a href="#" 
-          className="text-decoration-none text-secondary d-inline-block text-truncate fs-14-s" 
-          style={{maxWidth: "48vw"}}
+        <a
+          href="#"
+          className="text-decoration-none text-secondary d-inline-block text-truncate fs-14-s"
+          style={{ maxWidth: "48vw" }}
         >
           <i className="fal fa-map-marker-alt mr-1" />
           <span>
@@ -277,20 +295,26 @@ const Property = () => {
           </span>
         </a>
         <div className="float-right pr-3">
-          <a className="text-decoration-none text-secondary" onClick={() => setShowModal(true)}>
+          <a
+            className="text-decoration-none text-secondary"
+            onClick={() => setShowModal(true)}
+          >
             <span className="mr-3 btn-share-like">
               <i className="far fa-share-square mr-1" />
               <u>Share</u>
             </span>
           </a>
-          <a className="text-decoration-none text-secondary" onClick={() => loveHandler(id)}>
+          <a
+            className="text-decoration-none text-secondary"
+            onClick={() => loveHandler(id)}
+          >
             {fav ? (
               <span className="btn-share-like">
                 <i className="fas fa-heart mr-1 text-bhp" />
                 <u>Unsave</u>
               </span>
             ) : (
-              <span className="btn-share-like" >
+              <span className="btn-share-like">
                 <i className="fal fa-heart mr-1" />
                 <u>Save</u>
               </span>
@@ -305,7 +329,10 @@ const Property = () => {
             <div onClick={showAllPhotoHandler} className="hov_pointer">
               <SmoothImage src={img_list[0].photo} objectFit="cover" />
             </div>
-            <div className="img-status hov_pointer" onClick={showAllPhotoHandler}>
+            <div
+              className="img-status hov_pointer"
+              onClick={showAllPhotoHandler}
+            >
               <span className="img-status-num letter-space">
                 1/{img_list.length}
               </span>
@@ -342,11 +369,17 @@ const Property = () => {
                 <Col className="px-0 image-tp-btm img-detail">
                   <SmoothImage src={img_list[4].photo} className="img-fluid" />
                   <div className="show-btn d-sm-none d-md-block d-lg-block ">
-                    <Button className="mr-2 video-btn d-inline" onClick={showVideoHandler}>
+                    <Button
+                      className="mr-2 video-btn d-inline"
+                      onClick={showVideoHandler}
+                    >
                       <i className="far fa-video mr-1" />
                       Video
                     </Button>
-                    <Button className="image-btn d-inline" onClick={showAllPhotoHandler}>
+                    <Button
+                      className="image-btn d-inline"
+                      onClick={showAllPhotoHandler}
+                    >
                       <i className="far fa-image mr-1" />
                       Photos
                     </Button>
@@ -366,16 +399,15 @@ const Property = () => {
 
               <Card className="shadow-none m-t-25 m-border-0 m-t-0-s">
                 <Card.Body className="p-l-0-s p-r-0-s property-overview">
-                  <Card.Title className="fs-16-s">
-                    Property Overview
-                  </Card.Title>
+                  <Card.Title className="fs-16-s">Property Overview</Card.Title>
                   <div className="divide-title"></div>
                   <Row>
                     <Col lg={4} md={6} sm={6} className="mb-2">
                       <h4 className="fs-14">
                         Land size:
                         <span className="font-weight-normal ml-1">
-                          {land_size} {type_id == 1 ? "are" : type_id == 2 ? "m²" : ""}
+                          {land_size}{" "}
+                          {type_id == 1 ? "are" : type_id == 2 ? "m²" : ""}
                         </span>
                       </h4>
                     </Col>
@@ -392,13 +424,17 @@ const Property = () => {
                         <Col lg={4} md={6} sm={6} className="mb-2">
                           <h4 className="fs-14">
                             Bedrooms:
-                            <span className="font-weight-normal ml-1">{bedroom}</span>
+                            <span className="font-weight-normal ml-1">
+                              {bedroom}
+                            </span>
                           </h4>
                         </Col>
                         <Col lg={4} md={6} sm={6} className="mb-2">
                           <h4 className="fs-14">
                             Bathrooms:
-                            <span className="font-weight-normal ml-1">{bathroom}</span>
+                            <span className="font-weight-normal ml-1">
+                              {bathroom}
+                            </span>
                           </h4>
                         </Col>
                       </>
@@ -426,9 +462,17 @@ const Property = () => {
                   <ShowMoreText
                     /* Default options */
                     lines={3}
-                    more={<span id="show-more-btn" className="d-none">Show more</span>}
-                    less={<span id="show-more-btn" className="d-none">Show less</span>}
-                    anchorClass=''
+                    more={
+                      <span id="show-more-btn" className="d-none">
+                        Show more
+                      </span>
+                    }
+                    less={
+                      <span id="show-more-btn" className="d-none">
+                        Show less
+                      </span>
+                    }
+                    anchorClass=""
                     expanded={false}
                     onClick={textShowHandler}
                   >
@@ -438,15 +482,11 @@ const Property = () => {
                   </ShowMoreText>
                   {isMoreText ? (
                     <div className="show-less">
-                      <a onClick={showMoreText}>
-                        Show less
-                      </a>
+                      <a onClick={showMoreText}>Show less</a>
                     </div>
                   ) : (
                     <div className="show-more">
-                      <a onClick={showMoreText}>
-                        Show more
-                      </a>
+                      <a onClick={showMoreText}>Show more</a>
                     </div>
                   )}
                 </Card.Body>
@@ -462,16 +502,23 @@ const Property = () => {
                     </Card.Title>
                     <div className="divide-title"></div>
                     <Row>
-                      {facilities && facilities.slice(0, 10).map(fa => (
-                        <Col lg={4} md={6} sm={6} className="mb-2 fs-16" key={fa.id}>
-                          <h4 className="fs-14">
-                            <i className={`${fa.icon} mr-2 fs-16`} />
-                            <span className="font-weight-normal ml-1">
-                              {fa.name}
-                            </span>
-                          </h4>
-                        </Col>
-                      ))}
+                      {facilities &&
+                        facilities.slice(0, 10).map(fa => (
+                          <Col
+                            lg={4}
+                            md={6}
+                            sm={6}
+                            className="mb-2 fs-16"
+                            key={fa.id}
+                          >
+                            <h4 className="fs-14">
+                              <i className={`${fa.icon} mr-2 fs-16`} />
+                              <span className="font-weight-normal ml-1">
+                                {fa.name}
+                              </span>
+                            </h4>
+                          </Col>
+                        ))}
                     </Row>
                   </Card.Body>
                   {facilities && facilities.length > 10 && (
@@ -507,8 +554,8 @@ const Property = () => {
                     <Col lg={4} md={6} sm={6} className="mb-2">
                       <h4 className="fs-14">
                         <i className="fal fa-utensils mr-2 fs-16" /> Retaurant:
-                        <span className="font-weight-normal ml-1 text-secondary"> 
-                          14 Km 
+                        <span className="font-weight-normal ml-1 text-secondary">
+                          14 Km
                         </span>
                       </h4>
                     </Col>
@@ -564,15 +611,16 @@ const Property = () => {
                       position={center}
                     />
                     {marker_click && (
-                      <InfoWindow options={infoOptions} position={{lat: latitude, lng: longitude}}>
+                      <InfoWindow
+                        options={infoOptions}
+                        position={{ lat: latitude, lng: longitude }}
+                      >
                         <ContainerCardMarker dataProperty={propertyData} />
                       </InfoWindow>
                     )}
                   </GoogleMap>
-
                 </Card.Body>
               </Card>
-
             </Col>
 
             <Col lg={4} className="mt-4 d-none ">
@@ -584,11 +632,7 @@ const Property = () => {
                   <Card.Subtitle className="fs-14 text-muted">
                     Owner
                   </Card.Subtitle>
-                  <Button
-                    className="mt-3 btn-call"
-                    block
-                    size="lg"
-                  >
+                  <Button className="mt-3 btn-call" block size="lg">
                     <i className="fal fa-phone-alt mr-2" />
                     <>Call Agent</>
                   </Button>
@@ -602,11 +646,11 @@ const Property = () => {
               </Card>
             </Col>
 
-            <Col 
-              lg={{ span: 4, order: 'last' }} 
-              md={{ order: 'first' }} 
-              sm={{ order: 'first' }} 
-              xs={{ order: 'first' }} 
+            <Col
+              lg={{ span: 4, order: "last" }}
+              md={{ order: "first" }}
+              sm={{ order: "first" }}
+              xs={{ order: "first" }}
               className="mt-4 d-lg-block m-b-25-s m-b-25-m"
             >
               <Card className="property-inquiry text-center rounded-inquiry">
@@ -618,7 +662,8 @@ const Property = () => {
                   )}
 
                   <Card.Title className="fs-18 mb-1 pb-1 text-uppercase">
-                    {type_id == 1 && "Villa" || type_id == 2 && "Land"} Type Property
+                    {(type_id == 1 && "Villa") || (type_id == 2 && "Land")} Type
+                    Property
                   </Card.Title>
                   <Card.Subtitle className="fs-14 mt-1 text-muted">
                     For {pf.length > 0 && pf[0] !== "" && <>{pf.join(" & ")}</>}{" "}
@@ -629,50 +674,65 @@ const Property = () => {
                   <h4 className="fs-14 text-left">
                     Posted date:
                     <span className="font-weight-normal ml-1">
-                      {moment.utc(created_at).format('DD MMMM YYYY')}
+                      {moment.utc(created_at).format("DD MMMM YYYY")}
                     </span>
                   </h4>
                   {price_list}
-                  <h4 className="fs-14 text-left">
-                    Price tag:
-                    <span className="font-weight-normal">
-                      <Select
-                        size="small"
-                        value={selected.name}
-                        onChange={onSelectTagPrice}
-                        suffixIcon={<i className="fal fa-sm fa-chevron-down ml-1" />}
-                        bordered={false}
-                      >
-                        {buttonPrice}
-                      </Select>
-                    </span>
-                  </h4>
-                  <h4 className="fs-14 text-left">
-                    Price:
-                    <span className="font-weight-normal ml-1">
-                      IDR {formatter.format(selected.price)} 
-                    </span>
-                  </h4>
-                  {selected.period && (
-                    <h4 className="fs-14 text-left">
-                      Can lease until:
-                      <span className="font-weight-normal ml-1">
-                        {selected.period}
-                      </span>
-                    </h4>
+                  {type_id == 1 && (
+                    <>
+                      <h4 className="fs-14 text-left">
+                        Price tag:
+                        <span className="font-weight-normal">
+                          <Select
+                            size="small"
+                            value={selected.name}
+                            onChange={onSelectTagPrice}
+                            suffixIcon={
+                              <i className="fal fa-sm fa-chevron-down ml-1" />
+                            }
+                            bordered={false}
+                          >
+                            {buttonPrice}
+                          </Select>
+                        </span>
+                      </h4>
+                      <h4 className="fs-14 text-left">
+                        Price:
+                        <span className="font-weight-normal ml-1">
+                          IDR {formatter.format(selected.price)}
+                        </span>
+                      </h4>
+                      {selected.period && (
+                        <h4 className="fs-14 text-left">
+                          Can lease until:
+                          <span className="font-weight-normal ml-1">
+                            {selected.period}
+                          </span>
+                        </h4>
+                      )}
+                    </>
                   )}
                 </Card.Body>
 
                 <Card.Footer className="text-muted bg-transparent d-none d-lg-block">
                   <Row className="">
                     <Col className="px-1">
-                      <Button className="btn-call fs-14 fs-13-lg fs-13-t" block>
-                        <i className="fal fa-phone-alt mr-2" />
-                        <>Call Agent</>
-                      </Button>
+                      <Link href="/#contact-us" as="/#contact-us">
+                        <Button
+                          className="btn-call fs-14 fs-13-lg fs-13-t"
+                          block
+                        >
+                          <i className="fal fa-phone-alt mr-2" />
+                          <>Call Agent</>
+                        </Button>
+                      </Link>
                     </Col>
                     <Col className="px-1">
-                      <Button className="btn-red fs-14 fs-13-lg fs-13-t" block>
+                      <Button
+                        className="btn-red fs-14 fs-13-lg fs-13-t"
+                        block
+                        href="mailto:support@balihot-property.com?subject=Inquiry Property"
+                      >
                         <i className="fal fa-envelope-open mr-2"></i>
                         Send Inquiry
                       </Button>
@@ -681,7 +741,6 @@ const Property = () => {
                 </Card.Footer>
               </Card>
             </Col>
-
           </Row>
         </Container>
       </section>
@@ -712,20 +771,24 @@ const Property = () => {
           </Row>
 
           <ContainerCardPropertySimilar dataProperty={similar_listing} />
-
         </Container>
       </section>
 
-
       <Row className="fixed-bottom pt-2 pb-2 pl-4 pr-4 bg-light border-top d-lg-none">
         <Col className="px-1">
-          <Button className="btn-call fs-12" block>
-            <i className="fal fa-phone-alt mr-2" />
-            Call Agent
-          </Button>
+          <Link href="/#contact-us" as="/#contact-us">
+            <Button className="btn-call fs-12" block>
+              <i className="fal fa-phone-alt mr-2" />
+              Call Agent
+            </Button>
+          </Link>
         </Col>
         <Col className="px-1">
-          <Button className="btn-red fs-12" block>
+          <Button
+            className="btn-red fs-12"
+            block
+            href="mailto:support@balihot-property.com?subject=Inquiry Property"
+          >
             <i className="fal fa-envelope-open mr-2"></i>
             Send Inquiry
           </Button>
@@ -733,7 +796,7 @@ const Property = () => {
       </Row>
 
       {/* SHOW ALL PHOTO */}
-      <ReactBnbGallery 
+      <ReactBnbGallery
         show={showAllPhoto}
         photos={img_list}
         onClose={showAllPhotoHandler}
@@ -759,8 +822,8 @@ const Property = () => {
         visible={showModal}
         onCancel={() => setShowModal(false)}
         title="Share"
-        closeIcon={ <i className="fas fa-times" /> }
-        bodyStyle={{padding: "10px 0px"}}
+        closeIcon={<i className="fas fa-times" />}
+        bodyStyle={{ padding: "10px 0px" }}
         width="400px"
       >
         <ShareModal propertyShareLink={propertyShareLink} />
@@ -768,25 +831,28 @@ const Property = () => {
 
       <style jsx>{DetailPropertyStyle}</style>
       <style jsx>{`
-        :global(.img-detail > .smooth-image-wrapper){
+        :global(.img-detail > .smooth-image-wrapper) {
           height: auto;
         }
-        :global(.img-detail-mobile > div > .smooth-image-wrapper){
+        :global(.img-detail-mobile > div > .smooth-image-wrapper) {
           width: 100vw;
         }
-        :global(.img-detail-mobile > div > .smooth-image-wrapper > .smooth-image){
+        :global(.img-detail-mobile
+            > div
+            > .smooth-image-wrapper
+            > .smooth-image) {
           height: 50vw;
         }
         /*### IMAGES ###*/
         :global(.row-ml-9px) {
           margin-left: -9px;
         }
-        :global(.show-btn){
+        :global(.show-btn) {
           position: absolute;
           bottom: 10px;
           right: 8px;
         }
-        :global(.image-btn, .video-btn){
+        :global(.image-btn, .video-btn) {
           background: rgb(255, 255, 255) !important;
           color: rgb(34, 34, 34) !important;
           font-weight: 600 !important;
@@ -882,7 +948,7 @@ const Property = () => {
         }
         /*### MOBILE VIDEO BUTTON ###*/
 
-        :global(.txt-space-pre-line){
+        :global(.txt-space-pre-line) {
           white-space: pre-line;
         }
 
@@ -912,7 +978,7 @@ const Property = () => {
           letter-spacing: 0px;
           display: inline-block;
         }
-        
+
         :global(.ribbon-detail-property) {
           width: 160px;
           height: 28px;
@@ -928,43 +994,42 @@ const Property = () => {
           top: 12px;
           padding-top: 3px;
           z-index: 10;
-          line-height: 2;  
+          line-height: 2;
         }
 
-         @media (max-width: 1024px) {
-           :global(.fs-13-lg) {
-             font-size: 13px !important;
-           }
-         }
-
-
+        @media (max-width: 1024px) {
+          :global(.fs-13-lg) {
+            font-size: 13px !important;
+          }
+        }
       `}</style>
     </>
-  )
-}
+  );
+};
 
 Property.getInitialProps = async ctx => {
-  try{
+  try {
     const { slug } = ctx.query;
     const { access_token } = cookie.get(ctx);
-    const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
-    if(access_token){
-      let res = await axios.get(`/property/${slug}`, headerCfgServer)
+    const headerCfgServer = {
+      headers: { Authorization: `Bearer ${access_token}` }
+    };
+    if (access_token) {
+      let res = await axios.get(`/property/${slug}`, headerCfgServer);
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     }
-    if(!access_token || access_token === undefined){
-      let res = await axios.get(`/property/${slug}`)
+    if (!access_token || access_token === undefined) {
+      let res = await axios.get(`/property/${slug}`);
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     }
-  }
-  catch (err) {
-    console.log("ERROR FROM [SLUG] ====> ", err.response)
-    if(err.response && err.response.status == 404){
+  } catch (err) {
+    console.log("ERROR FROM [SLUG] ====> ", err.response);
+    if (err.response && err.response.status == 404) {
       process.browser
         ? Router.replace("/", "/") //Redirec from Client Side
         : ctx.res.writeHead(302, { Location: "/" }).end(); //Redirec from Server Side
     }
   }
-}
+};
 
 export default Property;

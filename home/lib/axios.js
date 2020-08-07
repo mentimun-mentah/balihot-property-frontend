@@ -1,5 +1,4 @@
 import axios from "axios";
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import {parseCookies, setCookie} from "nookies";
 
 const instance = axios.create({
@@ -19,24 +18,37 @@ export const headerCfgFormData = {
   }
 }
 
-const refreshAuthLogic = async (failedRequest) => {
+instance.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    return config;
+  }, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  });
 
-  const headerRefresh = {
-    headers: { Authorization: `Bearer ${refresh_token}` }
-  }
+// Add a response interceptor
+instance.interceptors.response.use(function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+  }, function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    const headerRefresh = {
+      headers: { Authorization: `Bearer ${refresh_token}` }
+    }
 
-  return instance
-    .post('/refresh', null, headerRefresh)
-    .then((res) => {
-      setCookie(null, "access_token", res.data.access_token, {
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-      });
-      failedRequest.response.config.headers.Authorization = `Bearer ${res.data.access_token}`;
-        return Promise.resolve();
-    });
-};
-
-createAuthRefreshInterceptor(instance, refreshAuthLogic);
+    if(error.response.data.msg === "Token has expired"){
+      instance.post('/refresh', null, headerRefresh)
+        .then(res => {
+          setCookie(null, "access_token", res.data.access_token, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          });
+          return Promise.resolve()
+        })
+    }
+    return Promise.reject(error);
+  });
 
 export default instance;

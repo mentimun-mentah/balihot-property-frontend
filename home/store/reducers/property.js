@@ -5,9 +5,6 @@ const initialState = {
   property: null,
   loading: false,
   error: null,
-  saleProperty: null,
-  rentProperty: null,
-  landProperty: null,
   slug: null,
 }
 
@@ -45,27 +42,20 @@ export const slugPropertyFail = (state, action) => {
   })
 }
 
-export const getPropertySale = (state, action) => {
+export const getWishlistStart = (state, action) => {
+  return updateObject(state, {loading: true, error: null})
+}
+export const getWishlistSuccess = (state, action) => {
   return updateObject(state, {
-    saleProperty: action.property,
-    loading: false,
-    error: null,
+    property: action.property, 
+    loading: false, 
+    error: null
   })
 }
-
-export const getPropertyRent = (state, action) => {
+export const getWishlistFail = (state, action) => {
   return updateObject(state, {
-    rentProperty: action.property,
     loading: false,
-    error: null,
-  })
-}
-
-export const getPropertyLand = (state, action) => {
-  return updateObject(state, {
-    landProperty: action.property,
-    loading: false,
-    error: null,
+    error: action.error
   })
 }
 
@@ -85,14 +75,12 @@ const reducer = (state = initialState, action) => {
     case actionType.SLUG_PROPERTY_FAIL:
       return slugPropertyFail(state, action)
 
-    case actionType.GET_PROPERTY_SALE:
-      return getPropertySale(state, action)
-
-    case actionType.GET_PROPERTY_RENT:
-      return getPropertyRent(state, action)
-
-    case actionType.GET_PROPERTY_LAND:
-      return getPropertyLand(state, action)
+    case actionType.GET_WISHLIST_START:
+      return getWishlistStart(state, action)
+    case actionType.GET_WISHLIST_SUCCESS:
+      return getWishlistSuccess(state, action)
+    case actionType.GET_WISHLIST_FAIL:
+      return getWishlistFail(state, action)
 
     default: 
       return state

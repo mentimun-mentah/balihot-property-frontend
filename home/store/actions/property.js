@@ -6,14 +6,12 @@ import axios from "../../lib/axios";
 export const getPropertyStart = () => {
   return { type: actionType.GET_PROPERTY_START}
 }
-
 export const getPropertySuccess = (property) => {
   return {
     type: actionType.GET_PROPERTY_SUCCESS,
     property: property
   }
 }
-
 export const getPropertyFail = (error) => {
   return {
     type: actionType.GET_PROPERTY_FAIL,
@@ -21,68 +19,65 @@ export const getPropertyFail = (error) => {
   }
 }
 
-export const getPropertySaleSuccess = (property) => {
-  return {
-    type: actionType.GET_PROPERTY_SALE,
-    property: property
-  }
-}
-
-export const getPropertyRentSuccess = (property) => {
-  return {
-    type: actionType.GET_PROPERTY_RENT,
-    property: property
-  }
-}
-
-export const getPropertyLandSuccess = (property) => {
-  return {
-    type: actionType.GET_PROPERTY_LAND,
-    property: property
-  }
-}
-
+/* SLUG PROPERTY */
 export const slugPropertyStart = () => {
   return { type: actionType.SLUG_PROPERTY_START}
 }
-
 export const slugPropertySuccess = (slug) => {
   return {
     type: actionType.SLUG_PROPERTY_SUCCESS,
-    slug:slug 
+    slug: slug 
   }
 }
-
 export const slugPropertyFail = (error) => {
   return {
     type: actionType.SLUG_PROPERTY_FAIL,
     error: error
   }
 }
+/* SLUG PROPERTY */
 
+/* LOVE */
 export const lovePropertyStart = () => {
   return { type: actionType.LOVE_PROPERTY_START }
 }
-
 export const lovePropertySuccess = () => {
   return { type: actionType.LOVE_PROPERTY_SUCCESS }
 }
-
 export const lovePropertyFail = (error) => {
   return { type: actionType.LOVE_PROPERTY_FAIL, error: error }
 }
+/* LOVE */
 
+/* UNLOVE */
 export const unLovePropertyStart = () => {
   return { type: actionType.UNLOVE_PROPERTY_START }
 }
-
 export const unLovePropertySuccess = () => {
   return { type: actionType.UNLOVE_PROPERTY_SUCCESS }
 }
-
 export const unLovePropertyFail = (error) => {
   return { type: actionType.UNLOVE_PROPERTY_FAIL, error: error }
 }
+/* UNLOVE */
+
+/* WISHLIST */
+export const getWishlistStart = () => {
+  return { type: actionType.GET_WISHLIST_START}
+}
+export const getWishlistSuccess = (property) => {
+  return {
+    type: actionType.GET_WISHLIST_SUCCESS,
+    property: property
+  }
+}
+export const getWishlistFail = (error) => {
+  return {
+    type: actionType.GET_WISHLIST_FAIL,
+    error: error
+  }
+}
+/* WISHLIST */
 
 export const getPropertyBy = (home, query, per_page, ctx) => {
   return dispatch => {
@@ -170,45 +165,6 @@ export const slugProperty = (slug, ctx) => {
   }
 }
 
-export const getPropertySale = () => {
-  return dispatch => {
-    dispatch(getPropertyStart())
-    axios.get('/properties?property_for=Sale&per_page=3')
-      .then(res => {
-        dispatch(getPropertySuccess(res.data))
-      })
-      .catch(err => {
-        dispatch(getPropertyFail(err.response))
-      })
-  }
-}
-
-export const getPropertyRent = () => {
-  return dispatch => {
-    dispatch(getPropertyStart())
-    axios.get('/properties?property_for=Rent&per_page=3')
-      .then(res => {
-        dispatch(getPropertySuccess(res.data))
-      })
-      .catch(err => {
-        dispatch(getPropertyFail(err.response))
-      })
-  }
-}
-
-export const getPropertyLand = () => {
-  return dispatch => {
-    dispatch(getPropertyStart())
-    axios.get('/properties?type_id=2&per_page=3')
-      .then(res => {
-        dispatch(getPropertySuccess(res.data))
-      })
-      .catch(err => {
-        dispatch(getPropertyFail(err.response))
-      })
-  }
-}
-
 export const loveProperty = (id, ctx) => {
   return dispatch => {
     const { access_token } = cookies.get(ctx);
@@ -239,7 +195,7 @@ export const unLoveProperty = (id, ctx) => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     dispatch(unLovePropertyStart())
-    axios.delete(`/wishlist/unlove/${id}`, null, headerCfg)
+    axios.delete(`/wishlist/unlove/${id}`, headerCfg)
       .then(res => {
         dispatch(unLovePropertySuccess(ctx))
         notification['success']({
@@ -255,6 +211,21 @@ export const unLoveProperty = (id, ctx) => {
           description: err.response.data.message,
           placement: 'bottomRight',
         });
+      })
+  }
+}
+
+export const getWishlist = (query, ctx) => {
+  return dispatch => {
+    const { access_token } = cookies.get(ctx);
+    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+    dispatch(getWishlistStart())
+    axios.get(`/wishlist/user?${query}&per_page=1`, headerCfg)
+      .then(res => {
+        dispatch(getWishlistSuccess(res.data))
+      })
+      .catch(err => {
+        dispatch(getWishlistFail(err.response))
       })
   }
 }

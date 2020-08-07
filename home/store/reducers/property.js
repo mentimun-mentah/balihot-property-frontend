@@ -6,6 +6,7 @@ const initialState = {
   loading: false,
   error: null,
   slug: null,
+  location: [],
 }
 
 export const getPropertyStart = (state, action) => {
@@ -59,6 +60,23 @@ export const getWishlistFail = (state, action) => {
   })
 }
 
+export const getLocationStart = (state, action) => {
+  return updateObject(state, {loading: true, error: null})
+}
+export const getLocationSuccess = (state, action) => {
+  return updateObject(state, {
+    location: action.location, 
+    loading: false, 
+    error: null
+  })
+}
+export const getLocationFail = (state, action) => {
+  return updateObject(state, {
+    loading: false,
+    error: action.error
+  })
+}
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionType.GET_PROPERTY_START:
@@ -81,6 +99,13 @@ const reducer = (state = initialState, action) => {
       return getWishlistSuccess(state, action)
     case actionType.GET_WISHLIST_FAIL:
       return getWishlistFail(state, action)
+
+    case actionType.GET_LOCATION_START:
+      return getLocationStart(state, action)
+    case actionType.GET_LOCATION_SUCCESS:
+      return getLocationSuccess(state, action)
+    case actionType.GET_LOCATION_FAIL:
+      return getLocationFail(state, action)
 
     default: 
       return state

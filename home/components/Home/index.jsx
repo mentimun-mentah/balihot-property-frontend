@@ -150,11 +150,12 @@ const Home = () => {
               )}
             </Tab>
           </Tabs>
+          <div id="about-us"></div>
         </section>
       </Container>
 
       <section className="discover-propt">
-        <div className="overlay-bg" id="about-us"></div>
+        <div className="overlay-bg"></div>
         <Container>
           <div className="discover-text">
             <h3 className="fs-24-s">Discover a property you'll love to stay</h3>

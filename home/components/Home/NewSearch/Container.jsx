@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Row, Col } from "react-bootstrap";
 import ButtonBoot from "react-bootstrap/Button";
@@ -13,6 +13,7 @@ import { Fade } from "../../Transition";
 
 import Router from 'next/router'
 import Table from 'react-bootstrap/Table'
+import * as actions from "../../../store/actions"
 
 const Option = Select.Option;
 const formatter = new Intl.NumberFormat(["ban", "id"]);
@@ -34,19 +35,15 @@ const formSearch = {
 };
 
 const SearchBox = ({ searchType }) => {
+  const dispatch = useDispatch();
   const [search, setSearch] = useState(formSearch);
   const dataType = useSelector(state => state.types.types);
   const dataFacilities = useSelector(state => state.facilities.facilities.slice(0,16));
+  const listLocation = useSelector(state => state.property.location);
 
   const { location, property_for, status, price, facility, bedroom, bathroom } = search;
 
   //====== SEARCH ======//
-  const options = [
-    { value: "Seminyak" },
-    { value: "Kuta" },
-    { value: "Nusa Dua" },
-    { value: "Sesetan" }
-  ];
   const type_list = [];
   renderOptions(type_list, dataType, true);
   const status_list = [];
@@ -110,6 +107,12 @@ const SearchBox = ({ searchType }) => {
       setSearch(data);
     }
   };
+
+  useEffect(() => {
+    const query = `type_id=${searchType}&q=${location.value}`
+    dispatch(actions.getLocation(query))
+
+  },[location.value, searchType])
 
   const searchHandler = () => {
     Router.push({
@@ -240,7 +243,7 @@ const SearchBox = ({ searchType }) => {
           <Col className="pr-0">
             <AutoComplete
               className="search-input w-100"
-              options={options}
+              options={listLocation}
               filterOption={(inputValue, option) =>
                 option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
                 -1

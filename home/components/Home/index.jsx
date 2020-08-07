@@ -154,7 +154,7 @@ const Home = () => {
       </Container>
 
       <section className="discover-propt">
-        <div className="overlay-bg"></div>
+        <div className="overlay-bg" id="about-us"></div>
         <Container>
           <div className="discover-text">
             <h3 className="fs-24-s">Discover a property you'll love to stay</h3>

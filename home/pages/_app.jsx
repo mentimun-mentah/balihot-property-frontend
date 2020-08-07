@@ -1,4 +1,5 @@
 import { Provider } from "react-redux";
+import Router from "next/router";
 import React from "react";
 import Head from "next/head";
 import axios from "../lib/axios";
@@ -13,8 +14,23 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "react-multi-carousel/lib/styles.css";
 import "render-smooth-image-react/build/style.css";
 import "react-responsive-carousel/lib/styles/carousel.css";
+import { useEffect } from "react";
 
 const App = ({ Component, pageProps, store }) => {
+
+  //useEffect(() => {
+  //  window.onload = function() {
+  //  //considering there aren't any hashes in the urls already
+  //    if(!window.location.hash) {
+  //      //setting window location
+  //      window.location = window.location + '#home';
+  //      //using reload() method to reload web page
+  //      window.location.reload();
+  //    }
+  //  }
+
+  //},[])
+
   return (
     <React.Fragment>
       <Head>
@@ -32,6 +48,18 @@ const App = ({ Component, pageProps, store }) => {
         </Layout>
       </Provider>
       <style global jsx>{`
+        .ant-upload-list-picture .ant-upload-list-item-error, .ant-upload-list-picture-card .ant-upload-list-item-error{
+          border: 1px solid #d9d9d9;
+        }
+        .ant-tooltip-placement-top{
+          display: none;
+        }
+        .ant-upload-list-picture-card .ant-upload-list-item-info::before {
+          left: 0;
+        }
+        .anticon {
+          vertical-align: 0.1em;
+        }
         .h-47 {
           height: 47px !important;
         }
@@ -194,29 +222,8 @@ const App = ({ Component, pageProps, store }) => {
 };
 
 App.getInitialProps = async ({ Component, ctx }) => {
-  await ctx.store.dispatch(actions.authCheckState(ctx))
-  const { access_token, refresh_token } = cookie.get(ctx);
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-
-  if(access_token && access_token !== undefined){
-    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
-    try{
-      const resUser = await axios.get('/user', headerCfg)
-      await ctx.store.dispatch(actions.getUserSuccess(resUser.data))
-    }
-    catch (err){
-      console.log("ERR FROM _APP.JSX ====> ", err.response)
-      if(refresh_token){
-        await ctx.store.dispatch(actions.refreshToken(ctx));
-      }
-      if(!refresh_token){
-        await ctx.store.dispatch(actions.logout(ctx));
-      }
-      // if(!err.response && !err.response.status) return;
-      // if(err.response.status == 422) await ctx.store.dispatch(actions.logout(ctx));
-      // if(err.response.status == 403) await ctx.store.dispatch(actions.logout(ctx));
-    }
-  }
+  await ctx.store.dispatch(actions.authCheckState(ctx))
   return { pageProps };
 };
 

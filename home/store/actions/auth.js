@@ -1,7 +1,9 @@
 import * as actionType from "./actionTypes";
+import * as actions from "./index";
 import cookies from "nookies";
 import Router from "next/router";
 import axios from "../../lib/axios";
+import { getProperty } from "./property";
 
 /*** AUTH ***/
 export const authStart = () => {
@@ -74,9 +76,10 @@ export const authCheckState = (ctx) => {
 
 export const getUser = (ctx) => {
   return (dispatch) => {
-    const { access_token } = cookies.get(ctx);
+    const { access_token, refresh_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
-    if (access_token && access_token !== undefined) {
+    const headerCfgRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } };
+    if (access_token) {
       axios.get('/user', headerCfg)
       .then(res => {
         dispatch(getUserSuccess(res.data))
@@ -88,10 +91,17 @@ export const getUser = (ctx) => {
           cookies.destroy(ctx, "refresh_token");
           cookies.destroy(ctx, "username");
         }
-        if(err.response.status == 401 || err.response.status == 422){
-          dispatch(refreshToken(ctx))
+        if(err.response.data.msg === "Token has expired"){
+          axios.post("/refresh", null, headerCfgRefresh)
+          .then(res => {
+            cookies.set(null, "access_token", res.data.access_token, {
+              maxAge: 30 * 24 * 60 * 60,
+              path: "/",
+            });
+            dispatch(refreshTokenSuccess(res.data.access_token));
+          })
+          dispatch(getUser())
         }
-        console.log("GET_USER ERROR =============> ", err.response.status)
       })
     }
   }
@@ -148,8 +158,7 @@ export const refreshToken = (ctx) => {
     const { refresh_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${refresh_token}` } };
     if (refresh_token) {
-      axios
-        .post("/refresh", null, headerCfg)
+      axios.post("/refresh", null, headerCfg)
         .then((res) => {
           cookies.set(null, "access_token", res.data.access_token, {
             maxAge: 30 * 24 * 60 * 60,

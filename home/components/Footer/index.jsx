@@ -1,4 +1,5 @@
 import { Container, Row, Col } from "react-bootstrap";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -7,34 +8,46 @@ const Footer = () => {
         <Container>
           <Row>
             <Col sm={12} md={6}>
-              <img src="/static/images/balihot-property-logo-red.png" width="250" />
+              <img
+                src="/static/images/balihot-property-logo-red.png"
+                width="250"
+              />
               <p className="text-justify mt-3 fs-14-s">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do iverra tellus in.
-                Sollicitudin ac orci phasellus egestas. Purus in mollis nunc sed. Sollicitudin ac
-                orci phasellus egestas tellus rutrum tellus pellentesque. Interdum consectetur
-                libero id faucibus nisl tincidunt eget.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                iverra tellus in. Sollicitudin ac orci phasellus egestas. Purus
+                in mollis nunc sed. Sollicitudin ac orci phasellus egestas
+                tellus rutrum tellus pellentesque. Interdum consectetur libero
+                id faucibus nisl tincidunt eget.
               </p>
             </Col>
             <Col sm={12} md={4} className="pl-ft-50 pl-md-2 pl-xl-5 pr-md-2">
               <h6>Contact Us</h6>
               <ul className="footer-links mt-3 fs-14-s">
                 <li className="mb-2">
-                  <i className="fal fa-map-marker-alt mr-2"></i> 432 Park Ave, New York, NY 10022
+                  <i className="fal fa-map-marker-alt mr-2"></i> 432 Park Ave,
+                  New York, NY 10022
                 </li>
                 <li className="mb-2">
                   <i className="fal fa-phone mr-2"></i> (844) 380-8603
                 </li>
                 <li>
-                  <i className="fal fa-envelope mr-2"></i> support@balihot-property.com
+                  <i className="fal fa-envelope mr-2"></i>{" "}
+                  support@balihot-property.com
                 </li>
               </ul>
             </Col>
             <Col sm={12} md={2}>
               <h6>Quick Links</h6>
               <ul className="footer-links mt-3 fs-14-s">
-                <li className="mb-2">About Us</li>
-                <li className="mb-2">Contact Us</li>
-                <li>Property</li>
+                <Link href="/#about-us" as="/#about-us">
+                  <li className="mb-2">About Us</li>
+                </Link>
+                <Link href="/#contact-us" as="/#contact-us">
+                  <li className="mb-2">Contact Us</li>
+                </Link>
+                <Link href="/#property" as="/#property">
+                  <li>Property</li>
+                </Link>
               </ul>
             </Col>
           </Row>
@@ -45,23 +58,24 @@ const Footer = () => {
           <Row>
             <Col xs={12} sm={6} md={8}>
               <p className="copyright-text">
-                Copyright &copy; 2020 All Rights Reserved by <a href="#">BaliHotProperty</a>.
+                Copyright &copy; 2020 All Rights Reserved by{" "}
+                <a href="#">BaliHotProperty</a>.
               </p>
             </Col>
             <Col xs={12} sm={6} md={4}>
               <ul className="social-icons">
                 <li>
-                  <a href="#">
+                  <a href="https://www.facebook.com/" target="_blank">
                     <i className="fab fa-facebook-f"></i>
                   </a>
                 </li>
                 <li>
-                  <a href="#">
+                  <a href="https://twitter.com/" target="_blank">
                     <i className="fab fa-twitter"></i>
                   </a>
                 </li>
                 <li>
-                  <a href="#">
+                  <a href="https://www.instagram.com/" target="_blank">
                     <i className="fab fa-instagram"></i>
                   </a>
                 </li>
@@ -177,7 +191,8 @@ const Footer = () => {
           -o-transition: all 0.2s linear;
           transition: all 0.2s linear;
         }
-        :global(.social-icons a:active, .social-icons a:focus, .social-icons a:hover) {
+        :global(.social-icons a:active, .social-icons a:focus, .social-icons
+            a:hover) {
           color: #fff !important;
           background-color: #29aafe !important;
         }

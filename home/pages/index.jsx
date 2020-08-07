@@ -7,10 +7,6 @@ import * as actions from "../store/actions";
 import HomeContainer from "../components/Home";
 
 const Home = ({ username, fresh }) => {
-  const dispatch = useDispatch();
-  setInterval(() => {
-    dispatch(actions.refreshToken());
-  }, 840000)
   useEffect(() => {
     if (fresh) {
       swal({
@@ -38,6 +34,24 @@ Home.getInitialProps = async (ctx) => {
   if(access_token, refresh_token){
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     ctx.store.dispatch(actions.authSuccess(access_token, refresh_token, username));
+    await axios.get(`/properties?property_for=Sale&per_page=3`, headerCfg)
+      .then(res => {
+        ctx.store.dispatch(actions.getPropertySuccess(res.data)); 
+        console.log(res.data)
+      })
+      .catch(err => {
+        console.log(err.response)
+        if(err.response.data.msg === "Token has expired"){
+          const headerCfgRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } };
+          axios.post("/refresh", null, headerCfgRefresh)
+            .then(async res => {
+              const headerCfgNew = { headers: { Authorization: `Bearer ${res.data.access_token}` } };
+              const resProperty = await axios.get(`/properties?property_for=Sale&per_page=3`, headerCfgNew)
+              console.log(resProperty.data)
+              ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+            })
+        }
+      })
     // const resProperty = await axios.get('/properties', headerCfg);
     // ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
     // const saleProperty = await axios.get('/properties?property_for=Sale&per_page=3', headerCfg);

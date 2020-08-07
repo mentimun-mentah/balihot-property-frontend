@@ -1,23 +1,94 @@
+import { useState, useEffect } from "react";
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
 import Pagination from 'react-bootstrap/Pagination'
 import ContainerCardProperty from "../Card/ContainerCardProperty";
+import * as actions from "../../store/actions";
 
-import { useSelector } from "react-redux";
-import { Select, Input, AutoComplete } from 'antd';
+import { useDispatch, useSelector } from "react-redux";
+import { Select } from 'antd';
 import { motion } from "framer-motion";
 import { Fade } from "../Transition";
 import { renderOptions } from "../../lib/renderOptions";
 
 const { Option } = Select;
 
+const formFilter = {
+  type_id: { value: [] },
+  status: { value: [] },
+}
+
 const Shortlist = () => {
+  const dispatch = useDispatch()
+
   const property = useSelector(state => state.property.property)
   const dataType = useSelector((state) => state.types.types);
 
+  const [filter, setFilter] = useState(formFilter)
+  const [active, setActive] = useState(property.page);
+
   const type_list = []; renderOptions(type_list, dataType, true);
 
+  const searchChangeHandler = (e, category) => {
+    if (category === "type_id") {
+      const data = { 
+        ...filter, 
+        type_id: { value: e }, 
+      };
+      setFilter(data);
+      setActive(1)
+    }
+    if (category === "status") {
+      const data = { 
+        ...filter, 
+        status: { value: e },
+      };
+      setFilter(data);
+      setActive(1)
+    }
+  }
+
+  const { type_id, status } = filter;
+
+  useEffect(() => {
+    let query = ''
+    if(type_id.value !== "" && status.value !== "") {
+      query = `type_id=${type_id.value}&status=${status.value}&page=${active}` 
+    }
+    if(type_id.value !== "" && status.value == "") query = `type_id=${type_id.value}&page=${active}`
+    if(type_id.value == "" && status.value !== "") query = `status=${status.value}&page=${active}`
+    dispatch(actions.getWishlist(query))
+  },[type_id.value, status.value, active])
+
+  //====== PAGINATION ======//
+  const pageHandler = (event) => {
+    setActive(+event.target.text);
+  };
+  const prevHandler = () => {
+    setActive(property.prev_num);
+  };
+  const nextHandler = () => {
+    setActive(property.next_num);
+  };
+  let pagination = [];
+  let iter_data;
+  if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.length
+  if(property.length === 0) iter_data = property.length
+  for (let n = 1; n <= iter_data ; n++) {
+    let click = pageHandler;
+    if (n === +active) {
+      click = null;
+    }
+    pagination.push(
+      <Pagination.Item key={n} active={n === +active} text={+n} onClick={click}>
+        {n}
+      </Pagination.Item>
+    );
+  }
+  //====== PAGINATION ======//
+  
   return (
     <>
       <Col md={9} lg={10} className="ml-sm-auto pl-0">
@@ -33,6 +104,8 @@ const Shortlist = () => {
                   <Col>
                     <Select size="large" style={{ width: "100%" }}
                       placeholder="Select type"
+                      value={type_id.value}
+                      onChange={e => searchChangeHandler(e, "type_id")}
                     >
                       {type_list}
                     </Select>
@@ -40,10 +113,16 @@ const Shortlist = () => {
                   <Col>
                     <Select size="large" style={{ width: "100%" }}
                       placeholder="Select status"
+                      onChange={e => searchChangeHandler(e, "status")}
+                      value={status.value}
+
                     >
-                      <Option value="jack">Free Hold</Option>
-                      <Option value="lucy">Lease Hold</Option>
+                      <Option value="Free Hold">Free Hold</Option>
+                      <Option value="Lease Hold">Lease Hold</Option>
                     </Select>
+                  </Col>
+                  <Col className="col-auto">
+                    <Button variant="link">Clear</Button>
                   </Col>
                 </Form.Row>
               </Form>
@@ -51,10 +130,13 @@ const Shortlist = () => {
                 dataProperty={property} 
                 horizontal={false} 
               />
-              <Pagination className="justify-content-end mt-4">
-                <Pagination.Prev />
-                <Pagination.Next />
-              </Pagination>
+              {property.iter_pages && property.iter_pages.length > 0 && property.iter_pages.length > 1 && (
+                <Pagination className="justify-content-end mt-4">
+                  <Pagination.Prev onClick={prevHandler} disabled={property.prev_num === null} />
+                  {pagination}
+                  <Pagination.Next onClick={nextHandler} disabled={property.next_num === null} />
+                </Pagination>
+              )}
             </Card.Body>
           </Card>
         </motion.div>

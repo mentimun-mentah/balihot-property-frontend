@@ -6,11 +6,10 @@ export {
   getPropertyBy, 
   getPropertySuccess, 
   slugPropertySuccess, 
-  getPropertySaleSuccess, 
-  getPropertyRentSuccess, 
-  getPropertyLandSuccess,
   loveProperty,
   unLoveProperty,
+  getWishlist,
+  getWishlistSuccess,
 } from "./property";
 
 export { getTeam, getTeamSuccess } from "./teams";

@@ -5,7 +5,8 @@ export const renderArrow = direction => (onClickHandler, shouldBeEnabled) => {
     position: "absolute",
     cursor: "pointer",
     top: "45%",
-    zIndex: 2
+    zIndex: 2,
+    width: "31px",
   };
 
   if (direction === "prev") {

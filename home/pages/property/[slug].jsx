@@ -1,15 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import {
-  GoogleMap,
-  useLoadScript,
-  Marker,
-  InfoWindow
-} from "@react-google-maps/api";
-import {
-  GMapsOptions,
-  markerOptions,
-  infoOptions
-} from "../../lib/GMaps-options";
+import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
+import { GMapsOptions, markerOptions, infoOptions } from "../../lib/GMaps-options";
 import { libraries, mapDetailContainerStyle } from "../../lib/GMaps-options";
 import { Select, Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";

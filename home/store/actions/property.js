@@ -195,7 +195,8 @@ export const unLoveProperty = (id, ctx) => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     dispatch(unLovePropertyStart())
-    axios.delete(`/wishlist/unlove/${id}`, null, headerCfg)
+    console.log(headerCfg)
+    axios.delete(`/wishlist/unlove/${id}`, headerCfg)
       .then(res => {
         dispatch(unLovePropertySuccess(ctx))
         notification['success']({

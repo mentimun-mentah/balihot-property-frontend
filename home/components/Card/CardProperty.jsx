@@ -317,7 +317,7 @@ const CardContainer = ({
           bottom: 0px;
           left: 0px;
           padding: 10px 8px 15px 8px;
-          width: auto;
+          width: 100%;
           white-space: pre;
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;

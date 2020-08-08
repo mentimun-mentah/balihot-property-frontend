@@ -9,6 +9,7 @@ import { formUpdatePassword, formAddPassword } from "./accountData";
 import { updateAccountIsValid, changePasswordIsValid, addPasswordIsValid } from "../../lib/validateFormAccount";
 import cx from "classnames";
 import swal from "sweetalert";
+import Router from "next/router";
 import axios, { headerCfg, headerCfgFormData } from "../../lib/axios";
 import * as actions from "../../store/actions";
 
@@ -85,19 +86,27 @@ const Account = () => {
   };
 
   useEffect(() => {
-    if(userData !== null){
-      const data = {
-        ...formUsername,
-        username: { value: userData.username, isValid: true, message: null }
-      };
-      setChangeUsername(data)
-      const fetchedImage = {
-        uid: -Math.random(),
-        url: `${process.env.API_URL}/static/avatars/${userData.avatar}`
-      }
-      setFileList([fetchedImage])
+    if(userData == null){
+      Router.replace("/")
     }
-  },[userData.avatar])
+  },[userData])
+
+  if(userData !== null){
+    useEffect(() => {
+      if(userData !== null){
+        const data = {
+          ...formUsername,
+          username: { value: userData.username, isValid: true, message: null }
+        };
+        setChangeUsername(data)
+        const fetchedImage = {
+          uid: -Math.random(),
+          url: `${process.env.API_URL}/static/avatars/${userData.avatar}`
+        }
+        setFileList([fetchedImage])
+      }
+    },[userData.avatar])
+  }
 
   const updateProfileHandler = event => {
     event.preventDefault();
@@ -351,7 +360,7 @@ const Account = () => {
                               </InputGroup.Prepend>
                               <Form.Control
                                 type="email"
-                                placeholder={userData.email}
+                                placeholder={userData !== null && userData.email}
                                 className="border-left-0 custom-place pl-1"
                                 disabled
                               />
@@ -360,7 +369,7 @@ const Account = () => {
                         </Form.Row>
                         {/* FORM USERNAME & EMAIL */}
 
-                        {userData.old_password ? (
+                        {userData !== null && userData.old_password ? (
                           // FORM OLD PASSWORD
                           <Form.Row>
                             <Form.Group as={Col} md={6} lg={4}>

@@ -61,7 +61,7 @@ export const getWishlistFail = (state, action) => {
 }
 
 export const getLocationStart = (state, action) => {
-  return updateObject(state, {loading: true, error: null})
+  return updateObject(state, {loading: false, error: null})
 }
 export const getLocationSuccess = (state, action) => {
   return updateObject(state, {

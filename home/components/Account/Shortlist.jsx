@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Pagination from 'react-bootstrap/Pagination'
+import Container from 'react-bootstrap/Container'
 import ContainerCardProperty from "../Card/ContainerCardProperty";
 import * as actions from "../../store/actions";
 
@@ -130,10 +131,23 @@ const Shortlist = () => {
                   </Col>
                 </Form.Row>
               </Form>
-              <ContainerCardProperty 
-                dataProperty={property} 
-                horizontal={false} 
-              />
+              {property && property.data.length > 0 ? (
+                <ContainerCardProperty 
+                  dataProperty={property} 
+                  horizontal={false} 
+                />
+              ) : (
+                <Container>
+                  <Card className="text-muted mt-2 pt-5 pb-5 shadow-none border-0">
+                    <Card.Img variant="top" src="/static/images/no-property.png" className="img-size mx-auto" />
+                    <Card.Body>
+                      <Card.Title className="text-center">
+                        There is no wishlist 
+                      </Card.Title>
+                    </Card.Body>
+                  </Card>
+                </Container>
+              )}
               {property.iter_pages && property.iter_pages.length > 0 && property.iter_pages.length > 1 && (
                 <Pagination className="justify-content-end mt-4">
                   <Pagination.Prev onClick={prevHandler} disabled={property.prev_num === null} />

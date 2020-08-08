@@ -111,7 +111,6 @@ const SearchBox = ({ searchType }) => {
   useEffect(() => {
     const query = `type_id=${searchType}&q=${location.value}`
     dispatch(actions.getLocation(query))
-
   },[location.value, searchType])
 
   const searchHandler = () => {

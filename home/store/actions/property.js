@@ -3,6 +3,7 @@ import cookies from "nookies";
 import * as actionType from "./actionTypes";
 import * as actions from "./index";
 import axios from "../../lib/axios";
+import Router from "next/router"
 
 export const getPropertyStart = () => {
   return { type: actionType.GET_PROPERTY_START}
@@ -109,6 +110,7 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       axios.get(`/properties?${searchQuery}`, headerCfg)
         .then(res => {
           dispatch(getPropertySuccess(res.data))
+          console.log(res.data)
         })
         .catch(err => {
           if(err.response.data.msg === "Token has expired"){
@@ -124,6 +126,7 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
                 axios.get(`/properties?${searchQuery}`, headerCfgNew)
                   .then(res => {
                     dispatch(getPropertySuccess(res.data))
+                    console.log(res.data)
                   })
               })
           }
@@ -134,6 +137,7 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       axios.get(`/properties?${searchQuery}`)
         .then(res => {
           dispatch(getPropertySuccess(res.data))
+          console.log(res.data)
         })
         .catch(err => {
           dispatch(getPropertyFail(err.response))
@@ -232,6 +236,9 @@ export const unLoveProperty = (id, ctx) => {
           description: res.data.message,
           placement: 'bottomRight',
         });
+        if(Router.pathname === "/account"){
+          dispatch(getWishlist())
+        }
       })
       .catch(err => {
         dispatch(unLovePropertyFail(err.response))
@@ -249,7 +256,7 @@ export const getWishlist = (query, ctx) => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     dispatch(getWishlistStart())
-    axios.get(`/wishlist/user?${query}&per_page=1`, headerCfg)
+    axios.get(`/wishlist/user?${query}`, headerCfg)
       .then(res => {
         dispatch(getWishlistSuccess(res.data))
       })

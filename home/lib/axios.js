@@ -24,7 +24,6 @@ instance.interceptors.request.use(function (config) {
     return config;
   }, function (error) {
     // Do something with request error
-    console.log("========== REQUEST ============", error.response)
     return Promise.reject(error);
   });
 
@@ -40,14 +39,14 @@ instance.interceptors.response.use(function (response) {
       headers: { Authorization: `Bearer ${refresh_token}` }
     }
 
-    if(error.response.data.msg === "Token has been revoked"){
+    if(error.response && error.response.data && error.response.data.msg === "Token has been revoked"){
       destroyCookie(null, "access_token")
       destroyCookie(null, "refresh_token")
       destroyCookie(null, "username")
       Router.reload("/")
     }
 
-    if(error.response.data.msg === "Token has expired"){
+    if(error.response && error.response.data && error.response.data.msg === "Token has expired"){
       instance.post('/refresh', null, headerRefresh)
         .then(res => {
           setCookie(null, "access_token", res.data.access_token, {

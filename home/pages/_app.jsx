@@ -216,6 +216,13 @@ const App = ({ Component, pageProps, store }) => {
         :global(.ant-slider-track){
           background-color: #f9696be0;
         }
+
+        /*### EMPTY CARD ###*/
+        :global(.img-size) {
+          width: auto;
+          height: 100px;
+          opacity: 0.5;
+        }
       `}</style>
     </React.Fragment>
   );

@@ -26,6 +26,36 @@ import MobileFilters from "../components/MobileFilter";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 const status_data = ["Free Hold", "Lease Hold"];
+const Option = Select.Option
+
+  const testpagination = (c, m) => {
+    var delta = 2,
+        range = [],
+        rangeWithDots = [],
+        l;
+  
+    range.push(1)  
+    for (let i = c - delta; i <= c + delta; i++) {
+        if (i < m && i > 1) {
+            range.push(i);
+        }
+    }  
+    range.push(m);
+
+    for (let i of range) {
+        if (l) {
+            if (i - l === 2) {
+                rangeWithDots.push(l + 1);
+            } else if (i - l !== 1) {
+                rangeWithDots.push('...');
+            }
+        }
+        rangeWithDots.push(i);
+        l = i;
+    }
+
+    return rangeWithDots;
+  }
 
 const formSearch = {
   location: { value: "" },
@@ -72,29 +102,37 @@ const AllProperties = ({ searchQuery }) => {
   };
   const prevHandler = () => {
     setActive(property.prev_num);
-    const searchData = `page=${+event.target.text}&` + queryString
+    const searchData = `page=${property.prev_num}&` + queryString
     dispatch(actions.getPropertyBy(false, searchData, 10))
   };
   const nextHandler = () => {
     setActive(property.next_num);
-    const searchData = `page=${+event.target.text}&` + queryString
+    const searchData = `page=${property.next_num}&` + queryString
     dispatch(actions.getPropertyBy(false, searchData, 10))
   };
   let pagination = []; let iter_data;
   if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.length
   if(property.length === 0) iter_data = property.length
-  for (let n = 1; n <= iter_data ; n++) {
+  iter_data && iter_data.length > 0 && iter_data.forEach(x => {
     let click = pageHandler;
-    if (n === +active) {
-      click = null;
-    }
+    if (x === +active) click = null;
     pagination.push(
-      <Pagination.Item key={n} active={n === +active} text={+n} onClick={click}>
-        {n}
+      <Pagination.Item key={x} active={x === +active} text={+x} onClick={click}>
+        {x}
       </Pagination.Item>
     );
-  }
+  })
   //====== PAGINATION ======//
+
+  let q = '?'
+  if(current_position.lat) q = q + `lat=${current_position.lat}&`
+  if(current_position.lng) q = q + `lng=${current_position.lng}&`
+  if(radius) q = q + `radius=${radius}&`
+  if(location.value) q = q + `location=${location.value}&`
+  if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+  if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+  if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
+  if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}`
 
   //====== MAPS ======//
   const mapRef = useRef(null);
@@ -136,19 +174,7 @@ const AllProperties = ({ searchQuery }) => {
       if (current_zoom >= 13) setRadius(30 / current_zoom);
     }
     if(!searchQuery.hotdeal){
-      Router.replace({
-        pathname: "/all-properties",
-        query: { 
-          lat: current_position.lat,
-          lng: current_position.lng,
-          radius: radius,
-          location: location.value, 
-          type_id: type_id.value, 
-          status: status.value,
-          min_price: price.value[0] === 0 ? null : price.value[0],
-          max_price: price.value[1] === 0 ? null : price.value[1],
-        },
-      })
+      Router.replace(`/all-properties${q}`)
     }
   }
 
@@ -299,22 +325,13 @@ const AllProperties = ({ searchQuery }) => {
 
   useEffect(() => {
     let id = 1
-    if(type_id.value.length !== 0) id = type_id.value
+    if(type_id.value) if(type_id.value.length !== 0) id = type_id.value
     const query = `type_id=${id}&q=${location.value}`
     dispatch(actions.getLocation(query))
   },[location.value, type_id.value])
 
   const searchHandler = () => {
-    Router.replace({
-      pathname: "/all-properties",
-      query: { 
-        location: location.value, 
-        type_id: type_id.value, 
-        status: status.value,
-        min_price: price.value[0] === 0 ? null : price.value[0],
-        max_price: price.value[1] === 0 ? null : price.value[1],
-      },
-    })
+    Router.replace(`/all-properties${q}`)
   }
   //====== SEARCH ======//
 
@@ -361,6 +378,7 @@ const AllProperties = ({ searchQuery }) => {
                 <Select placeholder="Type" className="w-100"
                   onChange={e => searchChangeHandler(e, "type_id")}
                   value={type_id.value}
+                  allowClear
                 >
                   {type_list}
                 </Select>
@@ -369,6 +387,7 @@ const AllProperties = ({ searchQuery }) => {
                 <Select placeholder="Status" className="w-100"
                   onChange={e => searchChangeHandler(e, "status")}
                   value={status.value}
+                  allowClear
                 >
                   {status_list}
                 </Select>
@@ -516,6 +535,7 @@ const AllProperties = ({ searchQuery }) => {
         {/* *** MAPS DESKTOP *** */}
       </Row>
 
+      // Mobile 
       <Row className="fixed-bottom text-center mb-3 d-block d-sm-block d-md-block d-lg-none d-xl-none">
         <Col>
           <Button variant="dark" className="badge-pill px-3 py-2 fs-14 shadow" onClick={showDrawer}>

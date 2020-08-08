@@ -116,7 +116,7 @@ const SearchBox = () => {
   };
 
   const searchHandler = () => {
-    Router.push({
+    Router.replace({
       pathname: "/all-properties",
       query: { 
         hotdeal: true, 
@@ -124,21 +124,19 @@ const SearchBox = () => {
     })
   }
 
+  let q = '?'
+  if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+  if(location.value) q = q + `location=${location.value}&`
+  if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
+  if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+  if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
+  if(facility.value) if(facility.value.length !== 0) q = q + `facility=${facility.value.join(",")}&`
+  if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
+  if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+  if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
+ 
   const searchHandlerMobile = () => {
-    Router.push({
-      pathname: "/all-properties",
-      query: { 
-        location: location.value, 
-        type_id: type_id.value,
-        property_for: property_for.value,
-        status: status.value,
-        period: period.value,
-        facility: facility.value.join(","),
-        min_price: price.value[0] === 0 ? null : price.value[0],
-        max_price: price.value[1] === 0 ? null : price.value[1],
-        hotdeal: hotdeal.value, 
-      },
-    })
+    Router.replace(`/all-properties${q}`)
   }
 
   return (

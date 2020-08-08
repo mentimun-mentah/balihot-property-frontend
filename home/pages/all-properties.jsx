@@ -135,19 +135,21 @@ const AllProperties = ({ searchQuery }) => {
       if (current_zoom >= 12) setRadius(10); // 10 km
       if (current_zoom >= 13) setRadius(30 / current_zoom);
     }
-    Router.replace({
-      pathname: "/all-properties",
-      query: { 
-        lat: current_position.lat,
-        lng: current_position.lng,
-        radius: radius,
-        location: location.value, 
-        type_id: type_id.value, 
-        status: status.value,
-        min_price: price.value[0] === 0 ? null : price.value[0],
-        max_price: price.value[1] === 0 ? null : price.value[1],
-      },
-    })
+    if(!searchQuery.hotdeal){
+      Router.replace({
+        pathname: "/all-properties",
+        query: { 
+          lat: current_position.lat,
+          lng: current_position.lng,
+          radius: radius,
+          location: location.value, 
+          type_id: type_id.value, 
+          status: status.value,
+          min_price: price.value[0] === 0 ? null : price.value[0],
+          max_price: price.value[1] === 0 ? null : price.value[1],
+        },
+      })
+    }
   }
 
   const infoWindowHover = () => (
@@ -277,6 +279,9 @@ const AllProperties = ({ searchQuery }) => {
     if(searchQuery.type_id){
       state.type_id.value = +searchQuery.type_id
     }
+    if(!searchQuery.type_id){
+      state.type_id.value = 1
+    }
     if(searchQuery.min_price || searchQuery.max_price){
       const min = searchQuery.min_price !== "" ? +searchQuery.min_price : 0
       const max = searchQuery.max_price !== "" ? +searchQuery.max_price : 0
@@ -293,7 +298,9 @@ const AllProperties = ({ searchQuery }) => {
   },[searchQuery])
 
   useEffect(() => {
-    const query = `type_id=${type_id.value}&q=${location.value}`
+    let id = 1
+    if(type_id.value.length !== 0) id = type_id.value
+    const query = `type_id=${id}&q=${location.value}`
     dispatch(actions.getLocation(query))
   },[location.value, type_id.value])
 

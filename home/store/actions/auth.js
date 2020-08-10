@@ -77,7 +77,7 @@ export const getUser = (ctx) => {
     const { access_token, refresh_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     const headerCfgRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } };
-    if (access_token) {
+    if (access_token && refresh_token) {
       axios.get('/user', headerCfg)
       .then(res => {
         dispatch(getUserSuccess(res.data))
@@ -90,23 +90,26 @@ export const getUser = (ctx) => {
           cookies.destroy(ctx, "username");
         }
         if(err.response && err.response.data && err.response.data.msg === "Token has expired"){
-          axios.post("/refresh", null, headerCfgRefresh)
-          .then(res => {
-            cookies.set(null, "access_token", res.data.access_token, {
-              maxAge: 30 * 24 * 60 * 60,
-              path: "/",
-            });
-            dispatch(refreshTokenSuccess(res.data.access_token));
-          })
-          .catch(err => {
-            if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
-              dispatch(authLogout())
-              cookies.destroy(ctx, "access_token");
-              cookies.destroy(ctx, "refresh_token");
-              cookies.destroy(ctx, "username");
-            }
-          })
-          dispatch(getUser())
+          if (access_token && refresh_token) {
+            axios.post("/refresh", null, headerCfgRefresh)
+            .then(res => {
+              cookies.set(null, "access_token", res.data.access_token, {
+                maxAge: 30 * 24 * 60 * 60,
+                path: "/",
+              });
+              dispatch(refreshTokenSuccess(res.data.access_token));
+              dispatch(getUser(ctx))
+            })
+            .catch(err => {
+              if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
+                dispatch(authLogout())
+                cookies.destroy(ctx, "access_token");
+                cookies.destroy(ctx, "refresh_token");
+                cookies.destroy(ctx, "username");
+              }
+            })
+          }
+          // dispatch(getUser())
         }
       })
     }
@@ -128,7 +131,8 @@ export const logout = (ctx) => {
         cookies.destroy(ctx, "username");
       })
       .catch(err => {
-        if(err.response && err.response.status == 401){
+        if(err.response && err.response.data && err.response.data.msg === "Not enough segments" || 
+           err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
           dispatch(authLogout())
           Router.reload()
           cookies.destroy(ctx, "access_token");
@@ -146,7 +150,8 @@ export const logout = (ctx) => {
         cookies.destroy(ctx, "username");
       })
       .catch(err => {
-        if(err.response && err.response.status == 401){
+        if(err.response && err.response.data && err.response.data.msg === "Not enough segments" || 
+           err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
           dispatch(authLogout())
           Router.reload()
           cookies.destroy(ctx, "access_token");
@@ -173,6 +178,12 @@ export const refreshToken = (ctx) => {
         })
         .catch((err) => {
           if(err.response && err.response.status === 422){
+            dispatch(authLogout())
+            cookies.destroy(ctx, "access_token");
+            cookies.destroy(ctx, "refresh_token");
+            cookies.destroy(ctx, "username");
+          }
+          if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
             dispatch(authLogout())
             cookies.destroy(ctx, "access_token");
             cookies.destroy(ctx, "refresh_token");

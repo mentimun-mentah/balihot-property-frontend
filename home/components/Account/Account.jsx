@@ -91,22 +91,20 @@ const Account = () => {
     }
   },[userData])
 
-  if(userData !== null){
-    useEffect(() => {
-      if(userData !== null){
-        const data = {
-          ...formUsername,
-          username: { value: userData.username, isValid: true, message: null }
-        };
-        setChangeUsername(data)
-        const fetchedImage = {
-          uid: -Math.random(),
-          url: `${process.env.API_URL}/static/avatars/${userData.avatar}`
-        }
-        setFileList([fetchedImage])
+  useEffect(() => {
+    if(userData !== null){
+      const data = {
+        ...formUsername,
+        username: { value: userData.username, isValid: true, message: null }
+      };
+      setChangeUsername(data)
+      const fetchedImage = {
+        uid: -Math.random(),
+        url: userData.avatar ? `${process.env.API_URL}/static/avatars/${userData.avatar}` : ""
       }
-    },[userData.avatar])
-  }
+      setFileList([fetchedImage])
+    }
+  },[userData])
 
   const updateProfileHandler = event => {
     event.preventDefault();

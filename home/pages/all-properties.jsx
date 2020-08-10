@@ -28,7 +28,7 @@ const formatter = new Intl.NumberFormat(['ban', 'id'])
 const status_data = ["Free Hold", "Lease Hold"];
 
 const pagination_iter = (c, m) => {
-  var delta = 2,
+  var delta = 1,
       range = [],
       rangeWithDots = [],
       l;
@@ -114,11 +114,16 @@ const AllProperties = ({ searchQuery }) => {
   if(property.length === 0) iter_data = property.length
   for(let n of pagination_iter(property.page, iter_data)){
     let click = pageHandler;
+    let disabled = false;
+    if (n === "...") {
+      disabled = true
+    }
     if (n === +active) {
       click = null;
+      disabled = true
     }
     pagination.push(
-      <Pagination.Item key={n} active={n === +active} text={+n} onClick={click}>
+      <Pagination.Item key={n + Math.random} active={n === +active} text={n} onClick={click} disabled={disabled}>
         {n}
       </Pagination.Item>
     );
@@ -126,6 +131,7 @@ const AllProperties = ({ searchQuery }) => {
   //====== PAGINATION ======//
 
   let q = '?'
+  q = q + "per_page=1&"
   if(current_position.lat) q = q + `lat=${current_position.lat}&`
   if(current_position.lng) q = q + `lng=${current_position.lng}&`
   if(radius) q = q + `radius=${radius}&`
@@ -175,7 +181,12 @@ const AllProperties = ({ searchQuery }) => {
       if (current_zoom >= 12) setRadius(10); // 10 km
       if (current_zoom >= 13) setRadius(30 / current_zoom);
     }
-    Router.replace(`/all-properties${q}`)
+    setActive(1)
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.replace(`/all-properties${check}`)
   }
 
   const infoWindowHover = () => (
@@ -305,10 +316,13 @@ const AllProperties = ({ searchQuery }) => {
     if(searchQuery.type_id){
       state.type_id.value = +searchQuery.type_id
     }
-    if(searchQuery.min_price || searchQuery.max_price){
+    if(searchQuery.min_price){
       const min = searchQuery.min_price !== "" ? +searchQuery.min_price : 0
+      state.price.value = [min, state.price.value[1]]
+    }
+    if(searchQuery.min_price || searchQuery.max_price){
       const max = searchQuery.max_price !== "" ? +searchQuery.max_price : 0
-      state.price.value = [min, max]
+      state.price.value = [state.price.value[0], max]
     }
     setSearch(state)
 
@@ -328,10 +342,18 @@ const AllProperties = ({ searchQuery }) => {
   },[location.value, type_id.value])
 
   const searchHandler = () => {
-    Router.replace(`/all-properties${q}`)
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.replace(`/all-properties${check}`)
   }
   const searchHandlerMobile = () => {
-    Router.replace(`/all-properties${q}`)
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.replace(`/all-properties${check}`)
     setChildVisible(false)
   }
   //====== SEARCH ======//
@@ -796,6 +818,7 @@ AllProperties.getInitialProps = async ctx => {
   const searchQuery = ctx.query;
   const dataQueryString = Object.keys(searchQuery).map(key => key + '=' + searchQuery[key]).join('&');
 
+  ctx.store.dispatch(actions.getPropertyStart())
   const resProperty = await axios.get(`/properties?${dataQueryString}`);
   ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
 

@@ -4,6 +4,7 @@ export { getRegion, getRegionSuccess } from "./region";
 export { 
   getProperty, 
   getPropertyBy, 
+  getPropertyStart, 
   getPropertySuccess, 
   slugPropertySuccess, 
   loveProperty,

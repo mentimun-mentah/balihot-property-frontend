@@ -40,10 +40,17 @@ instance.interceptors.response.use(function (response) {
     }
 
     if(error.response && error.response.data && error.response.data.msg === "Token has been revoked"){
-      destroyCookie(null, "access_token")
-      destroyCookie(null, "refresh_token")
-      destroyCookie(null, "username")
       Router.reload("/")
+      destroyCookie(null, "access_token", { path: "/" })
+      destroyCookie(null, "refresh_token", { path: "/" })
+      destroyCookie(null, "username", { path: "/" })
+    }
+
+    if(error.response && error.response.data && error.response.data.msg === "Not enough segments"){
+      Router.reload("/")
+      destroyCookie(null, "access_token", { path: "/" })
+      destroyCookie(null, "refresh_token", { path: "/" })
+      destroyCookie(null, "username", { path: "/" })
     }
 
     if(error.response && error.response.data && error.response.data.msg === "Token has expired"){
@@ -57,10 +64,16 @@ instance.interceptors.response.use(function (response) {
         })
         .catch(err => {
           if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
-            destroyCookie(null, "access_token")
-            destroyCookie(null, "refresh_token")
-            destroyCookie(null, "username")
             Router.reload("/")
+            destroyCookie(null, "access_token", { path: "/" })
+            destroyCookie(null, "refresh_token", { path: "/" })
+            destroyCookie(null, "username", { path: "/" })
+          }
+          if(error.response && error.response.data && error.response.data.msg === "Not enough segments"){
+            Router.reload("/")
+            destroyCookie(null, "access_token", { path: "/" })
+            destroyCookie(null, "refresh_token", { path: "/" })
+            destroyCookie(null, "username", { path: "/" })
           }
         })
     }

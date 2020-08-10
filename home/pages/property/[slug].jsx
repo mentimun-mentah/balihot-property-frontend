@@ -389,7 +389,8 @@ const Property = () => {
       <Container className="mt-4k2rem pt-5">
         <h1 className="fs-24 fs-18-s text-truncate">{name}</h1>
         <a
-          href="#"
+          href={`https://www.google.com/maps/search/?api=1&query=${location}`}
+          target="_blank"
           className="text-decoration-none text-secondary d-inline-block text-truncate fs-14-s"
           style={{ maxWidth: "48vw" }}
         >
@@ -1050,13 +1051,13 @@ Property.getInitialProps = async ctx => {
     if (access_token) {
       let res = await axios.get(`/property/${slug}`, headerCfgServer);
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
-    }
-    if (!access_token || access_token === undefined) {
+    } else {
       let res = await axios.get(`/property/${slug}`);
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     }
   } catch (err) {
-    if (err.response.data.msg === 'Token has expired'){
+    console.log("property [slug] ===> ", err.response)
+    if(err.response.data.msg === "Token has expired"){
       let res = await axios.get(`/property/${slug}`);
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     }

@@ -100,7 +100,7 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       if(query === "Sale" || query === "Rent") searchQuery = `property_for=${query}&per_page=${per_page}`;
       if(query === "Land") searchQuery = `type_id=2&per_page=${per_page}`;
     } else {
-      searchQuery = query + `&per_page=${per_page}`
+      searchQuery = query
     }
 
     const { access_token, refresh_token } = cookies.get(ctx);
@@ -110,9 +110,10 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       axios.get(`/properties?${searchQuery}`, headerCfg)
         .then(res => {
           dispatch(getPropertySuccess(res.data))
+          console.log(res.data)
         })
         .catch(err => {
-          if(err.response.data.msg === "Token has expired"){
+          if(err.response && err.response.data && err.response.data.msg === "Token has expired"){
             const headerCfgRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } };
             axios.post("/refresh", null, headerCfgRefresh)
               .then((res) => {

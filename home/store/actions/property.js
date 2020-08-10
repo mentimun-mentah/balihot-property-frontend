@@ -253,7 +253,6 @@ export const getWishlist = (query, ctx) => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     dispatch(getWishlistStart())
-    console.log(query)
     axios.get(`/wishlist/user${query}`, headerCfg)
       .then(res => {
         dispatch(getWishlistSuccess(res.data))

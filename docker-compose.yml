@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile.nginx
     restart: unless-stopped
     ports:
-      - "192.168.18.11:8000:80"
+      - "0.0.0.0:8000:80"
     depends_on:
       - frontend
       - dashboard
@@ -19,7 +19,7 @@ services:
       - "/app/.next"
       - "./dashboard:/app"
     ports:
-      - "192.168.18.11:3002:3000"
+      - "0.0.0.0:3002:3000"
   frontend:
     build:
       context: ./home

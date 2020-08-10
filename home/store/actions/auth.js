@@ -83,13 +83,13 @@ export const getUser = (ctx) => {
         dispatch(getUserSuccess(res.data))
       })
       .catch(err => {
-        if(err.response.data.msg === "Token has been revoked"){
+        if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
           dispatch(authLogout())
           cookies.destroy(ctx, "access_token");
           cookies.destroy(ctx, "refresh_token");
           cookies.destroy(ctx, "username");
         }
-        if(err.response.data.msg === "Token has expired"){
+        if(err.response && err.response.data && err.response.data.msg === "Token has expired"){
           axios.post("/refresh", null, headerCfgRefresh)
           .then(res => {
             cookies.set(null, "access_token", res.data.access_token, {
@@ -99,7 +99,7 @@ export const getUser = (ctx) => {
             dispatch(refreshTokenSuccess(res.data.access_token));
           })
           .catch(err => {
-            if(err.response.data.msg === "Token has been revoked"){
+            if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
               dispatch(authLogout())
               cookies.destroy(ctx, "access_token");
               cookies.destroy(ctx, "refresh_token");

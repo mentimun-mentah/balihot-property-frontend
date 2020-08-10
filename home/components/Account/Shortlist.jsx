@@ -51,20 +51,14 @@ const Shortlist = () => {
     }
   }
 
-  const resetFilterHandler = () => {
-    setFilter(formFilter);
-  }
-
   const { type_id, status } = filter;
 
   useEffect(() => {
-    let query = ''
-    if(type_id.value !== "" && status.value !== "") {
-      query = `type_id=${type_id.value}&status=${status.value}&page=${active}` 
-    }
-    if(type_id.value !== "" && status.value == "") query = `type_id=${type_id.value}&page=${active}`
-    if(type_id.value == "" && status.value !== "") query = `status=${status.value}&page=${active}`
-    dispatch(actions.getWishlist(query))
+    let q = '?'
+    if(active) q = q + `page=${active}&`
+    if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+    if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}`
+    dispatch(actions.getWishlist(q))
   },[type_id.value, status.value, active])
 
   //====== PAGINATION ======//
@@ -111,6 +105,7 @@ const Shortlist = () => {
                       placeholder="Select type"
                       value={type_id.value}
                       onChange={e => searchChangeHandler(e, "type_id")}
+                      allowClear
                     >
                       {type_list}
                     </Select>
@@ -120,14 +115,11 @@ const Shortlist = () => {
                       placeholder="Select status"
                       onChange={e => searchChangeHandler(e, "status")}
                       value={status.value}
-
+                      allowClear
                     >
                       <Option value="Free Hold">Free Hold</Option>
                       <Option value="Lease Hold">Lease Hold</Option>
                     </Select>
-                  </Col>
-                  <Col className="col-auto">
-                    <Button variant="link" className="text-reset fs-14" onClick={resetFilterHandler}>Clear</Button>
                   </Col>
                 </Form.Row>
               </Form>

@@ -26,36 +26,35 @@ import MobileFilters from "../components/MobileFilter";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 const status_data = ["Free Hold", "Lease Hold"];
-const Option = Select.Option
 
-  const testpagination = (c, m) => {
-    var delta = 2,
-        range = [],
-        rangeWithDots = [],
-        l;
-  
-    range.push(1)  
-    for (let i = c - delta; i <= c + delta; i++) {
-        if (i < m && i > 1) {
-            range.push(i);
-        }
-    }  
-    range.push(m);
+const pagination_iter = (c, m) => {
+  var delta = 2,
+      range = [],
+      rangeWithDots = [],
+      l;
 
-    for (let i of range) {
-        if (l) {
-            if (i - l === 2) {
-                rangeWithDots.push(l + 1);
-            } else if (i - l !== 1) {
-                rangeWithDots.push('...');
-            }
-        }
-        rangeWithDots.push(i);
-        l = i;
-    }
+  range.push(1)  
+  for (let i = c - delta; i <= c + delta; i++) {
+      if (i < m && i > 1) {
+          range.push(i);
+      }
+  }  
+  range.push(m);
 
-    return rangeWithDots;
+  for (let i of range) {
+      if (l) {
+          if (i - l === 2) {
+              rangeWithDots.push(l + 1);
+          } else if (i - l !== 1) {
+              rangeWithDots.push('...');
+          }
+      }
+      rangeWithDots.push(i);
+      l = i;
   }
+
+  return rangeWithDots;
+}
 
 const formSearch = {
   location: { value: "" },
@@ -87,7 +86,7 @@ const AllProperties = ({ searchQuery }) => {
   const [visible, setVisible] = useState(false);
   const [childVisible, setChildVisible] = useState(false);
 
-  const { location, type_id, status, price } = search;
+  const { location, type_id, status, price, hotdeal } = search;
 
   const showDrawer = () => { setVisible(true); };
   const onClose = () => { setVisible(false); };
@@ -111,17 +110,19 @@ const AllProperties = ({ searchQuery }) => {
     dispatch(actions.getPropertyBy(false, searchData, 10))
   };
   let pagination = []; let iter_data;
-  if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.length
+  if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.slice(-1)[0]
   if(property.length === 0) iter_data = property.length
-  iter_data && iter_data.length > 0 && iter_data.forEach(x => {
+  for(let n of pagination_iter(property.page, iter_data)){
     let click = pageHandler;
-    if (x === +active) click = null;
+    if (n === +active) {
+      click = null;
+    }
     pagination.push(
-      <Pagination.Item key={x} active={x === +active} text={+x} onClick={click}>
-        {x}
+      <Pagination.Item key={n} active={n === +active} text={+n} onClick={click}>
+        {n}
       </Pagination.Item>
     );
-  })
+  }
   //====== PAGINATION ======//
 
   let q = '?'
@@ -132,7 +133,8 @@ const AllProperties = ({ searchQuery }) => {
   if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
   if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
   if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
-  if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}`
+  if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+  if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
 
   //====== MAPS ======//
   const mapRef = useRef(null);
@@ -173,9 +175,7 @@ const AllProperties = ({ searchQuery }) => {
       if (current_zoom >= 12) setRadius(10); // 10 km
       if (current_zoom >= 13) setRadius(30 / current_zoom);
     }
-    if(!searchQuery.hotdeal){
-      Router.replace(`/all-properties${q}`)
-    }
+    Router.replace(`/all-properties${q}`)
   }
 
   const infoWindowHover = () => (
@@ -305,9 +305,6 @@ const AllProperties = ({ searchQuery }) => {
     if(searchQuery.type_id){
       state.type_id.value = +searchQuery.type_id
     }
-    if(!searchQuery.type_id){
-      state.type_id.value = 1
-    }
     if(searchQuery.min_price || searchQuery.max_price){
       const min = searchQuery.min_price !== "" ? +searchQuery.min_price : 0
       const max = searchQuery.max_price !== "" ? +searchQuery.max_price : 0
@@ -324,14 +321,18 @@ const AllProperties = ({ searchQuery }) => {
   },[searchQuery])
 
   useEffect(() => {
-    let id = 1
-    if(type_id.value) if(type_id.value.length !== 0) id = type_id.value
-    const query = `type_id=${id}&q=${location.value}`
-    dispatch(actions.getLocation(query))
+    let qLoct = '?'
+    if(location.value) qLoct = qLoct + `q=${location.value}&`
+    if(type_id.value) if(type_id.value.length !== 0) qLoct = qLoct + `type_id=${type_id.value}`
+    dispatch(actions.getLocation(qLoct))
   },[location.value, type_id.value])
 
   const searchHandler = () => {
     Router.replace(`/all-properties${q}`)
+  }
+  const searchHandlerMobile = () => {
+    Router.replace(`/all-properties${q}`)
+    setChildVisible(false)
   }
   //====== SEARCH ======//
 
@@ -535,7 +536,6 @@ const AllProperties = ({ searchQuery }) => {
         {/* *** MAPS DESKTOP *** */}
       </Row>
 
-      // Mobile 
       <Row className="fixed-bottom text-center mb-3 d-block d-sm-block d-md-block d-lg-none d-xl-none">
         <Col>
           <Button variant="dark" className="badge-pill px-3 py-2 fs-14 shadow" onClick={showDrawer}>
@@ -618,7 +618,7 @@ const AllProperties = ({ searchQuery }) => {
             </Button>
             <Button 
               className="btn-red-hot rounded-0"
-              onClick={() => console.log(search)}
+              onClick={searchHandlerMobile}
             > 
               Submit 
             </Button>

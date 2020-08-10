@@ -32,14 +32,10 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
   if(type_id.value == 2) renderOptions(for_list, for_data.land) // 2 for land
 
   useEffect(() => {
-    if(type_id.value.length == 0){
-      onChange(1, "type_id")
-    }
-  },[])
-
-  useEffect(() => {
-    const query = `type_id=${type_id.value}&q=${location.value}`
-    dispatch(actions.getLocation(query))
+    let qLoct = '?'
+    if(location.value) qLoct = qLoct + `q=${location.value}&`
+    if(type_id.value) if(type_id.value.length !== 0) qLoct = qLoct + `type_id=${type_id.value}`
+    dispatch(actions.getLocation(qLoct))
   },[type_id.value, location.value])
 
   return (
@@ -64,6 +60,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
           className="w-100 text-left"
           onChange={e => onChange(e, "type_id")}
           value={type_id.value}
+          allowClear
         >
           {type_list}
         </Select>
@@ -75,6 +72,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
           className="w-100 text-left"
           onChange={e => onChange(e, "property_for")}
           value={property_for.value}
+          allowClear
         >
           {for_list}
         </Select>
@@ -87,6 +85,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
             className="w-100 text-left"
             onChange={e => onChange(e, "status")}
             value={status.value}
+            allowClear
           >
             {status_list}
           </Select>
@@ -100,6 +99,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
             className="w-100 text-left"
             onChange={e => onChange(e, "period")}
             value={period.value}
+            allowClear
           >
             {period_list}
           </Select>

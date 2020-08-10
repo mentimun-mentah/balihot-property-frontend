@@ -100,7 +100,7 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       if(query === "Sale" || query === "Rent") searchQuery = `property_for=${query}&per_page=${per_page}`;
       if(query === "Land") searchQuery = `type_id=2&per_page=${per_page}`;
     } else {
-      searchQuery = query
+      searchQuery = query + `&per_page=${per_page}`
     }
 
     const { access_token, refresh_token } = cookies.get(ctx);
@@ -110,7 +110,6 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       axios.get(`/properties?${searchQuery}`, headerCfg)
         .then(res => {
           dispatch(getPropertySuccess(res.data))
-          console.log(res.data)
         })
         .catch(err => {
           if(err.response.data.msg === "Token has expired"){
@@ -126,7 +125,6 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
                 axios.get(`/properties?${searchQuery}`, headerCfgNew)
                   .then(res => {
                     dispatch(getPropertySuccess(res.data))
-                    console.log(res.data)
                   })
               })
           }
@@ -137,7 +135,6 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       axios.get(`/properties?${searchQuery}`)
         .then(res => {
           dispatch(getPropertySuccess(res.data))
-          console.log(res.data)
         })
         .catch(err => {
           dispatch(getPropertyFail(err.response))
@@ -256,7 +253,8 @@ export const getWishlist = (query, ctx) => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     dispatch(getWishlistStart())
-    axios.get(`/wishlist/user?${query}`, headerCfg)
+    console.log(query)
+    axios.get(`/wishlist/user${query}`, headerCfg)
       .then(res => {
         dispatch(getWishlistSuccess(res.data))
       })
@@ -269,7 +267,7 @@ export const getWishlist = (query, ctx) => {
 export const getLocation = (query) => {
   return dispatch => {
     dispatch(getLocationStart())
-    axios.get(`/property/search-by-location?${query}`)
+    axios.get(`/property/search-by-location${query}`)
       .then(res => {
         let loct = res.data.map(obj => {
           obj['value'] = obj['location']

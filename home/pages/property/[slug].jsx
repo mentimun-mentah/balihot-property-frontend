@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { isAuth } from "../../hoc/withAuth";
 import { updateObject } from "../../lib/utility.js";
 
-import Link from "next/link";
 import cookie from "nookies";
 import moment from "moment";
 import Router from "next/router";
@@ -729,29 +728,6 @@ const Property = () => {
               </Card>
             </Col>
 
-            <Col lg={4} className="mt-4 d-none ">
-              <Card className="property-inquiry text-center rounded-inquiry">
-                <Card.Body>
-                  <Card.Title className="fs-18 mb-1 pb-1">
-                    Asthi Smith
-                  </Card.Title>
-                  <Card.Subtitle className="fs-14 text-muted">
-                    Owner
-                  </Card.Subtitle>
-                  <Button className="mt-3 btn-call" block size="lg">
-                    <i className="fal fa-phone-alt mr-2" />
-                    <>Call Agent</>
-                  </Button>
-                </Card.Body>
-                <Card.Footer className="text-muted bg-transparent">
-                  <Button className="btn-red" block>
-                    <i className="fal fa-envelope-open mr-2"></i>
-                    Send Inquiry
-                  </Button>
-                </Card.Footer>
-              </Card>
-            </Col>
-
             <Col
               lg={{ span: 4, order: "last" }}
               md={{ order: "first" }}
@@ -819,32 +795,6 @@ const Property = () => {
                     </>
                   )}
                 </Card.Body>
-
-                <Card.Footer className="text-muted bg-transparent d-none d-lg-block">
-                  <Row className="">
-                    <Col className="px-1">
-                      <Link href="/#contact-us" as="/#contact-us">
-                        <Button
-                          className="btn-call fs-14 fs-13-lg fs-13-t"
-                          block
-                        >
-                          <i className="fal fa-phone-alt mr-2" />
-                          <>Call Agent</>
-                        </Button>
-                      </Link>
-                    </Col>
-                    <Col className="px-1">
-                      <Button
-                        className="btn-red fs-14 fs-13-lg fs-13-t"
-                        block
-                        href="mailto:support@balihot-property.com?subject=Inquiry Property"
-                      >
-                        <i className="fal fa-envelope-open mr-2"></i>
-                        Send Inquiry
-                      </Button>
-                    </Col>
-                  </Row>
-                </Card.Footer>
               </Card>
             </Col>
           </Row>
@@ -879,27 +829,6 @@ const Property = () => {
           <ContainerCardPropertySimilar dataProperty={similar_listing} />
         </Container>
       </section>
-
-      <Row className="fixed-bottom pt-2 pb-2 pl-4 pr-4 bg-light border-top d-lg-none">
-        <Col className="px-1">
-          <Link href="/#contact-us" as="/#contact-us">
-            <Button className="btn-call fs-12" block>
-              <i className="fal fa-phone-alt mr-2" />
-              Call Agent
-            </Button>
-          </Link>
-        </Col>
-        <Col className="px-1">
-          <Button
-            className="btn-red fs-12"
-            block
-            href="mailto:support@balihot-property.com?subject=Inquiry Property"
-          >
-            <i className="fal fa-envelope-open mr-2"></i>
-            Send Inquiry
-          </Button>
-        </Col>
-      </Row>
 
       {/* SHOW ALL PHOTO */}
       <ReactBnbGallery

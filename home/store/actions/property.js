@@ -110,7 +110,6 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       axios.get(`/properties?${searchQuery}`, headerCfg)
         .then(res => {
           dispatch(getPropertySuccess(res.data))
-          console.log(res.data)
         })
         .catch(err => {
           if(err.response && err.response.data && err.response.data.msg === "Token has expired"){
@@ -196,7 +195,7 @@ export const slugProperty = (slug, ctx) => {
   }
 }
 
-export const loveProperty = (id, ctx) => {
+export const loveProperty = (id, slug, ctx) => {
   return dispatch => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
@@ -209,6 +208,14 @@ export const loveProperty = (id, ctx) => {
           description: res.data.message,
           placement: 'bottomRight',
         });
+        if(Router.router.pathname === "/property/[slug]"){
+          if(slug === Router.router.query.slug){
+            axios.get(`/property/${slug}`, headerCfg)
+              .then(res => {
+                dispatch(slugPropertySuccess(res.data))
+              })
+          }
+        }
       })
       .catch(err => {
         dispatch(lovePropertyFail(err.response))
@@ -221,7 +228,7 @@ export const loveProperty = (id, ctx) => {
   }
 }
 
-export const unLoveProperty = (id, ctx) => {
+export const unLoveProperty = (id, slug, ctx) => {
   return dispatch => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
@@ -235,7 +242,15 @@ export const unLoveProperty = (id, ctx) => {
           placement: 'bottomRight',
         });
         if(Router.pathname === "/account"){
-          dispatch(getWishlist())
+          dispatch(getWishlist(_, ctx))
+        }
+        if(Router.router.pathname === "/property/[slug]"){
+          if(slug === Router.router.query.slug){
+            axios.get(`/property/${slug}`, headerCfg)
+              .then(res => {
+                dispatch(slugPropertySuccess(res.data))
+              })
+          }
         }
       })
       .catch(err => {
@@ -256,7 +271,21 @@ export const getWishlist = (query, ctx) => {
     dispatch(getWishlistStart())
     axios.get(`/wishlist/user${query}`, headerCfg)
       .then(res => {
-        dispatch(getWishlistSuccess(res.data))
+        const fetchedData = [];
+        for(let key in res.data.data){
+          fetchedData.push({
+            ...res.data.data[key],
+            love: true
+          })
+        }
+        const data = {
+          data: fetchedData, 
+          iter_pages: res.data.iter_pages, 
+          next_num: res.data.next_num, 
+          page: res.data.page, 
+          prev_num: res.data.prev_num
+        }
+        dispatch(getWishlistSuccess(data))
       })
       .catch(err => {
         dispatch(getWishlistFail(err.response))

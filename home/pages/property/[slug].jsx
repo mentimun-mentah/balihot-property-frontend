@@ -64,6 +64,8 @@ const Property = () => {
   let pf = property_for.split(",");
   const propertyShareLink = `${process.env.BASE_URL}/property/${slug}`;
 
+  console.log(Router.router.pathname)
+
   const mapRef = useRef(null);
   const [center, setCenter] = useState({ lat: latitude, lng: longitude });
   const [marker_click, setMarker_click] = useState(false);
@@ -95,16 +97,16 @@ const Property = () => {
     setIsMoreText(val);
   };
 
-  const loveHandler = id => {
+  const loveHandler = (id, slug) => {
     if (!isAuth()) {
       favLoginBtn();
     }
     if (isAuth() && !fav) {
-      dispatch(actions.loveProperty(id));
+      dispatch(actions.loveProperty(id, slug));
       setFav(!fav);
     }
     if (isAuth() && fav) {
-      dispatch(actions.unLoveProperty(id));
+      dispatch(actions.unLoveProperty(id, slug));
       setFav(!fav);
     }
   };
@@ -411,7 +413,7 @@ const Property = () => {
           </a>
           <a
             className="text-decoration-none text-secondary"
-            onClick={() => loveHandler(id)}
+            onClick={() => loveHandler(id, slug)}
           >
             {fav ? (
               <span className="btn-share-like">

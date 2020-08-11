@@ -107,6 +107,7 @@ const Shortlist = () => {
                       onChange={e => searchChangeHandler(e, "type_id")}
                       allowClear
                     >
+                      <Option value="">All</Option>
                       {type_list}
                     </Select>
                   </Col>
@@ -117,6 +118,7 @@ const Shortlist = () => {
                       value={status.value}
                       allowClear
                     >
+                      <Option value="">All</Option>
                       <Option value="Free Hold">Free Hold</Option>
                       <Option value="Lease Hold">Lease Hold</Option>
                     </Select>

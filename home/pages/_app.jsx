@@ -31,6 +31,18 @@ const App = ({ Component, pageProps, store }) => {
 
   //},[])
 
+  useEffect(() => {
+    window.$crisp = [];
+    window.CRISP_WEBSITE_ID = "dd114cf0-49f1-481d-af2b-033c5fea4c53";
+    (function () {
+      let d = document;
+      let s = d.createElement("script");
+      s.src = "https://client.crisp.chat/l.js";
+      s.async = 1;
+      d.getElementsByTagName("head")[0].appendChild(s);
+    })();
+  }, []);
+
   return (
     <React.Fragment>
       <Head>
@@ -215,6 +227,13 @@ const App = ({ Component, pageProps, store }) => {
         }
         :global(.ant-slider-track){
           background-color: #f9696be0;
+        }
+
+        /*### EMPTY CARD ###*/
+        :global(.img-size) {
+          width: auto;
+          height: 100px;
+          opacity: 0.5;
         }
       `}</style>
     </React.Fragment>

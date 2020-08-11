@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Pagination from 'react-bootstrap/Pagination'
+import Container from 'react-bootstrap/Container'
 import ContainerCardProperty from "../Card/ContainerCardProperty";
 import * as actions from "../../store/actions";
 
@@ -50,20 +51,14 @@ const Shortlist = () => {
     }
   }
 
-  const resetFilterHandler = () => {
-    setFilter(formFilter);
-  }
-
   const { type_id, status } = filter;
 
   useEffect(() => {
-    let query = ''
-    if(type_id.value !== "" && status.value !== "") {
-      query = `type_id=${type_id.value}&status=${status.value}&page=${active}` 
-    }
-    if(type_id.value !== "" && status.value == "") query = `type_id=${type_id.value}&page=${active}`
-    if(type_id.value == "" && status.value !== "") query = `status=${status.value}&page=${active}`
-    dispatch(actions.getWishlist(query))
+    let q = '?'
+    if(active) q = q + `page=${active}&`
+    if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+    if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}`
+    dispatch(actions.getWishlist(q))
   },[type_id.value, status.value, active])
 
   //====== PAGINATION ======//
@@ -110,7 +105,9 @@ const Shortlist = () => {
                       placeholder="Select type"
                       value={type_id.value}
                       onChange={e => searchChangeHandler(e, "type_id")}
+                      allowClear
                     >
+                      <Option value="">All</Option>
                       {type_list}
                     </Select>
                   </Col>
@@ -119,21 +116,32 @@ const Shortlist = () => {
                       placeholder="Select status"
                       onChange={e => searchChangeHandler(e, "status")}
                       value={status.value}
-
+                      allowClear
                     >
+                      <Option value="">All</Option>
                       <Option value="Free Hold">Free Hold</Option>
                       <Option value="Lease Hold">Lease Hold</Option>
                     </Select>
                   </Col>
-                  <Col className="col-auto">
-                    <Button variant="link" className="text-reset fs-14" onClick={resetFilterHandler}>Clear</Button>
-                  </Col>
                 </Form.Row>
               </Form>
-              <ContainerCardProperty 
-                dataProperty={property} 
-                horizontal={false} 
-              />
+              {property && property.data.length > 0 ? (
+                <ContainerCardProperty 
+                  dataProperty={property} 
+                  horizontal={false} 
+                />
+              ) : (
+                <Container>
+                  <Card className="text-muted mt-2 pt-5 pb-5 shadow-none border-0">
+                    <Card.Img variant="top" src="/static/images/no-property.png" className="img-size mx-auto" />
+                    <Card.Body>
+                      <Card.Title className="text-center">
+                        There is no wishlist 
+                      </Card.Title>
+                    </Card.Body>
+                  </Card>
+                </Container>
+              )}
               {property.iter_pages && property.iter_pages.length > 0 && property.iter_pages.length > 1 && (
                 <Pagination className="justify-content-end mt-4">
                   <Pagination.Prev onClick={prevHandler} disabled={property.prev_num === null} />

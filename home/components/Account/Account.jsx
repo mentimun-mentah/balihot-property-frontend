@@ -9,11 +9,11 @@ import { formUpdatePassword, formAddPassword } from "./accountData";
 import { updateAccountIsValid, changePasswordIsValid, addPasswordIsValid } from "../../lib/validateFormAccount";
 import cx from "classnames";
 import swal from "sweetalert";
+import Router from "next/router";
 import axios, { headerCfg, headerCfgFormData } from "../../lib/axios";
 import * as actions from "../../store/actions";
 
 const formUsername = { username: { value: "", isValid: true, message: null }, };
-
 
 const Account = () => {
   const dispatch = useDispatch();
@@ -86,6 +86,12 @@ const Account = () => {
   };
 
   useEffect(() => {
+    if(userData == null){
+      Router.replace("/")
+    }
+  },[userData])
+
+  useEffect(() => {
     if(userData !== null){
       const data = {
         ...formUsername,
@@ -94,11 +100,11 @@ const Account = () => {
       setChangeUsername(data)
       const fetchedImage = {
         uid: -Math.random(),
-        url: `${process.env.API_URL}/static/avatars/${userData.avatar}`
+        url: userData.avatar ? `${process.env.API_URL}/static/avatars/${userData.avatar}` : ""
       }
       setFileList([fetchedImage])
     }
-  },[userData.avatar])
+  },[userData])
 
   const updateProfileHandler = event => {
     event.preventDefault();
@@ -352,7 +358,7 @@ const Account = () => {
                               </InputGroup.Prepend>
                               <Form.Control
                                 type="email"
-                                placeholder={userData.email}
+                                placeholder={userData !== null && userData.email}
                                 className="border-left-0 custom-place pl-1"
                                 disabled
                               />
@@ -361,7 +367,7 @@ const Account = () => {
                         </Form.Row>
                         {/* FORM USERNAME & EMAIL */}
 
-                        {userData.old_password ? (
+                        {userData !== null && userData.old_password ? (
                           // FORM OLD PASSWORD
                           <Form.Row>
                             <Form.Group as={Col} md={6} lg={4}>

@@ -45,16 +45,16 @@ const CardContainer = ({
     })
   }
 
-  const loveHandler = id => {
+  const loveHandler = (id, slug) => {
     if(!isAuth()){
       favLoginBtn()
     } 
     if(isAuth() && !fav) {
-      dispatch(actions.loveProperty(id))
+      dispatch(actions.loveProperty(id, slug))
       setFav(!fav)
     } 
     if(isAuth() && fav) {
-      dispatch(actions.unLoveProperty(id))
+      dispatch(actions.unLoveProperty(id, slug))
       setFav(!fav)
     } 
   }
@@ -216,9 +216,9 @@ const CardContainer = ({
             <Col className="text-right">
               <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
                 {fav ? (
-                  <i className="fas fa-lg fa-heart text-bhp" onClick={() => loveHandler(id)} />
+                  <i className="fas fa-lg fa-heart text-bhp" onClick={() => loveHandler(id, slug)} />
                 ) : (
-                  <i className="fal fa-lg fa-heart" onClick={() => loveHandler(id)} />
+                  <i className="fal fa-lg fa-heart" onClick={() => loveHandler(id, slug)} />
                 )}
               </span>
               <a className="text-decoration-none text-muted hov_pointer">
@@ -317,7 +317,7 @@ const CardContainer = ({
           bottom: 0px;
           left: 0px;
           padding: 10px 8px 15px 8px;
-          width: auto;
+          width: 100%;
           white-space: pre;
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;

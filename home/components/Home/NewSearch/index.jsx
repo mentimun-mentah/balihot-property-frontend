@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { Container, Row, Col, Nav, Button, Form, Card} from "react-bootstrap";
+import { Container, Row, Col, Nav, Button } from "react-bootstrap";
 import { AnimatePresence } from "framer-motion";
-import { Drawer, Input, AutoComplete, Select, Slider, Checkbox } from 'antd';
+import { Drawer } from 'antd';
 import Router from "next/router";
 import SearchContainer from "./Container";
 import { renderOptions } from "../../../lib/renderOptions";
@@ -19,7 +19,6 @@ const formSearch = {
   hotdeal: { value: false },
 };
 
-const formatter = new Intl.NumberFormat(["ban", "id"]);
 const for_data = { villa: ["Sale", "Rent"], land: ["Sale"] }; // If type is Land than only Sale
 const period_data = ["Annually", "Monthly", "Weekly", "Daily"]; // If type is Villa
 const status_data = ["Free Hold", "Lease Hold"];
@@ -44,8 +43,6 @@ const SearchBox = () => {
   if(type_id.value == 2) renderOptions(for_list, for_data.land) // 2 for land
 
   //====== SEARCH ======//
-  const options = [ { value: "Seminyak" }, { value: "Kuta" }, { value: "Nusa Dua" }, { value: "Sesetan" } ];
-
   const searchChangeHandler = (e, category) => {
     if (category === "location") {
       const data = { ...search, location: { value: e } };
@@ -119,7 +116,7 @@ const SearchBox = () => {
   };
 
   const searchHandler = () => {
-    Router.push({
+    Router.replace({
       pathname: "/all-properties",
       query: { 
         hotdeal: true, 
@@ -127,21 +124,19 @@ const SearchBox = () => {
     })
   }
 
+  let q = '?'
+  if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+  if(location.value) q = q + `location=${location.value}&`
+  if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
+  if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+  if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
+  if(facility.value) if(facility.value.length !== 0) q = q + `facility=${facility.value.join(",")}&`
+  if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
+  if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+  if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
+ 
   const searchHandlerMobile = () => {
-    Router.push({
-      pathname: "/all-properties",
-      query: { 
-        location: location.value, 
-        type_id: type_id.value,
-        property_for: property_for.value,
-        status: status.value,
-        period: period.value,
-        facility: facility.value.join(","),
-        min_price: price.value[0] === 0 ? null : price.value[0],
-        max_price: price.value[1] === 0 ? null : price.value[1],
-        hotdeal: hotdeal.value, 
-      },
-    })
+    Router.replace(`/all-properties${q}`)
   }
 
   return (
@@ -230,124 +225,6 @@ const SearchBox = () => {
           hotdealHandler={hotdealHandler} 
           onChange={searchChangeHandler} 
         />
-        {/* <Row> */}
-        {/*   <Col xs={12} sm={12} md={12} className="mb-3"> */}
-        {/*     <Form.Label className="fw-600">Location</Form.Label> */}
-        {/*     <AutoComplete */}
-        {/*       className="search-input w-100" */}
-        {/*       options={options} */}
-        {/*       filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1} */}
-        {/*       value={location.value} */}
-        {/*       onChange={e => searchChangeHandler(e, "location")} */}
-        {/*     > */}
-        {/*       <Input size="large" placeholder="Location" /> */}
-        {/*     </AutoComplete> */}
-        {/*   </Col> */}
-        {/*   <Col xs={12} sm={6} md={6} className="mb-3"> */}
-        {/*     <Form.Label className="fw-600">Property Type</Form.Label> */}
-        {/*     <Select */}
-        {/*       placeholder="Select type" */}
-        {/*       className="w-100 text-left" */}
-        {/*       onChange={e => searchChangeHandler(e, "type_id")} */}
-        {/*       value={type_id.value} */}
-        {/*     > */}
-        {/*       {type_list} */}
-        {/*     </Select> */}
-        {/*   </Col> */}
-        {/*   <Col xs={12} sm={6} md={6} className="mb-3"> */}
-        {/*     <Form.Label className="fw-600">Property For</Form.Label> */}
-        {/*     <Select */}
-        {/*       placeholder="For" */}
-        {/*       className="w-100 text-left" */}
-        {/*       onChange={e => searchChangeHandler(e, "property_for")} */}
-        {/*       value={property_for.value} */}
-        {/*     > */}
-        {/*       {for_list} */}
-        {/*     </Select> */}
-        {/*   </Col> */}
-        {/*   {property_for.value === "Sale" && ( */}
-        {/*     <Col xs={12} sm={12} md={12} className="mb-3"> */}
-        {/*       <Form.Label className="fw-600">Status</Form.Label> */}
-        {/*       <Select */}
-        {/*         placeholder="Status" */}
-        {/*         className="w-100 text-left" */}
-        {/*         onChange={e => searchChangeHandler(e, "status")} */}
-        {/*         value={status.value} */}
-        {/*       > */}
-        {/*         {status_list} */}
-        {/*       </Select> */}
-        {/*     </Col> */}
-        {/*   )} */}
-        {/*   {property_for.value === "Rent" && ( */}
-        {/*     <Col xs={12} sm={12} md={12} className="mb-3"> */}
-        {/*       <Form.Label className="fw-600">Period</Form.Label> */}
-        {/*       <Select */}
-        {/*         placeholder="Period" */}
-        {/*         className="w-100 text-left" */}
-        {/*         onChange={e => searchChangeHandler(e, "period")} */}
-        {/*         value={period.value} */}
-        {/*       > */}
-        {/*         {period_list} */}
-        {/*       </Select> */}
-        {/*     </Col> */}
-        {/*   )} */}
-        {/*   {type_id.value == 1 && ( */}
-        {/*     <Col xs={12} sm={12} md={12} className="mb-3"> */}
-        {/*       <Form.Label className="fw-600">Facilities</Form.Label> */}
-        {/*       <Select */}
-        {/*         size="large" */}
-        {/*         mode="multiple" */}
-        {/*         placeholder="Facilities" */}
-        {/*         className="w-100 text-left" */}
-        {/*         onChange={e => searchChangeHandler(e, "facility")} */}
-        {/*         value={facility.value} */}
-        {/*       > */}
-        {/*         {facility_list} */}
-        {/*       </Select> */}
-        {/*     </Col> */}
-        {/*   )} */}
-        {/*   <Col sm={12} className="mb-3"> */}
-        {/*     <Form.Label className="fw-600">Price</Form.Label> */}
-        {/*     <Row> */}
-        {/*       <Col> */}
-        {/*         <Card.Body className="pb-2 pl-0 pt-0"> */}
-        {/*           <h5 className="card-title fs-12 text-secondary mb-1">MIN</h5> */}
-        {/*           <p className="text-dark card-text">${formatter.format(price.value[0])}</p> */}
-        {/*         </Card.Body> */}
-        {/*       </Col> */}
-        {/*       <Col> */}
-        {/*         <Card.Body className="pb-2 pl-0 pt-0"> */}
-        {/*           <h5 className="card-title fs-12 text-secondary mb-1">MAX</h5> */}
-        {/*           <p className="text-dark card-text"> */}
-        {/*             ${`${formatter.format(price.value[1])}`} */}
-        {/*           </p> */}
-        {/*         </Card.Body> */}
-        {/*       </Col> */}
-        {/*     </Row> */}
-        {/*     <Row> */}
-        {/*       <Col> */}
-        {/*         <div className="card-body pt-0 px-0 pb-1"> */}
-        {/*           <Slider range */} 
-        {/*             tooltipVisible={false} */} 
-        {/*             min={0} */}
-        {/*             max={1000000000} */}
-        {/*             step={10} */}
-        {/*             value={price.value} */}
-        {/*             onChange={e => searchChangeHandler(e, "price")} */}
-        {/*           /> */}
-        {/*         </div> */}
-        {/*       </Col> */}
-        {/*     </Row> */}
-        {/*   </Col> */}
-        {/*   <Col sm={12} className="mb-3"> */}
-        {/*     <Checkbox */}
-        {/*       checked={hotdeal.value} */} 
-        {/*       onChange={hotdealHandler} */}
-        {/*     > */}
-        {/*       Hot Deals ? */}
-        {/*     </Checkbox> */}
-        {/*   </Col> */}
-        {/* </Row> */}
       </Drawer>
 
       <style jsx>{`

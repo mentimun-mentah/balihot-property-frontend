@@ -22,17 +22,21 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import InputGroup from "react-bootstrap/InputGroup";
 
+import InfoModal from "../../../components/Property/InfoModal";
 import ImageProperty from "../../../components/Property/ImageProperty"
 import BuildingInformation from "../../../components/Property/BuildingInformation"
 import LocationInformation from "../../../components/Property/LocationInformation"
 import StyleProperty from "../../../components/Property/style"
+const InfoModalMemo = React.memo(InfoModal);
 
 const ImagePropertyMemo = React.memo(ImageProperty)
 
 const Property = () => {
+  const [showInfo, setShowInfo] = useState(false);
   //========= PROPERTY ==========//
   const [imageList, setImageList] = useState(formImage);
   const [property, setProperty] = useState(formProperty);
+
   const {name, type_id, region_id, property_for, land_size, youtube, description} = property; // Property Information
   const {status, freehold_price, leasehold_price, leasehold_period} = property; // Property for sale
   const {period, daily_price, weekly_price, monthly_price, annually_price, hotdeal} = property; // Property for rent
@@ -321,6 +325,8 @@ const Property = () => {
   }
   //========= SUBMIT HANDLER ==========//
 
+  const showInfoHandler = () => setShowInfo(!showInfo);
+
   const invalidName = cx({ "is-invalid": !name.isValid });
   const invalidType = cx({ "is-invalid": !type_id.isValid });
   const invalidRegion = cx({ "is-invalid": !region_id.isValid });
@@ -601,9 +607,12 @@ const Property = () => {
                   {/*PRICE VILLA FOR RENT*/}
 
                   <Form.Group>
-                    <Form.Label>Youtube</Form.Label>
+                    <Form.Label>
+                      Youtube
+                      <i className="far fa-map-marker-question hov_pointer text-primary ml-1" onClick={showInfoHandler}/>
+                    </Form.Label>
                     <Form.Control type="text"
-                      placeholder="Youtube link"
+                      placeholder="Youtube embed link"
                       name="youtube"
                       className={invalidYoutube}
                       value={youtube.value}
@@ -665,6 +674,10 @@ const Property = () => {
           </Col>
         </Row>
       </Container>
+
+      {showInfo && (
+        <InfoModalMemo show={showInfo} close={showInfoHandler} />
+      )}
 
       <style jsx>{StyleProperty}</style>
     </>

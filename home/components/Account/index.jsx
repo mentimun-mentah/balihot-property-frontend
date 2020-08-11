@@ -8,11 +8,7 @@ import Shortlist from "./Shortlist";
 const Account = () => {
   const userData = useSelector(state => state.auth.data);
   const [select, setSelect] = useState("account");
-  const selectHandler = e => {
-  setSelect(e);
-    console.log(e)
-
-  }
+  const selectHandler = e => { setSelect(e); }
   return (
     <>
       <Container className="mt-4k2rem bg-light" fluid>

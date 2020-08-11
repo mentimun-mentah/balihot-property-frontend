@@ -2,6 +2,7 @@ const express = require("express");
 const next = require("next");
 const cookieParser = require("cookie-parser");
 const axios = require("axios");
+const {response} = require("express");
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== "production";
@@ -23,6 +24,18 @@ app.prepare().then(() => {
       res.redirect(302, process.env.BASE_URL);
     });
   });
+
+  //Login Google
+  server.get("/login/google/:token", async (req, res) => {
+    // console.log("====================================> ", req.originalUrl)
+    await axios.get(`${process.env.API_URL}${req.originalUrl}`).then(response => {
+      res.cookie("access_token", response.data.access_token);
+      res.cookie("refresh_token", response.data.refresh_token);
+      res.cookie("fresh", true);
+  console.log("####### access_token => ", response.data.access_token, " ####### refresh_token => ", response.data.refresh_token)
+      res.redirect(302, process.env.BASE_URL);
+    }).catch(err => console.log("SERVER.JS ERROR ====> ", err.response))
+  })
 
   //Reset Password
   server.get("/password/reset/:token", async (req, res) => {

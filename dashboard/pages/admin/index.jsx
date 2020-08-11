@@ -21,6 +21,39 @@ const App = () => {
           </Card>
         </Col>
       </Row>
+      <Row>
+        <Col xl={8}>
+          <Card>
+            <div className="card-header">
+              <Row>
+                <Col>
+                  <h3 className="mb-0">Top properties</h3>
+                </Col>
+              </Row>
+            </div>
+    
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Property name</th>
+                    <th scope="col">Visitors</th>
+                    <th scope="col">Favorite</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Villa test 1</th>
+                    <td>2000</td>
+                    <td>340</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 };

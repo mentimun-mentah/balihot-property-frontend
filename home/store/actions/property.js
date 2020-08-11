@@ -1,7 +1,9 @@
 import { notification } from 'antd';
 import cookies from "nookies";
 import * as actionType from "./actionTypes";
+import * as actions from "./index";
 import axios from "../../lib/axios";
+import Router from "next/router"
 
 export const getPropertyStart = () => {
   return { type: actionType.GET_PROPERTY_START}
@@ -101,7 +103,7 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       searchQuery = query
     }
 
-    const { access_token } = cookies.get(ctx);
+    const { access_token, refresh_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     if(access_token){
       dispatch(getPropertyStart())
@@ -110,6 +112,22 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
           dispatch(getPropertySuccess(res.data))
         })
         .catch(err => {
+          if(err.response && err.response.data && err.response.data.msg === "Token has expired"){
+            const headerCfgRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } };
+            axios.post("/refresh", null, headerCfgRefresh)
+              .then((res) => {
+                cookies.set(null, "access_token", res.data.access_token, {
+                  maxAge: 30 * 24 * 60 * 60,
+                  path: "/",
+                });
+                dispatch(actions.refreshTokenSuccess(res.data.access_token));
+                const headerCfgNew = { headers: { Authorization: `Bearer ${res.data.access_token}` } };
+                axios.get(`/properties?${searchQuery}`, headerCfgNew)
+                  .then(res => {
+                    dispatch(getPropertySuccess(res.data))
+                  })
+              })
+          }
           dispatch(getPropertyFail(err.response))
         })
     } else {
@@ -177,7 +195,7 @@ export const slugProperty = (slug, ctx) => {
   }
 }
 
-export const loveProperty = (id, ctx) => {
+export const loveProperty = (id, slug, ctx) => {
   return dispatch => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
@@ -190,6 +208,14 @@ export const loveProperty = (id, ctx) => {
           description: res.data.message,
           placement: 'bottomRight',
         });
+        if(Router.router.pathname === "/property/[slug]"){
+          if(slug === Router.router.query.slug){
+            axios.get(`/property/${slug}`, headerCfg)
+              .then(res => {
+                dispatch(slugPropertySuccess(res.data))
+              })
+          }
+        }
       })
       .catch(err => {
         dispatch(lovePropertyFail(err.response))
@@ -202,7 +228,7 @@ export const loveProperty = (id, ctx) => {
   }
 }
 
-export const unLoveProperty = (id, ctx) => {
+export const unLoveProperty = (id, slug, ctx) => {
   return dispatch => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
@@ -215,6 +241,17 @@ export const unLoveProperty = (id, ctx) => {
           description: res.data.message,
           placement: 'bottomRight',
         });
+        if(Router.pathname === "/account"){
+          dispatch(getWishlist(_, ctx))
+        }
+        if(Router.router.pathname === "/property/[slug]"){
+          if(slug === Router.router.query.slug){
+            axios.get(`/property/${slug}`, headerCfg)
+              .then(res => {
+                dispatch(slugPropertySuccess(res.data))
+              })
+          }
+        }
       })
       .catch(err => {
         dispatch(unLovePropertyFail(err.response))
@@ -232,9 +269,23 @@ export const getWishlist = (query, ctx) => {
     const { access_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     dispatch(getWishlistStart())
-    axios.get(`/wishlist/user?${query}&per_page=1`, headerCfg)
+    axios.get(`/wishlist/user${query}`, headerCfg)
       .then(res => {
-        dispatch(getWishlistSuccess(res.data))
+        const fetchedData = [];
+        for(let key in res.data.data){
+          fetchedData.push({
+            ...res.data.data[key],
+            love: true
+          })
+        }
+        const data = {
+          data: fetchedData, 
+          iter_pages: res.data.iter_pages, 
+          next_num: res.data.next_num, 
+          page: res.data.page, 
+          prev_num: res.data.prev_num
+        }
+        dispatch(getWishlistSuccess(data))
       })
       .catch(err => {
         dispatch(getWishlistFail(err.response))
@@ -245,7 +296,7 @@ export const getWishlist = (query, ctx) => {
 export const getLocation = (query) => {
   return dispatch => {
     dispatch(getLocationStart())
-    axios.get(`/property/search-by-location?${query}`)
+    axios.get(`/property/search-by-location${query}`)
       .then(res => {
         let loct = res.data.map(obj => {
           obj['value'] = obj['location']

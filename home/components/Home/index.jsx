@@ -22,7 +22,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(actions.getPropertyBy(true, "Sale"))
+    dispatch(actions.getPropertyBy(true, "Sale", 3))
   },[])
 
   const region = useSelector(state => state.region.region)

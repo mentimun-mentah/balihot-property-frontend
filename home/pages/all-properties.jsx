@@ -27,6 +27,35 @@ import MobileFilters from "../components/MobileFilter";
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 const status_data = ["Free Hold", "Lease Hold"];
 
+const pagination_iter = (c, m) => {
+  var delta = 1,
+      range = [],
+      rangeWithDots = [],
+      l;
+
+  range.push(1)  
+  for (let i = c - delta; i <= c + delta; i++) {
+      if (i < m && i > 1) {
+          range.push(i);
+      }
+  }  
+  range.push(m);
+
+  for (let i of range) {
+      if (l) {
+          if (i - l === 2) {
+              rangeWithDots.push(l + 1);
+          } else if (i - l !== 1) {
+              rangeWithDots.push('...');
+          }
+      }
+      rangeWithDots.push(i);
+      l = i;
+  }
+
+  return rangeWithDots;
+}
+
 const formSearch = {
   location: { value: "" },
   type_id: { value: [] },
@@ -42,6 +71,7 @@ const AllProperties = ({ searchQuery }) => {
   const dispatch = useDispatch();
   const property = useSelector(state => state.property.property)
   const dataType = useSelector((state) => state.types.types);
+  const listLocation = useSelector(state => state.property.location);
 
   const [search, setSearch] = useState(formSearch);
   const [radius, setRadius] = useState();
@@ -56,7 +86,7 @@ const AllProperties = ({ searchQuery }) => {
   const [visible, setVisible] = useState(false);
   const [childVisible, setChildVisible] = useState(false);
 
-  const { location, type_id, status, price } = search;
+  const { location, type_id, status, price, hotdeal } = search;
 
   const showDrawer = () => { setVisible(true); };
   const onClose = () => { setVisible(false); };
@@ -71,30 +101,46 @@ const AllProperties = ({ searchQuery }) => {
   };
   const prevHandler = () => {
     setActive(property.prev_num);
-    const searchData = `page=${+event.target.text}&` + queryString
+    const searchData = `page=${property.prev_num}&` + queryString
     dispatch(actions.getPropertyBy(false, searchData, 10))
   };
   const nextHandler = () => {
     setActive(property.next_num);
-    const searchData = `page=${+event.target.text}&` + queryString
+    const searchData = `page=${property.next_num}&` + queryString
     dispatch(actions.getPropertyBy(false, searchData, 10))
   };
-  let pagination = [];
-  let iter_data;
-  if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.length
+  let pagination = []; let iter_data;
+  if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.slice(-1)[0]
   if(property.length === 0) iter_data = property.length
-  for (let n = 1; n <= iter_data ; n++) {
+  for(let n of pagination_iter(property.page, iter_data)){
     let click = pageHandler;
+    let disabled = false;
+    if (n === "...") {
+      disabled = true
+    }
     if (n === +active) {
       click = null;
+      disabled = true
     }
     pagination.push(
-      <Pagination.Item key={n} active={n === +active} text={+n} onClick={click}>
+      <Pagination.Item key={n + Math.random} active={n === +active} text={n} onClick={click} disabled={disabled}>
         {n}
       </Pagination.Item>
     );
   }
   //====== PAGINATION ======//
+
+  let q = '?'
+  q = q + "per_page=1&"
+  if(current_position.lat) q = q + `lat=${current_position.lat}&`
+  if(current_position.lng) q = q + `lng=${current_position.lng}&`
+  if(radius) q = q + `radius=${radius}&`
+  if(location.value) q = q + `location=${location.value}&`
+  if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+  if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+  if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
+  if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+  if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
 
   //====== MAPS ======//
   const mapRef = useRef(null);
@@ -135,19 +181,12 @@ const AllProperties = ({ searchQuery }) => {
       if (current_zoom >= 12) setRadius(10); // 10 km
       if (current_zoom >= 13) setRadius(30 / current_zoom);
     }
-    Router.replace({
-      pathname: "/all-properties",
-      query: { 
-        lat: current_position.lat,
-        lng: current_position.lng,
-        radius: radius,
-        location: location.value, 
-        type_id: type_id.value, 
-        status: status.value,
-        min_price: price.value[0] === 0 ? null : price.value[0],
-        max_price: price.value[1] === 0 ? null : price.value[1],
-      },
-    })
+    setActive(1)
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.replace(`/all-properties${check}`)
   }
 
   const infoWindowHover = () => (
@@ -190,7 +229,6 @@ const AllProperties = ({ searchQuery }) => {
   //====== MAPS ======//
 
   //====== SEARCH ======//
-  const options = [ { value: 'Seminyak', }, { value: 'Kuta', }, { value: 'Nusa Dua', }, { value: 'Sesetan', } ];
   const type_list = []; renderOptions(type_list, dataType, true);
   const status_list = []; renderOptions(status_list, status_data)
 
@@ -278,10 +316,13 @@ const AllProperties = ({ searchQuery }) => {
     if(searchQuery.type_id){
       state.type_id.value = +searchQuery.type_id
     }
-    if(searchQuery.min_price || searchQuery.max_price){
+    if(searchQuery.min_price){
       const min = searchQuery.min_price !== "" ? +searchQuery.min_price : 0
+      state.price.value = [min, state.price.value[1]]
+    }
+    if(searchQuery.min_price || searchQuery.max_price){
       const max = searchQuery.max_price !== "" ? +searchQuery.max_price : 0
-      state.price.value = [min, max]
+      state.price.value = [state.price.value[0], max]
     }
     setSearch(state)
 
@@ -293,17 +334,27 @@ const AllProperties = ({ searchQuery }) => {
     return () => {}
   },[searchQuery])
 
+  useEffect(() => {
+    let qLoct = '?'
+    if(location.value) qLoct = qLoct + `q=${location.value}&`
+    if(type_id.value) if(type_id.value.length !== 0) qLoct = qLoct + `type_id=${type_id.value}`
+    dispatch(actions.getLocation(qLoct))
+  },[location.value, type_id.value])
+
   const searchHandler = () => {
-    Router.replace({
-      pathname: "/all-properties",
-      query: { 
-        location: location.value, 
-        type_id: type_id.value, 
-        status: status.value,
-        min_price: price.value[0] === 0 ? null : price.value[0],
-        max_price: price.value[1] === 0 ? null : price.value[1],
-      },
-    })
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.replace(`/all-properties${check}`)
+  }
+  const searchHandlerMobile = () => {
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.replace(`/all-properties${check}`)
+    setChildVisible(false)
   }
   //====== SEARCH ======//
 
@@ -334,7 +385,7 @@ const AllProperties = ({ searchQuery }) => {
               <Form.Label className="h1 fs-18">Location</Form.Label>
               <AutoComplete 
                 className="search-input"
-                options={options}
+                options={listLocation}
                 filterOption={(inputValue, option) =>
                   option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                 }
@@ -350,6 +401,7 @@ const AllProperties = ({ searchQuery }) => {
                 <Select placeholder="Type" className="w-100"
                   onChange={e => searchChangeHandler(e, "type_id")}
                   value={type_id.value}
+                  allowClear
                 >
                   {type_list}
                 </Select>
@@ -358,6 +410,7 @@ const AllProperties = ({ searchQuery }) => {
                 <Select placeholder="Status" className="w-100"
                   onChange={e => searchChangeHandler(e, "status")}
                   value={status.value}
+                  allowClear
                 >
                   {status_list}
                 </Select>
@@ -587,7 +640,7 @@ const AllProperties = ({ searchQuery }) => {
             </Button>
             <Button 
               className="btn-red-hot rounded-0"
-              onClick={() => console.log(search)}
+              onClick={searchHandlerMobile}
             > 
               Submit 
             </Button>
@@ -765,6 +818,7 @@ AllProperties.getInitialProps = async ctx => {
   const searchQuery = ctx.query;
   const dataQueryString = Object.keys(searchQuery).map(key => key + '=' + searchQuery[key]).join('&');
 
+  ctx.store.dispatch(actions.getPropertyStart())
   const resProperty = await axios.get(`/properties?${dataQueryString}`);
   ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
 

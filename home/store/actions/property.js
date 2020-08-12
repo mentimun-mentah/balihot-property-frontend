@@ -105,30 +105,23 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
 
     const { access_token, refresh_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
-    if(access_token){
+    if(access_token, refresh_token){
       dispatch(getPropertyStart())
       axios.get(`/properties?${searchQuery}`, headerCfg)
         .then(res => {
           dispatch(getPropertySuccess(res.data))
         })
         .catch(err => {
-          if(err.response && err.response.data && err.response.data.msg === "Token has expired"){
-            const headerCfgRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } };
-            axios.post("/refresh", null, headerCfgRefresh)
-              .then((res) => {
-                cookies.set(null, "access_token", res.data.access_token, {
-                  maxAge: 30 * 24 * 60 * 60,
-                  path: "/",
-                });
-                dispatch(actions.refreshTokenSuccess(res.data.access_token));
-                const headerCfgNew = { headers: { Authorization: `Bearer ${res.data.access_token}` } };
-                axios.get(`/properties?${searchQuery}`, headerCfgNew)
-                  .then(res => {
-                    dispatch(getPropertySuccess(res.data))
-                  })
-              })
-          }
+          console.log("ACTION PROPERTY ######## === > ", err.response)
           dispatch(getPropertyFail(err.response))
+          axios.get(`/properties?${searchQuery}`)
+            .then(res => {
+              dispatch(getPropertySuccess(res.data))
+            })
+            .catch(err => {
+              dispatch(getPropertyFail(err.response))
+              console.log("BAWAH ACTION PROPERTY ######## === > ", err.response)
+            })
         })
     } else {
       dispatch(getPropertyStart())

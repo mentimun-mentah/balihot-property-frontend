@@ -4,8 +4,8 @@ import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps
 import { libraries, mapContainerStyle, mapMobileContainerStyle } from "../lib/GMaps-options";
 import { default_center, GMapsOptions } from "../lib/GMaps-options";
 import { markerOptions, infoOptions } from "../lib/GMaps-options";
-import { Input, AutoComplete, Select, Slider, Drawer } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Input, AutoComplete, Select, Slider, Drawer, Menu, Dropdown, Button } from 'antd';
+import { LoadingOutlined, DownOutlined } from '@ant-design/icons';
 import { motion, AnimatePresence } from "framer-motion";
 import { Fade } from "../components/Transition";
 import { renderOptions } from "../lib/renderOptions";
@@ -16,7 +16,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import Table from "react-bootstrap/Table";
+import ButtonBoot from "react-bootstrap/Button";
 import * as actions from "../store/actions";
 import Container from 'react-bootstrap/Container'
 import Pagination from 'react-bootstrap/Pagination'
@@ -26,6 +27,7 @@ import MobileFilters from "../components/MobileFilter";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 const status_data = ["Free Hold", "Lease Hold"];
+const { Option } = Select;
 
 const pagination_iter = (c, m) => {
   var delta = 1,
@@ -63,8 +65,11 @@ const formSearch = {
   status: { value: [] },
   period: { value: [] },
   price: { value: [0, 0] },
+  bedroom: { value: [] },
+  bathroom: { value: [] },
   facility: { value: [] },
   hotdeal: { value: false },
+  region_id: { value: "" },
 };
 
 const AllProperties = ({ searchQuery }) => {
@@ -86,7 +91,8 @@ const AllProperties = ({ searchQuery }) => {
   const [visible, setVisible] = useState(false);
   const [childVisible, setChildVisible] = useState(false);
 
-  const { location, type_id, status, price, hotdeal } = search;
+  const { location, type_id, property_for, status, period, price, bedroom, bathroom, hotdeal, facility } = search;
+  const { region_id } = search;
 
   const showDrawer = () => { setVisible(true); };
   const onClose = () => { setVisible(false); };
@@ -137,10 +143,16 @@ const AllProperties = ({ searchQuery }) => {
   if(radius) q = q + `radius=${radius}&`
   if(location.value) q = q + `location=${location.value}&`
   if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+  if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
   if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+  if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
   if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
   if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
-  if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
+  if(bedroom.value) if(bedroom.value.length !== 0) q = q + `bedroom=${bedroom.value}&`
+  if(bathroom.value) if(bathroom.value.length !== 0) q = q + `bathroom=${bathroom.value}&`
+  if(facility.value) if(facility.value.length !== 0) q = q + `facility=${facility.value}&`
+  if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}&`
+  if(region_id.value) q = q + `region_id=${region_id.value}&`
 
   //====== MAPS ======//
   const mapRef = useRef(null);
@@ -241,11 +253,13 @@ const AllProperties = ({ searchQuery }) => {
       const data = { 
         ...search, 
         type_id: { value: e }, 
-        status: { value: [] }, 
         property_for: { value: [] },
+        status: { value: [] }, 
         period: { value: [] }, 
-        facility: { value: [] }, 
         price: { value: [0, 0] },
+        facility: { value: [] }, 
+        bedroom: { value: [] },
+        bathroom: { value: [] },
       };
       setSearch(data);
     }
@@ -269,14 +283,12 @@ const AllProperties = ({ searchQuery }) => {
       };
       setSearch(data);
     }
-    if (category === "price") {
-      const data = { ...search, price: { value: e }, }
-      setSearch(data);
-    }
     if (category === "period") {
       const data = { 
         ...search, 
-        period: { value: e } 
+        period: { value: e },
+        status: { value: [] },
+        price: { value: [0, 0] },
       };
       setSearch(data);
     }
@@ -307,14 +319,21 @@ const AllProperties = ({ searchQuery }) => {
   useEffect(() => {
     if(!searchQuery) return
     const state = JSON.parse(JSON.stringify(search));
+    const current_pos = JSON.parse(JSON.stringify(current_position));
+    if(searchQuery.type_id){
+      state.type_id.value = +searchQuery.type_id
+    }
     if(searchQuery.location){
       state.location.value = searchQuery.location
+    }
+    if(searchQuery.property_for){
+      state.property_for.value = searchQuery.property_for !== "" ? [searchQuery.property_for] : []
     }
     if(searchQuery.status){
       state.status.value = searchQuery.status !== "" ? [searchQuery.status] : []
     }
-    if(searchQuery.type_id){
-      state.type_id.value = +searchQuery.type_id
+    if(searchQuery.period){
+      state.period.value = searchQuery.period !== "" ? [searchQuery.period] : []
     }
     if(searchQuery.min_price){
       const min = searchQuery.min_price !== "" ? +searchQuery.min_price : 0
@@ -324,7 +343,30 @@ const AllProperties = ({ searchQuery }) => {
       const max = searchQuery.max_price !== "" ? +searchQuery.max_price : 0
       state.price.value = [state.price.value[0], max]
     }
+    if(searchQuery.bedroom){
+      state.bedroom.value = searchQuery.bedroom !== "" ? [searchQuery.bedroom] : []
+    }
+    if(searchQuery.bathroom){
+      state.bathroom.value = searchQuery.bathroom !== "" ? [searchQuery.bathroom] : []
+    }
+    if(searchQuery.facility){
+      let fetchedFacility = []
+      let fa = searchQuery.facility.split(",")
+      fa.forEach(x => fetchedFacility.push(+x))
+      state.facility.value = searchQuery.facility !== "" ? fetchedFacility : []
+    }
+    if(searchQuery.hotdeal){
+      state.hotdeal.value = searchQuery.hotdeal !== "" ? searchQuery.hotdeal : false
+    }
+    if(searchQuery.region_id){
+      state.region_id.value = searchQuery.region_id
+    }
     setSearch(state)
+    if(searchQuery.lat && searchQuery.lng){
+      current_pos.lat = searchQuery.lat
+      current_pos.lng = searchQuery.lng
+    }
+    setCurrent_postition(current_pos)
 
     const dataQueryString = Object.keys(searchQuery).map(key => key + '=' + searchQuery[key]).join('&');
     setQueryString(dataQueryString)
@@ -342,20 +384,86 @@ const AllProperties = ({ searchQuery }) => {
   },[location.value, type_id.value])
 
   const searchHandler = () => {
+    let q = '?'
+    q = q + "per_page=1&"
+    if(location.value) q = q + `location=${location.value}&`
+    if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+    if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+    if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
+    if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+
     let check = q.slice(-1)
     if(check === "&") check = q.slice(0, -1)
     else check = q
+    setActive(1)
+    setCurrent_postition({})
 
     Router.replace(`/all-properties${check}`)
   }
   const searchHandlerMobile = () => {
+    let q = '?'
+    q = q + "per_page=1&"
+    if(location.value) q = q + `location=${location.value}&`
+    if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+    if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
+    if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+    if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
+    if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
+    if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+    if(facility.value) if(facility.value.length !== 0) q = q + `facility=${facility.value}&`
+    if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
+
     let check = q.slice(-1)
     if(check === "&") check = q.slice(0, -1)
     else check = q
+    setActive(1)
+    setCurrent_postition({})
 
     Router.replace(`/all-properties${check}`)
     setChildVisible(false)
   }
+
+  const priceMenu = (
+    <Menu style={{ width: "50vh" }}>
+      <div
+        className="col-12 justify-content-center px-0"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="toast-body p-4">
+          <Table className="table-borderless">
+            <thead>
+              <tr>
+                <th className="card-title fs-12 text-secondary font-weight-bold pl-0">MIN</th>
+                <th className="card-title fs-12 text-secondary font-weight-bold text-right pr-0">MAX</th>
+              </tr>
+              <tr>
+                <td className="pl-0 py-0">
+                  <p className="font-weight-bold text-dark card-text">
+                    IDR{formatter.format(price.value[0])}
+                  </p>
+                </td>
+                <td className="pr-0 py-0">
+                  <p className="font-weight-bold text-dark card-text float-right">
+                    IDR{`${formatter.format(price.value[1])}`}
+                  </p>
+                </td>
+              </tr>
+            </thead>
+          </Table>
+          <Slider
+            range
+            tooltipVisible={false}
+            min={0}
+            max={1000000000}
+            step={10}
+            value={price.value}
+            onChange={e => searchChangeHandler(e, "price")}
+          />
+        </div>
+      </div>
+    </Menu>
+  );
+
   //====== SEARCH ======//
 
   if (loadError) return "Error";
@@ -403,6 +511,7 @@ const AllProperties = ({ searchQuery }) => {
                   value={type_id.value}
                   allowClear
                 >
+                  <Option value="">All</Option>
                   {type_list}
                 </Select>
               </Form.Group>
@@ -412,52 +521,30 @@ const AllProperties = ({ searchQuery }) => {
                   value={status.value}
                   allowClear
                 >
+                  <Option value="">All</Option>
                   {status_list}
                 </Select>
               </Form.Group>
               <Form.Group as={Col} className="col-md-4">
-                <Select placeholder="Price" className="w-100"
-                  dropdownRender={() => (
-                    <>
-                      <Row>
-                        <Col>
-                          <Card.Body className="pb-2">
-                            <h5 className="card-title fs-12 text-secondary font-weight-bold">MIN</h5>
-                            <p className="font-weight-bold text-dark card-text">${formatter.format(price.value[0])}</p>
-                          </Card.Body>
-                        </Col>
-                        <Col>
-                          <Card.Body className="text-right pb-2">
-                            <h5 className="card-title fs-12 text-secondary font-weight-bold">MAX</h5>
-                            <p className="font-weight-bold text-dark card-text float-right">
-                              ${`${formatter.format(price.value[1])}`}
-                            </p>
-                          </Card.Body>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <div className="card-body pt-0">
-                            <Slider range 
-                              tooltipVisible={false} 
-                              min={0}
-                              max={1000000000}
-                              step={10}
-                              value={price.value}
-                              onChange={e => searchChangeHandler(e, "price")}
-                            />
-                          </div>
-                        </Col>
-                      </Row>
-                    </>
-                  )}
+                <Dropdown
+                  className="w-100"
+                  overlay={priceMenu}
+                  trigger={["click"]}
+                  overlayClassName="menu-price"
+                  placement="bottomRight"
                 >
-                </Select>
+                  <Button className="btn-price">
+                    <span className="btn-price-text">Price </span>
+                    <span className="btn-price-arrow">
+                      <DownOutlined />
+                    </span>
+                  </Button>
+                </Dropdown>
               </Form.Group>
             </Form.Row>
-            <Button className="btn-red-hot border-0 h-47" block onClick={searchHandler}>
+            <ButtonBoot className="btn-red-hot border-0 h-47" block onClick={searchHandler}>
               Search Now
-            </Button>
+            </ButtonBoot>
           </Form>
           {/* *** SEARCH DESKTOP *** */}
 
@@ -560,9 +647,9 @@ const AllProperties = ({ searchQuery }) => {
 
       <Row className="fixed-bottom text-center mb-3 d-block d-sm-block d-md-block d-lg-none d-xl-none">
         <Col>
-          <Button variant="dark" className="badge-pill px-3 py-2 fs-14 shadow" onClick={showDrawer}>
+          <ButtonBoot variant="dark" className="badge-pill px-3 py-2 fs-14 shadow" onClick={showDrawer}>
             <i className="far fa-map mr-2" />Map
-          </Button>
+          </ButtonBoot>
         </Col>
       </Row>
       <Drawer
@@ -588,13 +675,13 @@ const AllProperties = ({ searchQuery }) => {
           </span>
         </AnimatePresence>
         <div className="position-absolute close-mobile-search">
-          <Button className="fm-button" variant="light" onClick={onClose}>
+          <ButtonBoot className="fm-button" variant="light" onClick={onClose}>
             <i className="fas fa-times" />
-          </Button>
+          </ButtonBoot>
           <br />
-          <Button className="fm-button" variant="light" onClick={showChildDrawer}>
+          <ButtonBoot className="fm-button" variant="light" onClick={showChildDrawer}>
             <i className="fas fa-sliders-h" />
-          </Button>
+          </ButtonBoot>
         </div>
         <GoogleMap
           mapContainerStyle={mapMobileContainerStyle}
@@ -631,19 +718,19 @@ const AllProperties = ({ searchQuery }) => {
         className="d-block d-sm-block d-md-block d-lg-none d-xl-none"
         footer={
           <div style={{ textAlign: 'right' }} >
-            <Button 
+            <ButtonBoot 
               variant="link" 
               className="mr-2 rounded-0 text-reset"
               onClick={onChildClose}
             >
               Cancel
-            </Button>
-            <Button 
+            </ButtonBoot>
+            <ButtonBoot 
               className="btn-red-hot rounded-0"
               onClick={searchHandlerMobile}
             > 
               Submit 
-            </Button>
+            </ButtonBoot>
           </div>
         }
       >
@@ -663,6 +750,7 @@ const AllProperties = ({ searchQuery }) => {
         :global(.page-item.active .page-link){
           background-color: #021927;
           border-color: #021927;
+          color: white !important;
         }
         :global(.page-link:hover){
           color: #021927;
@@ -728,7 +816,7 @@ const AllProperties = ({ searchQuery }) => {
           border-radius: 0.25rem;
         }
         :global(.ant-input:focus, .ant-input-focused, .ant-input:hover, 
-                .ant-select-focused.ant-select-single:not(.ant-select-customize-input) .ant-select-selector
+                .ant-select-focused.ant-select-single:not(.ant-select-customize-input) .ant-select-selector, .ant-btn:hover, .ant-btn:focus
         ){
           border: 1px solid rgb(162, 162, 162);
           border-radius: 0.25rem;
@@ -808,7 +896,23 @@ const AllProperties = ({ searchQuery }) => {
           height: 100px;
           opacity: 0.5;
         }
-
+        :global(.btn-price) {
+          height: 47px;
+          padding: 8px 11px;
+          border-radius: 0.25rem;
+        }
+        :global(.btn-price-text) {
+          float: left;
+          color: #a3a3a3;
+        }
+        :global(.btn-price-arrow) {
+          float: right;
+        }
+        :global(.btn-price-arrow > span) {
+          font-size: 12px;
+          color: #a3a3a3;
+          vertical-align: 0;
+        }
       `}</style>
     </>
   );
@@ -818,12 +922,14 @@ AllProperties.getInitialProps = async ctx => {
   const searchQuery = ctx.query;
   const dataQueryString = Object.keys(searchQuery).map(key => key + '=' + searchQuery[key]).join('&');
 
-  ctx.store.dispatch(actions.getPropertyStart())
   const resProperty = await axios.get(`/properties?${dataQueryString}`);
   ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
 
   const resType = await axios.get('/types');
   ctx.store.dispatch(actions.getTypeSuccess(resType.data));
+  const resFacilities = await axios.get('/facilities');
+  ctx.store.dispatch(actions.getFacilitySuccess(resFacilities.data));
+
   return { searchQuery: searchQuery }
 }
 

@@ -1,9 +1,13 @@
+import getConfig from 'next/config';
 import axios from "axios";
 import Router from "next/router";
 import {parseCookies, setCookie, destroyCookie} from "nookies";
 
+const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
+const API_URL = serverRuntimeConfig.API_URL || publicRuntimeConfig.API_URL;
+
 const instance = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: API_URL,
 });
 
 const {access_token, refresh_token} = parseCookies()

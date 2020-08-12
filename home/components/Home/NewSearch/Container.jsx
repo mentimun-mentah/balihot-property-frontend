@@ -18,16 +18,16 @@ import * as actions from "../../../store/actions"
 const Option = Select.Option;
 const formatter = new Intl.NumberFormat(["ban", "id"]);
 const for_data = { villa: ["Sale", "Rent"], land: ["Sale"] }; // If type is Land than only Sale
-const status_data = {
-  sale: ["Free Hold", "Lease Hold"],
-  rent: ["Annually", "Monthly", "Weekly", "Daily"]
-};
+
+const period_data = ["Annually", "Monthly", "Weekly", "Daily"]; // If type is Villa
+const status_data = ["Free Hold", "Lease Hold"];
 
 const formSearch = {
   location: { value: "" },
   type_id: { value: [] },
   property_for: { value: [] },
   status: { value: [] },
+  period: { value: [] },
   price: { value: [0, 0] },
   bedroom: { value : [] },
   bathroom: { value: [] },
@@ -41,19 +41,15 @@ const SearchBox = ({ searchType }) => {
   const dataFacilities = useSelector(state => state.facilities.facilities.slice(0,16));
   const listLocation = useSelector(state => state.property.location);
 
-  const { location, property_for, status, price, facility, bedroom, bathroom } = search;
+  const { location, property_for, status, period, price, facility, bedroom, bathroom } = search;
 
   //====== SEARCH ======//
-  const type_list = [];
-  renderOptions(type_list, dataType, true);
-  const status_list = [];
-  if ((searchType == 1 && property_for.value === "Sale") || searchType == 2)
-    renderOptions(status_list, status_data.sale);
-  if (searchType == 1 && property_for.value === "Rent")
-    renderOptions(status_list, status_data.rent);
+  const type_list = []; renderOptions(type_list, dataType, true);
   const for_list = [];
   if (searchType == 1) renderOptions(for_list, for_data.villa); // 1 for villa
   if (searchType == 2) renderOptions(for_list, for_data.land); // 2 for land
+  const period_list = []; renderOptions(period_list, period_data)
+  const status_list = []; renderOptions(status_list, status_data)
 
   const searchChangeHandler = (e, category) => {
     if (category === "location") {
@@ -67,7 +63,8 @@ const SearchBox = ({ searchType }) => {
       const data = {
         ...search,
         property_for: { value: e },
-        status: { value: [] }
+        status: { value: [] },
+        period: { value: [] }
       };
       setSearch(data);
     }
@@ -75,6 +72,13 @@ const SearchBox = ({ searchType }) => {
       const data = {
         ...search,
         status: { value: e }
+      };
+      setSearch(data);
+    }
+    if (category === "period") {
+      const data = {
+        ...search,
+        period: { value: e }
       };
       setSearch(data);
     }
@@ -109,6 +113,18 @@ const SearchBox = ({ searchType }) => {
   };
 
   useEffect(() => {
+    if (searchType === "2") {
+      const data = {
+        ...search,
+        property_for: { value: e },
+        status: { value: [] },
+        period: { value: [] }
+      };
+      setSearch(data);
+    }
+  }, [searchType])
+
+  useEffect(() => {
     let qLoct = '?'
     if(location.value) qLoct = qLoct + `q=${location.value}&`
     if(searchType) qLoct = qLoct + `type_id=${searchType}`
@@ -116,21 +132,23 @@ const SearchBox = ({ searchType }) => {
   },[location.value, searchType])
 
   const searchHandler = () => {
-    Router.push({
-      pathname: "/all-properties",
-      query: { 
-        type_id: searchType, 
-        location: location.value, 
-        property_for: property_for.value,
-        status: property_for.value === "Sale" ? status.value : null,
-        period: property_for.value === "Rent" ? status.value : null,
-        facility: facility.value.join(","),
-        min_price: price.value[0] === 0 ? null : price.value[0],
-        max_price: price.value[1] === 0 ? null : price.value[1],
-        bedroom: bedroom.value,
-        bathroom: bathroom.value,
-      },
-    })
+    let q = '?'
+    q = q + "per_page=1&"
+    if(searchType) q = q + `type_id=${searchType}&`
+    if(location.value) q = q + `location=${location.value}&`
+    if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
+    if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+    if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
+    if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
+    if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+    if(bedroom.value) if(bedroom.value.length !== 0) q = q + `bedroom=${bedroom.value}&`
+    if(bathroom.value) if(bathroom.value.length !== 0) q = q + `bathroom=${bathroom.value}&`
+    if(facility.value) if(facility.value.length !== 0) q = q + `facility=${facility.value.join(",")}`
+
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+    Router.push(`/all-properties${check}`)
   }
 
   const advancedMenu = (
@@ -160,7 +178,7 @@ const SearchBox = ({ searchType }) => {
                     onChange={e => searchChangeHandler(e, "bedroom")}
                     value={bedroom.value}
                   >
-                    {[...Array(81)].map((_, i) => (
+                    {[...Array(16)].map((_, i) => (
                       <Option value={i + 1} key={i}>
                         {i + 1}
                       </Option>
@@ -174,7 +192,7 @@ const SearchBox = ({ searchType }) => {
                     onChange={e => searchChangeHandler(e, "bathroom")}
                     value={bathroom.value}
                   >
-                    {[...Array(8)].map((_, i) => (
+                    {[...Array(16)].map((_, i) => (
                       <Option value={i + 1} key={i}>
                         {i + 1}
                       </Option>
@@ -205,12 +223,12 @@ const SearchBox = ({ searchType }) => {
               <tr>
                 <td className="pl-0 py-0">
                   <p className="font-weight-bold text-dark card-text">
-                    ${formatter.format(price.value[0])}
+                    IDR{formatter.format(price.value[0])}
                   </p>
                 </td>
                 <td className="pr-0 py-0">
                   <p className="font-weight-bold text-dark card-text float-right">
-                    ${`${formatter.format(price.value[1])}`}
+                    IDR{`${formatter.format(price.value[1])}`}
                   </p>
                 </td>
               </tr>
@@ -267,12 +285,29 @@ const SearchBox = ({ searchType }) => {
           </Col>
           <Col md={2} className="pr-0">
             <Select
-              placeholder="Status"
+              placeholder={
+                searchType === "1" && property_for.value === "Sale" ? "Status" : 
+                searchType === "1" && property_for.value === "Rent" ? "Period" : 
+                searchType === "2" && property_for.value === "Sale" ? "Status" : "Status"
+              }
               className="w-100 text-left"
-              onChange={e => searchChangeHandler(e, "status")}
-              value={status.value}
+              onChange={
+                searchType === "1" && property_for.value === "Sale" ? e => searchChangeHandler(e, "status") : 
+                searchType === "1" && property_for.value === "Rent" ? e => searchChangeHandler(e, "period") : 
+                searchType === "2" && property_for.value === "Sale" ? e => searchChangeHandler(e, "status") : e => searchChangeHandler(e, "status")
+                
+              }
+              value={
+                searchType === "1" && property_for.value === "Sale" ? status.value : 
+                searchType === "1" && property_for.value === "Rent" ? period.value : 
+                searchType === "2" && property_for.value === "Sale" ? status.value : status.value
+              }
             >
-              {status_list}
+              {
+                searchType === "1" && property_for.value === "Sale" ? <>{status_list}</> : 
+                searchType === "1" && property_for.value === "Rent" ? <>{period_list}</> : 
+                searchType === "2" && property_for.value === "Sale" ? <>{status_list}</> : <>{status_list}</>
+              }
             </Select>
           </Col>
           <Col md={2} className="pr-0">

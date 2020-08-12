@@ -64,8 +64,6 @@ const Property = () => {
   let pf = property_for.split(",");
   const propertyShareLink = `${process.env.BASE_URL}/property/${slug}`;
 
-  console.log(Router.router.pathname)
-
   const mapRef = useRef(null);
   const [center, setCenter] = useState({ lat: latitude, lng: longitude });
   const [marker_click, setMarker_click] = useState(false);
@@ -644,9 +642,6 @@ const Property = () => {
                 <Card.Body className="p-l-0-s p-r-0-s mb-2 property-distance">
                   <Card.Title className="fs-16-s property-content-title">
                     Distance to:
-                    <span className="float-right hov_pointer text-muted">
-                      <i className="fal fa-question-circle"></i>
-                    </span>
                   </Card.Title>
                   <div className="divide-title"></div>
                   <Row>
@@ -747,8 +742,7 @@ const Property = () => {
                   )}
 
                   <Card.Title className="fs-18 mb-1 pb-1 text-uppercase">
-                    {(type_id == 1 && "Villa") || (type_id == 2 && "Land")} Type
-                    Property
+                    {(type_id == 1 && "Villa") || (type_id == 2 && "Land")} Property
                   </Card.Title>
                   <Card.Subtitle className="fs-14 mt-1 text-muted">
                     For {pf.length > 0 && pf[0] !== "" && <>{pf.join(" & ")}</>}{" "}
@@ -1058,11 +1052,8 @@ Property.getInitialProps = async ctx => {
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     }
   } catch (err) {
-    console.log("property [slug] ===> ", err.response)
-    if(err.response.data.msg === "Token has expired"){
-      let res = await axios.get(`/property/${slug}`);
-      ctx.store.dispatch(actions.slugPropertySuccess(res.data));
-    }
+    let res = await axios.get(`/property/${slug}`);
+    ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     if (err.response && err.response.status == 404) {
       process.browser
         ? Router.replace("/", "/") //Redirec from Client Side

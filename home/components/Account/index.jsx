@@ -31,7 +31,7 @@ const Account = () => {
                   </Col>
                   <Col md={8}>
                     <Card.Body className="px-0 text-truncate">
-                      <Card.Title className="h6 fs-13-pro p-l-2-pro text-truncate">
+                      <Card.Title className="h6 fs-13-pro p-l-2-pro text-truncate text-capitalize">
                         {userData !== null && <>{userData.username}</>}
                       </Card.Title>
                     </Card.Body>
@@ -180,6 +180,9 @@ const Account = () => {
           :global(.p-l-2-pro) {
             padding-left: .5rem !important;
           }
+        }
+        :global(.ant-notification){
+          z-index: 1030;
         }
 
       `}</style>

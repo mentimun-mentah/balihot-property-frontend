@@ -116,7 +116,7 @@ const SearchBox = () => {
   };
 
   const searchHandler = () => {
-    Router.replace({
+    Router.push({
       pathname: "/all-properties",
       query: { 
         hotdeal: true, 
@@ -136,7 +136,11 @@ const SearchBox = () => {
   if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
  
   const searchHandlerMobile = () => {
-    Router.replace(`/all-properties${q}`)
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.push(`/all-properties${check}`)
   }
 
   return (

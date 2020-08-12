@@ -178,16 +178,16 @@ const Header = () => {
     )
 
     headerMobile = (
-      <>
+      <div className="text-truncate mr-2">
         <img
           className="img-profile mr-2"
           src={`${process.env.API_URL}/static/avatars/${user.avatar}`}
           alt="profile"
         /> 
-        <span className="text-capitalize">
+        <span className="text-capitalize text-truncate">
           {user.username}
         </span>
-      </>
+      </div>
     )
   }
 
@@ -301,6 +301,7 @@ const Header = () => {
       <Drawer
         className="d-block d-sm-block d-md-block d-lg-none d-xl-none"
         placement="right"
+        closeIcon={ <i className="fas fa-times" /> }
         onClose={onClose}
         visible={visible}
         zIndex="1030"

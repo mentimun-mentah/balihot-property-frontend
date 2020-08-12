@@ -127,14 +127,14 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
               <Col>
                 <Card.Body className="pb-2 pl-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MIN</h5>
-                  <p className="text-dark card-text">${formatter.format(price.value[0])}</p>
+                  <p className="text-dark card-text">IDR{formatter.format(price.value[0])}</p>
                 </Card.Body>
               </Col>
               <Col>
                 <Card.Body className="pb-2 pl-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MAX</h5>
                   <p className="text-dark card-text">
-                    ${`${formatter.format(price.value[1])}`}
+                    IDR{`${formatter.format(price.value[1])}`}
                   </p>
                 </Card.Body>
               </Col>

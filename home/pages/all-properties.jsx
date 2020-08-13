@@ -4,7 +4,7 @@ import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps
 import { libraries, mapContainerStyle, mapMobileContainerStyle } from "../lib/GMaps-options";
 import { default_center, GMapsOptions } from "../lib/GMaps-options";
 import { markerOptions, infoOptions } from "../lib/GMaps-options";
-import { Input, AutoComplete, Select, Slider, Drawer, Menu, Dropdown, Button } from 'antd';
+import { Input, AutoComplete, Select, Slider, Drawer, Menu, Dropdown, Button, Checkbox } from 'antd';
 import { LoadingOutlined, DownOutlined } from '@ant-design/icons';
 import { motion, AnimatePresence } from "framer-motion";
 import { Fade } from "../components/Transition";
@@ -93,6 +93,8 @@ const AllProperties = ({ searchQuery }) => {
   const [queryString, setQueryString] = useState();
   const [visible, setVisible] = useState(false);
   const [childVisible, setChildVisible] = useState(false);
+  const [moveSearch, setMoveSearch] = useState(true);
+  const [mapChange, setMapChange] = useState(false)
 
   const { location, type_id, property_for, status, period, price, bedroom, bathroom, hotdeal, facility } = search;
   const { region_id } = search;
@@ -101,6 +103,7 @@ const AllProperties = ({ searchQuery }) => {
   const onClose = () => { setVisible(false); };
   const showChildDrawer = () => { setChildVisible(true); };
   const onChildClose = () => { setChildVisible(false); };
+  const moveSearchHandler = () => setMoveSearch(!moveSearch)
   
   //====== PAGINATION ======//
   const pageHandler = (event) => {
@@ -201,7 +204,20 @@ const AllProperties = ({ searchQuery }) => {
     if(check === "&") check = q.slice(0, -1)
     else check = q
 
+    if(moveSearch){
+      Router.replace(`/all-properties${check}`)
+    } else {
+      setMapChange(true)
+    }
+  }
+
+  const searchAreaHandler = () => {
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
     Router.replace(`/all-properties${check}`)
+    setMapChange(false)
   }
 
   const infoWindowHover = () => (
@@ -654,18 +670,25 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
 
         {/* *** MAPS DESKTOP *** */}
         <Col xl={5} lg={5} className="position-sticky px-0 top-4rem card-wrapper d-none d-sm-none d-md-none d-lg-block d-xl-block">
-          <AnimatePresence exitBeforeEnter key={loading}>
-            <span className="position-absolute text-searching badge-light text-center">
-              <motion.div
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={Fade}
-              >
-                {dataMaps}
-              </motion.div>
-            </span>
-          </AnimatePresence>
+          <span className="position-absolute text-searching badge-light text-center">
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={Fade}
+            >
+              {dataMaps}
+            </motion.div>
+          </span>
+          {mapChange ? (
+            <Button className="position-absolute move-search" onClick={searchAreaHandler}>
+              <i className="fas fa-redo mr-2" /> Search this area
+            </Button>
+            ) : (
+            <Button className="position-absolute move-search" onClick={moveSearchHandler}>
+            <Checkbox checked={moveSearch} onChange={moveSearchHandler} className="mr-2" /> Search as I move the map
+            </Button>
+          )}
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             onCenterChanged={updateCenter}
@@ -708,18 +731,25 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
         height="100vh"
         zIndex="1030"
       >
-        <AnimatePresence exitBeforeEnter key={loading}>
-          <span className="position-absolute text-searching-mobile badge-light text-center">
-            <motion.div
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={Fade}
-            >
-              {dataMaps}
-            </motion.div>
-          </span>
-        </AnimatePresence>
+        <span className="position-absolute text-searching-mobile badge-light text-center">
+          <motion.div
+            initial="initial"
+            animate="in"
+            exit="out"
+            variants={Fade}
+          >
+            {dataMaps}
+          </motion.div>
+        </span>
+        {mapChange ? (
+          <Button className="position-absolute move-search" onClick={searchAreaHandler}>
+            <i className="fas fa-redo mr-2" /> Search this area
+          </Button>
+          ) : (
+          <Button className="position-absolute move-search" onClick={moveSearchHandler}>
+            <Checkbox checked={moveSearch} onChange={moveSearchHandler} className="mr-2" /> Search as I move the map
+          </Button>
+        )}
         <div className="position-absolute close-mobile-search">
           <ButtonBoot className="fm-button" variant="light" onClick={onClose}>
             <i className="fas fa-times" />
@@ -885,9 +915,8 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
         :global(.text-searching) {
           z-index: 10;
           margin: 0 auto;
-          top: 2.3rem;
-          left: 50%;
-          transform: translate(-50%, -50%);
+          bottom: 30px;
+          left: 10px;
           padding: 10px 15px;
           font-size: 14px;
           font-weight: 500;
@@ -895,6 +924,7 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
           justify-content: center !important;
           background: rgb(255, 255, 255) !important;
           border-radius: 8px !important;
+          color: rgb(101 101 101);
         }
 
         :global(.anticon){
@@ -919,14 +949,14 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
           height: 40px;
           align-items: center;
           padding: 0;
+          color: rgb(101 101 101);
           background-color: white;
         }
         :global(.text-searching-mobile) {
           z-index: 10;
-          margin: 10px auto;
-          top: 20px;
-          left: 50%;
-          transform: translate(-50%, -50%);
+          margin: 0px auto;
+          bottom: 30px;
+          left: 10px;
           padding: 10px 15px;
           font-size: 14px;
           font-weight: 500;
@@ -934,6 +964,22 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
           justify-content: center !important;
           background: rgb(255, 255, 255) !important;
           border-radius: 8px !important;
+          color: rgb(101 101 101);
+        }
+
+        :global(.move-search) {
+          z-index: 10;
+          margin: 10px auto;
+          top: 20px;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          align-items: center !important;
+          height: 40px;
+          font-weight: 500;
+          color: rgb(101 101 101) !important;
+          border: unset !important;
+          border-radius: 8px !important;
+          letter-spacing: -.5px;
         }
         
         /*### EMPTY CARD ###*/                                                                                          

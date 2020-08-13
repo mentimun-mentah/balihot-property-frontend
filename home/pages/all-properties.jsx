@@ -3,13 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import { libraries, mapContainerStyle, mapMobileContainerStyle } from "../lib/GMaps-options";
 import { default_center, GMapsOptions } from "../lib/GMaps-options";
-import { markerOptions, infoOptions } from "../lib/GMaps-options";
+import { markerOptions, markerClicked, infoOptions } from "../lib/GMaps-options";
 import { Input, AutoComplete, Select, Slider, Drawer, Menu, Dropdown, Button, Checkbox } from 'antd';
 import { LoadingOutlined, DownOutlined } from '@ant-design/icons';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Fade } from "../components/Transition";
 import { renderOptions } from "../lib/renderOptions";
 
+import { parseCookies, setCookie } from 'nookies';
 import Router from 'next/router'
 import axios from "../lib/axios";
 import Row from "react-bootstrap/Row";
@@ -95,6 +96,7 @@ const AllProperties = ({ searchQuery }) => {
   const [childVisible, setChildVisible] = useState(false);
   const [moveSearch, setMoveSearch] = useState(true);
   const [mapChange, setMapChange] = useState(false)
+  const [sessionProperty, setSesionProperty] = useState()
 
   const { location, type_id, property_for, status, period, price, bedroom, bathroom, hotdeal, facility } = search;
   const { region_id } = search;
@@ -246,6 +248,10 @@ const AllProperties = ({ searchQuery }) => {
     setIsHover(true); setIsClick(false); setInfoWindow(data);
   },[])
   const onClickMarkerHandler = useCallback(data => {
+    setCookie(null, data.slug, data.slug, {
+      maxAge: 30 * 24 * 60 * 60,
+      path: '/',
+    })
     setIsClick(true); setIsHover(false); setInfoWindow(data);
   },[])
   const onMapClick = () => {
@@ -398,6 +404,9 @@ const AllProperties = ({ searchQuery }) => {
     const searchData = `page=${active}&` + dataQueryString
     dispatch(actions.getPropertyBy(false, searchData, 10))
 
+    const cookies = parseCookies()
+    setSesionProperty({cookies})
+
     return () => {}
   },[searchQuery])
 
@@ -450,6 +459,7 @@ const AllProperties = ({ searchQuery }) => {
     Router.replace(`/all-properties${check}`)
     setChildVisible(false)
   }
+
 
   const priceMenu = (
     <Menu style={{ width: "50vh" }}>
@@ -701,13 +711,13 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
             onClick={onMapClick}
             zoom={10}
           >
-            {property && property.data && property.data.map(prop => (
-              <Marker key={prop.id} 
-                icon={markerOptions} 
-                position={{ lat: prop.latitude, lng: prop.longitude }} 
-                onClick={() => onClickMarkerHandler(prop)}
-              />
-            ))}
+              {property && property.data && property.data.map(prop => (
+                <Marker key={prop.id} 
+                  icon={sessionProperty.cookies.hasOwnProperty(prop.slug) ? markerClicked : markerOptions} 
+                  position={{ lat: prop.latitude, lng: prop.longitude }} 
+                  onClick={() => onClickMarkerHandler(prop)}
+                />
+              ))}
             {infoWindowCon}
           </GoogleMap>
         </Col>
@@ -731,7 +741,7 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
         height="100vh"
         zIndex="1030"
       >
-        <span className="position-absolute text-searching-mobile badge-light text-center">
+        <span className="position-fixed text-searching-mobile badge-light text-center">
           <motion.div
             initial="initial"
             animate="in"
@@ -955,7 +965,7 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
         :global(.text-searching-mobile) {
           z-index: 10;
           margin: 0px auto;
-          bottom: 30px;
+          bottom: 10px;
           left: 10px;
           padding: 10px 15px;
           font-size: 14px;

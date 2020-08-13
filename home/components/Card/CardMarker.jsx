@@ -110,7 +110,6 @@ const CardMarker = ({
     )
   }
 
-
   const renderImages = imageCard.map((img, i) => (
     <img src={`${process.env.API_URL}/static/properties/${slug}/${img}`} 
     className="img-fit h-200" key={i} />

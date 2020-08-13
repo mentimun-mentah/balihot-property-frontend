@@ -17,7 +17,7 @@ const App = ({ Component, pageProps, store }) => {
     <>
       <Head>
         <title>BaliHotProperty</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="icon" href="/static/images/balihot-property.png" />
         <link rel="stylesheet" href="/static/fontawesome/css/all.css" />
         <link rel="stylesheet" href="/static/css/utility.css" />

@@ -241,6 +241,35 @@ const ContainerCardProperty = ({ dataProperty }) => {
         })}
       </Carousel>
     </div>
+    <style jsx>{`
+      :global(.custom-arrow-right, .custom-arrow-left){
+        outline: 0px;
+        transition: all 0.5s ease 0s;
+        border-radius: 50%;
+        border: 0px;
+        background: #ffffff4d;
+        color: #6a6a6a8a;
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        min-height: 30px;
+        max-width: 30px;
+        max-height: 30px;
+      }
+      :global(.custom-arrow-right){
+        margin-right: 5px;
+      }
+      :global(.custom-arrow-left){
+        margin-left: 5px;
+      }
+      :global(.custom-arrow-right:hover, .custom-arrow-left:hover, 
+        .custom-arrow-right:focus, .custom-arrow-left:focus) {
+        border-radius: 50% !important;
+        border: 0px !important;
+        background: #ffffffdb;
+        color: #6a6a6a;
+      }
+    `}</style>
     </>
   );
 };

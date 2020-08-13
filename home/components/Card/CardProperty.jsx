@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
-import { Modal } from 'antd';
+import { Modal, Button } from 'antd';
 
 import Link from "next/link"
 import validator from "validator";
@@ -11,13 +11,12 @@ import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import NoSSR from "react-no-ssr";
 import moment from "moment";
+import ItemsCarousel from 'react-items-carousel';
 import * as actions from "../../store/actions";
 import ShareModal from "./ShareModal";
 
 import { isAuth } from "../../hoc/withAuth";
-import { Carousel } from "react-responsive-carousel";
 import { Fade } from "../Transition";
-import { renderArrow } from "./CarouselButton";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 
@@ -31,6 +30,7 @@ const CardContainer = ({
   const [selected, setSelected] = useState(selectedPrice)
   const [fav, setFav] = useState(love)
   const [showModal, setShowModal] = useState(false)
+  const [activeItemIndex, setActiveItemIndex] = useState(0);
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
@@ -148,25 +148,29 @@ const CardContainer = ({
   }
   const renderImages = imageCard.map((img, i) => (
     <img src={`${process.env.API_URL}/static/properties/${slug}/${img}`} 
-    className="img-fit h-230 bor-rad-top-10" key={i} />
+    className="w-100 img-fit h-230 bor-rad-top-10" key={i} />
   ))
   return (
     <>
       <Card className="pos-unset border-0 shadow-card bor-rad-top-10 hov_none mt-2 mb-2">
         <div className="position-relative overflow-hidden">
           {hotdeal && <div className="ribbon font-weight-normal fs-11-s">HOT DEAL</div> }
-          <Carousel
+          <ItemsCarousel
+            requestToChangeActive={setActiveItemIndex}
+            activeItemIndex={activeItemIndex}
             infiniteLoop
-            swipeable
-            className="carousel-image-vertikal"
-            showIndicators={false}
-            showThumbs={false}
-            showStatus={false}
-            renderArrowPrev={renderArrow("prev")}
-            renderArrowNext={renderArrow("next")}
+            numberOfCards={1}
+            leftChevron={
+              <Button shape="circle" className="custom-arrow-left">
+                <i className="fas fa-chevron-left" />
+              </Button>}
+            rightChevron={
+              <Button shape="circle" className="custom-arrow-right">
+                <i className="fas fa-chevron-right" />
+              </Button>}
           >
             {renderImages}
-          </Carousel>
+          </ItemsCarousel>
           <div className="status">
             <span className="for-sale fs-10-s">
               For {statusProperty.length > 0 && statusProperty[0] !== "" && `${statusProperty.join(" & ")}`}

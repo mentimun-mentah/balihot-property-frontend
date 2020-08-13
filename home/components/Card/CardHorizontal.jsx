@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { renderArrow } from "./CarouselButton";
 import { isAuth } from "../../hoc/withAuth";
-import { Modal } from "antd"
+import { Modal, Button } from "antd"
 
 import Link from "next/link"
 import validator from "validator";
@@ -10,12 +9,12 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
-import moment from "moment";
 import NoSSR from "react-no-ssr";
+import moment from "moment";
+import ItemsCarousel from 'react-items-carousel';
 import * as actions from "../../store/actions";
 import ShareModal from "./ShareModal";
 
-import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
 import { Fade } from "../Transition";
 
@@ -30,6 +29,7 @@ const CardContainer = ({
   const [selected, setSelected] = useState(selectedPrice)
   const [fav, setFav] = useState(love);
   const [showModal, setShowModal] = useState(false)
+  const [activeItemIndex, setActiveItemIndex] = useState(0);
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
@@ -147,7 +147,7 @@ const CardContainer = ({
   }
   const renderImages = imageCard.map((img, i) => (
     <img src={`${process.env.API_URL}/static/properties/${slug}/${img}`} 
-    className="card-img h-230 img-fit bor-rad-left-10 bor-rad-right-0" key={i} />
+    className="w-100 card-img h-230 img-fit bor-rad-left-10 bor-rad-right-0" key={i} />
   ))
 
   return (
@@ -157,18 +157,22 @@ const CardContainer = ({
           <Col xl={5} lg={5} md={5} sm={5} xs={5} className="card-horizontal">
             <div className="position-relative overflow-hidden carousel-horizontal">
               {hotdeal && <div className="ribbon font-weight-normal">HOT DEAL</div> }
-              <Carousel
+              <ItemsCarousel
                 infiniteLoop
-                swipeable
-                className="carousel-image-horizontal"
-                showIndicators={false}
-                showThumbs={false}
-                showStatus={false}
-                renderArrowPrev={renderArrow("prev")}
-                renderArrowNext={renderArrow("next")}
+                numberOfCards={1}
+                activeItemIndex={activeItemIndex}
+                requestToChangeActive={setActiveItemIndex}
+                leftChevron={
+                  <Button shape="circle" className="custom-arrow-left">
+                    <i className="fas fa-chevron-left" />
+                  </Button>}
+                rightChevron={
+                  <Button shape="circle" className="custom-arrow-right">
+                    <i className="fas fa-chevron-right" />
+                  </Button>}
               >
                 {renderImages}
-              </Carousel>
+              </ItemsCarousel>
               <div className="status">
                 <span className="for-sale">
                   For {statusProperty.length > 0 && statusProperty[0] !== "" && `${statusProperty.join(" & ")}`}

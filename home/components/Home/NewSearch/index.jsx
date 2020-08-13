@@ -22,6 +22,8 @@ const formSearch = {
 const for_data = { villa: ["Sale", "Rent"], land: ["Sale"] }; // If type is Land than only Sale
 const period_data = ["Annually", "Monthly", "Weekly", "Daily"]; // If type is Villa
 const status_data = ["Free Hold", "Lease Hold"];
+const MIN_PRICE = 0;
+const MAX_PRICE = 1000000000;
 
 const SearchBox = () => {
   const [select, setSelect] = useState("1");
@@ -116,7 +118,7 @@ const SearchBox = () => {
   };
 
   const searchHandler = () => {
-    Router.replace({
+    Router.push({
       pathname: "/all-properties",
       query: { 
         hotdeal: true, 
@@ -132,11 +134,15 @@ const SearchBox = () => {
   if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
   if(facility.value) if(facility.value.length !== 0) q = q + `facility=${facility.value.join(",")}&`
   if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
-  if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+  if(price.value[1] !== 0 && price.value[1] !== MAX_PRICE) q = q + `max_price=${price.value[1]}&`
   if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
  
   const searchHandlerMobile = () => {
-    Router.replace(`/all-properties${q}`)
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.push(`/all-properties${check}`)
   }
 
   return (

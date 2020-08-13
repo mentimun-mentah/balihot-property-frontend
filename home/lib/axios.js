@@ -1,9 +1,14 @@
+import getConfig from 'next/config';
 import axios from "axios";
+import * as actions from "../store/actions";
 import Router from "next/router";
 import {parseCookies, setCookie, destroyCookie} from "nookies";
 
+const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
+const API_URL = serverRuntimeConfig.API_URL || publicRuntimeConfig.API_URL;
+
 const instance = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: API_URL,
 });
 
 const {access_token, refresh_token} = parseCookies()
@@ -24,6 +29,7 @@ instance.interceptors.request.use(function (config) {
     return config;
   }, function (error) {
     // Do something with request error
+    console.log("REQUEST AXIOS LIB ##### => ", error.response)
     return Promise.reject(error);
   });
 
@@ -32,51 +38,51 @@ instance.interceptors.response.use(function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     return response;
-  }, function (error) {
+  }, async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    const headerRefresh = {
-      headers: { Authorization: `Bearer ${refresh_token}` }
-    }
-
-    if(error.response && error.response.data && error.response.data.msg === "Token has been revoked"){
-      Router.reload("/")
-      destroyCookie(null, "access_token", { path: "/" })
-      destroyCookie(null, "refresh_token", { path: "/" })
-      destroyCookie(null, "username", { path: "/" })
-    }
-
-    if(error.response && error.response.data && error.response.data.msg === "Not enough segments"){
-      Router.reload("/")
-      destroyCookie(null, "access_token", { path: "/" })
-      destroyCookie(null, "refresh_token", { path: "/" })
-      destroyCookie(null, "username", { path: "/" })
-    }
-
-    if(error.response && error.response.data && error.response.data.msg === "Token has expired"){
-      instance.post('/refresh', null, headerRefresh)
-        .then(res => {
-          setCookie(null, "access_token", res.data.access_token, {
-            maxAge: 30 * 24 * 60 * 60,
-            path: "/",
+    const headerRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } }
+    console.log("AXIOS LIB ##### => ", error.response)
+    if(error.response.status == 401 && error.response.data.msg === "Token has expired"){
+      if(refresh_token){
+        await instance.post('/refresh', null, headerRefresh)
+          .then(res => {
+            setCookie(null, "access_token", res.data.access_token, {
+              maxAge: 30 * 24 * 60 * 60,
+              path: "/",
+            })
+            return Promise.resolve()
           })
-          return Promise.resolve()
-        })
-        .catch(err => {
-          if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
-            Router.reload("/")
+          .catch((err) => {
+            console.log("ERROR REFRESH AXIOS LIB ##### +++> ", err.response.status, err.response.data)
             destroyCookie(null, "access_token", { path: "/" })
             destroyCookie(null, "refresh_token", { path: "/" })
             destroyCookie(null, "username", { path: "/" })
-          }
-          if(error.response && error.response.data && error.response.data.msg === "Not enough segments"){
-            Router.reload("/")
-            destroyCookie(null, "access_token", { path: "/" })
-            destroyCookie(null, "refresh_token", { path: "/" })
-            destroyCookie(null, "username", { path: "/" })
-          }
-        })
+            process.browser && Router.reload()
+          })
+          .then(() => {
+            return Promise.resolve()
+          })
+      } else {
+        destroyCookie(null, "access_token", { path: "/" })
+        destroyCookie(null, "refresh_token", { path: "/" })
+        destroyCookie(null, "username", { path: "/" })
+        process.browser && Router.reload()
+      }
     }
+    if(error.response.status == 401 && error.response.data.msg === "Token has been revoked"){
+      destroyCookie(null, "access_token", { path: "/" })
+      destroyCookie(null, "refresh_token", { path: "/" })
+      destroyCookie(null, "username", { path: "/" })
+      process.browser && Router.reload()
+    }
+    if(error.response.status == 422 && error.response.data.msg === "Not enough segments"){
+      destroyCookie(null, "access_token", { path: "/" })
+      destroyCookie(null, "refresh_token", { path: "/" })
+      destroyCookie(null, "username", { path: "/" })
+      process.browser && Router.reload()
+    }
+
     return Promise.reject(error);
   });
 

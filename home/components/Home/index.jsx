@@ -30,12 +30,15 @@ const Home = () => {
   const property = useSelector(state => state.property.property)
 
   const searchHandler = () => {
-    Router.push({
-      pathname: "/all-properties",
-      query: { 
-        property_for: activeTab
-      },
-    })
+    let q = '?'
+    if(activeTab !== "Land") q = q + `property_for=${activeTab}`
+    else q = q + `type_id=2`
+
+    let check = q.slice(-1)
+    if(check === "&") check = q.slice(0, -1)
+    else check = q
+
+    Router.push(`/all-properties${check}`)
   }
 
   return (

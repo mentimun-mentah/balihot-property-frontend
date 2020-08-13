@@ -38,8 +38,8 @@ export const refreshTokenSuccess = (access_token) => {
 export const authCheckState = (ctx) => {
   return (dispatch) => {
     dispatch(authStart());
-    const { access_token } = cookies.get(ctx);
-    if (access_token) {
+    const { access_token, refresh_token } = cookies.get(ctx);
+    if (access_token && refresh_token) {
       const { refresh_token, username } = cookies.get(ctx);
       if((access_token && !refresh_token) || (refresh_token && !access_token)){
         dispatch(authLogout())
@@ -76,42 +76,12 @@ export const getUser = (ctx) => {
   return (dispatch) => {
     const { access_token, refresh_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
-    const headerCfgRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } };
     if (access_token && refresh_token) {
       axios.get('/user', headerCfg)
       .then(res => {
         dispatch(getUserSuccess(res.data))
       })
-      .catch(err => {
-        if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
-          dispatch(authLogout())
-          cookies.destroy(ctx, "access_token");
-          cookies.destroy(ctx, "refresh_token");
-          cookies.destroy(ctx, "username");
-        }
-        if(err.response && err.response.data && err.response.data.msg === "Token has expired"){
-          if (access_token && refresh_token) {
-            axios.post("/refresh", null, headerCfgRefresh)
-            .then(res => {
-              cookies.set(null, "access_token", res.data.access_token, {
-                maxAge: 30 * 24 * 60 * 60,
-                path: "/",
-              });
-              dispatch(refreshTokenSuccess(res.data.access_token));
-              dispatch(getUser(ctx))
-            })
-            .catch(err => {
-              if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
-                dispatch(authLogout())
-                cookies.destroy(ctx, "access_token");
-                cookies.destroy(ctx, "refresh_token");
-                cookies.destroy(ctx, "username");
-              }
-            })
-          }
-          // dispatch(getUser())
-        }
-      })
+      .catch(() => {})
     }
   }
 }

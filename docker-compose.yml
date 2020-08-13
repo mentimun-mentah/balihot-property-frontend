@@ -28,3 +28,8 @@ services:
       - "/app/node_modules"
       - "/app/.next"
       - "./home:/app"
+
+networks:
+  default:
+    external:
+      name: restapi_networks

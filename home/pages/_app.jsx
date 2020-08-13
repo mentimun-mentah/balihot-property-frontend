@@ -18,19 +18,6 @@ import { useEffect } from "react";
 
 const App = ({ Component, pageProps, store }) => {
 
-  //useEffect(() => {
-  //  window.onload = function() {
-  //  //considering there aren't any hashes in the urls already
-  //    if(!window.location.hash) {
-  //      //setting window location
-  //      window.location = window.location + '#home';
-  //      //using reload() method to reload web page
-  //      window.location.reload();
-  //    }
-  //  }
-
-  //},[])
-
   useEffect(() => {
     window.$crisp = [];
     window.CRISP_WEBSITE_ID = "dd114cf0-49f1-481d-af2b-033c5fea4c53";
@@ -52,7 +39,7 @@ const App = ({ Component, pageProps, store }) => {
         <link rel="stylesheet" href="/static/css/utility.css" />
         <link rel="stylesheet" href="/static/css/placeholder-loading.css" />
         <link rel="stylesheet" href="/static/css/image-galery.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <Provider store={store}>
         <Layout>
@@ -234,6 +221,11 @@ const App = ({ Component, pageProps, store }) => {
           width: auto;
           height: 100px;
           opacity: 0.5;
+        }
+        @media (max-width: 991px) {
+          :global(.crisp-client .crisp-1rjpbb7){
+            z-index: 1030 !important;
+          }
         }
       `}</style>
     </React.Fragment>

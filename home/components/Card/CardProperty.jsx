@@ -158,6 +158,7 @@ const CardContainer = ({
           <Carousel
             infiniteLoop
             swipeable
+            className="carousel-image-vertikal"
             showIndicators={false}
             showThumbs={false}
             showStatus={false}
@@ -254,6 +255,10 @@ const CardContainer = ({
           margin: 0;
           position: relative;
           text-align: center;
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
+        }
+        :global(.carousel-image-vertikal > .carousel.carousel-slider) {
           border-top-left-radius: 10px;
           border-top-right-radius: 10px;
         }

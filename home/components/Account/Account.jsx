@@ -44,6 +44,7 @@ const Account = () => {
             message: 'Yuhuu!!!',
             description: res.data.message,
             placement: 'bottomRight',
+            duration: 2,
           });
         })
         .catch(err => {
@@ -100,7 +101,7 @@ const Account = () => {
       setChangeUsername(data)
       const fetchedImage = {
         uid: -Math.random(),
-        url: userData.avatar ? `${process.env.API_URL}/static/avatars/${userData.avatar}` : ""
+        url: userData.avatar ? `${process.env.API_URL}/static/avatars/${userData.avatar}` : `${process.env.API_URL}/static/avatars/default.png`
       }
       setFileList([fetchedImage])
     }
@@ -514,8 +515,8 @@ const Account = () => {
 
                 <Col md={4} className="pl-0 p-r-0-s order-lg-12 order-md-12 order-1">
                   <Card className="border-left-0 rounded-0 text-center shadow-none hov_none m-border-0">
-                    <p className="h6 fs-14 mt-4 mb-0 d-lg-none">
-                      Albert Davis
+                    <p className="h6 fs-14 mt-4 mb-0 d-lg-none text-truncate text-capitalize">
+                      {userData !== null && <>{userData.username}</>}
                     </p>
                     <Upload
                       accept="image/*"
@@ -530,16 +531,15 @@ const Account = () => {
                     </Upload>
 
                     <Card.Body className="pb-33 pb-12-pro">
-                      <p className="fs-14 mb-0 text-secondary">
+                      <small className="fs-10 text-secondary font-italic">
+                        click the image to change your avatar.
+                      </small>
+                      <p className="fs-14 mb-0 text-secondary mt-2">
                         Image size: maks. 4 MB
                       </p>
                       <p className="fs-14 text-secondary">
                         Image format: .JPEG, .JPG, .PNG
                       </p>
-
-                      <small className="fs-10 text-secondary font-italic">
-                        click the image to change your avatar.
-                      </small>
                     </Card.Body>
                   </Card>
                 </Col>

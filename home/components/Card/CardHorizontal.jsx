@@ -160,6 +160,7 @@ const CardContainer = ({
               <Carousel
                 infiniteLoop
                 swipeable
+                className="carousel-image-horizontal"
                 showIndicators={false}
                 showThumbs={false}
                 showStatus={false}
@@ -263,6 +264,11 @@ const CardContainer = ({
           height: 100% !important;
           top: 0;
           left: 0;
+        }
+        :global(.carousel-image-horizontal > .carousel.carousel-slider) {
+          border-top-left-radius: 10px;
+          border-bottom-left-radius: 10px;
+
         }
         :global(.carousel.carousel-slider) {
           display: block;

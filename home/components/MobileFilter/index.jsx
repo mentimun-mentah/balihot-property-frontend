@@ -14,6 +14,8 @@ const formatter = new Intl.NumberFormat(["ban", "id"]);
 const for_data = { villa: ["Sale", "Rent"], land: ["Sale"] }; // If type is Land than only Sale
 const period_data = ["Annually", "Monthly", "Weekly", "Daily"]; // If type is Villa
 const status_data = ["Free Hold", "Lease Hold"];
+const MIN_PRICE = 0;
+const MAX_PRICE = 1000000000;
 
 const MobileFilter = ({search, hotdealHandler, onChange}) => {
   const dispatch = useDispatch();
@@ -131,10 +133,10 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
                 </Card.Body>
               </Col>
               <Col>
-                <Card.Body className="pb-2 pl-0 pt-0">
+                <Card.Body className="pb-2 px-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MAX</h5>
                   <p className="text-dark card-text">
-                    IDR{`${formatter.format(price.value[1])}`}
+  IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </Card.Body>
               </Col>
@@ -144,8 +146,8 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
                 <div className="card-body pt-0 px-0 pb-1">
                   <Slider range 
                     tooltipVisible={false} 
-                    min={0}
-                    max={1000000000}
+                    min={MIN_PRICE}
+                    max={MAX_PRICE}
                     step={10}
                     value={price.value}
                     onChange={e => onChange(e, "price")}

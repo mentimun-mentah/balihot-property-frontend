@@ -26,33 +26,36 @@ import ContainerCardProperty from "../components/Card/ContainerCardProperty";
 import MobileFilters from "../components/MobileFilter";
 
 const formatter = new Intl.NumberFormat(['ban', 'id'])
+
+const for_data = { villa: ["Sale", "Rent"], land: ["Sale"] }; // If type is Land than only Sale
 const status_data = ["Free Hold", "Lease Hold"];
+const period_data = ["Annually", "Monthly", "Weekly", "Daily"]; // If type is Villa
+
 const { Option } = Select;
+const MIN_PRICE = 0;
+const MAX_PRICE = 1000000000;
 
 const pagination_iter = (c, m) => {
-  var delta = 1,
-      range = [],
-      rangeWithDots = [],
-      l;
+  var delta = 1, range = [], rangeWithDots = [], l;
 
   range.push(1)  
   for (let i = c - delta; i <= c + delta; i++) {
-      if (i < m && i > 1) {
-          range.push(i);
-      }
+    if (i < m && i > 1) {
+      range.push(i);
+    }
   }  
   range.push(m);
 
   for (let i of range) {
-      if (l) {
-          if (i - l === 2) {
-              rangeWithDots.push(l + 1);
-          } else if (i - l !== 1) {
-              rangeWithDots.push('...');
-          }
+    if (l) {
+      if (i - l === 2) {
+        rangeWithDots.push(l + 1);
+      } else if (i - l !== 1) {
+        rangeWithDots.push('...');
       }
-      rangeWithDots.push(i);
-      l = i;
+    }
+    rangeWithDots.push(i);
+    l = i;
   }
 
   return rangeWithDots;
@@ -243,6 +246,12 @@ const AllProperties = ({ searchQuery }) => {
   //====== SEARCH ======//
   const type_list = []; renderOptions(type_list, dataType, true);
   const status_list = []; renderOptions(status_list, status_data)
+  const period_list = []; renderOptions(period_list, period_data)
+  const for_list = [];
+  if (type_id.value == 1 || type_id.value == [] || type_id.value == ""){
+    renderOptions(for_list, for_data.villa); // 1 for villa
+  }
+  if (type_id.value == 2) renderOptions(for_list, for_data.land); // 2 for land
 
   const searchChangeHandler = (e, category) => {
     if (category === "location"){
@@ -327,20 +336,20 @@ const AllProperties = ({ searchQuery }) => {
       state.location.value = searchQuery.location
     }
     if(searchQuery.property_for){
-      state.property_for.value = searchQuery.property_for !== "" ? [searchQuery.property_for] : []
+      state.property_for.value = searchQuery.property_for !== "" ? searchQuery.property_for : []
     }
     if(searchQuery.status){
-      state.status.value = searchQuery.status !== "" ? [searchQuery.status] : []
+      state.status.value = searchQuery.status !== "" ? searchQuery.status : []
     }
     if(searchQuery.period){
-      state.period.value = searchQuery.period !== "" ? [searchQuery.period] : []
+      state.period.value = searchQuery.period !== "" ? searchQuery.period : []
     }
     if(searchQuery.min_price){
       const min = searchQuery.min_price !== "" ? +searchQuery.min_price : 0
       state.price.value = [min, state.price.value[1]]
     }
-    if(searchQuery.min_price || searchQuery.max_price){
-      const max = searchQuery.max_price !== "" ? +searchQuery.max_price : 0
+    if(searchQuery.max_price){
+      const max = searchQuery.max_price !== "NaN" || searchQuery.max_price !== "" ? +searchQuery.max_price : 0
       state.price.value = [state.price.value[0], max]
     }
     if(searchQuery.bedroom){
@@ -388,18 +397,21 @@ const AllProperties = ({ searchQuery }) => {
     q = q + "per_page=1&"
     if(location.value) q = q + `location=${location.value}&`
     if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
+    if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
     if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
+    if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
     if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
-    if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+    if(price.value[1] !== 0 && price.value[1] !== MAX_PRICE) q = q + `max_price=${price.value[1]}&`
 
     let check = q.slice(-1)
     if(check === "&") check = q.slice(0, -1)
     else check = q
-    setActive(1)
-    setCurrent_postition({})
+    // setActive(1)
+    // setCurrent_postition({})
 
     Router.replace(`/all-properties${check}`)
   }
+
   const searchHandlerMobile = () => {
     let q = '?'
     q = q + "per_page=1&"
@@ -409,7 +421,7 @@ const AllProperties = ({ searchQuery }) => {
     if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
     if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
     if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
-    if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+    if(price.value[1] !== 0 && price.value[1] !== MAX_PRICE) q = q + `max_price=${price.value[1]}&`
     if(facility.value) if(facility.value.length !== 0) q = q + `facility=${facility.value}&`
     if(hotdeal.value) q = q + `hotdeal=${hotdeal.value}`
 
@@ -444,7 +456,7 @@ const AllProperties = ({ searchQuery }) => {
                 </td>
                 <td className="pr-0 py-0">
                   <p className="font-weight-bold text-dark card-text float-right">
-                    IDR{`${formatter.format(price.value[1])}`}
+IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </td>
               </tr>
@@ -453,8 +465,8 @@ const AllProperties = ({ searchQuery }) => {
           <Slider
             range
             tooltipVisible={false}
-            min={0}
-            max={1000000000}
+            min={MIN_PRICE}
+            max={MAX_PRICE}
             step={10}
             value={price.value}
             onChange={e => searchChangeHandler(e, "price")}
@@ -489,23 +501,24 @@ const AllProperties = ({ searchQuery }) => {
         <Col xl={7} lg={7}>
           {/* *** SEARCH DESKTOP *** */}
           <Form className="mb-4 mt-3 d-none d-sm-none d-md-none d-lg-block d-xl-block">
-            <Form.Group>
-              <Form.Label className="h1 fs-18">Location</Form.Label>
-              <AutoComplete 
-                className="search-input"
-                options={listLocation}
-                filterOption={(inputValue, option) =>
-                  option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                }
-                value={location.value}
-                onChange={e => searchChangeHandler(e, "location")}
-              >
-                <Input size="large" placeholder="Location"/>
-              </AutoComplete>
-            </Form.Group>
-
             <Form.Row>
-              <Form.Group as={Col} className="col-md-4">
+              <Form.Group as={Col}>
+                <Form.Label className="h1 fs-16">Location</Form.Label>
+                <AutoComplete 
+                  className="search-input"
+                  options={listLocation}
+                  filterOption={(inputValue, option) =>
+                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                  }
+                  value={location.value}
+                  onChange={e => searchChangeHandler(e, "location")}
+                >
+                  <Input size="large" placeholder="Location"/>
+                </AutoComplete>
+              </Form.Group>
+
+              <Form.Group as={Col}>
+                <Form.Label className="h1 fs-16">Property Type</Form.Label>
                 <Select placeholder="Type" className="w-100"
                   onChange={e => searchChangeHandler(e, "type_id")}
                   value={type_id.value}
@@ -515,16 +528,49 @@ const AllProperties = ({ searchQuery }) => {
                   {type_list}
                 </Select>
               </Form.Group>
+            </Form.Row>
+
+            <Form.Row>
               <Form.Group as={Col} className="col-md-4">
-                <Select placeholder="Status" className="w-100"
-                  onChange={e => searchChangeHandler(e, "status")}
-                  value={status.value}
+                <Select
+                  placeholder="For"
+                  className="w-100"
+                  onChange={e => searchChangeHandler(e, "property_for")}
+                  value={property_for.value}
                   allowClear
                 >
                   <Option value="">All</Option>
-                  {status_list}
+                  {for_list}
                 </Select>
               </Form.Group>
+
+              {property_for.value === "Rent" && (
+                <Form.Group as={Col} className="col-md-4">
+                  <Select className="w-100"
+                    placeholder="Period"
+                    onChange={ e => searchChangeHandler(e, "period")}
+                    value={ period.value }
+                    allowClear
+                  >
+                    <Option value="">All</Option>
+                    {period_list}
+                  </Select>
+                </Form.Group>
+              )}
+              {property_for.value !== "Rent" && (
+                <Form.Group as={Col} className="col-md-4">
+                  <Select className="w-100"
+                    placeholder="Status"
+                    onChange={ e => searchChangeHandler(e, "status") }
+                    value={ status.value }
+                    allowClear
+                  >
+                    <Option value="">All</Option>
+                    {status_list}
+                  </Select>
+                </Form.Group>
+              )}
+
               <Form.Group as={Col} className="col-md-4">
                 <Dropdown
                   className="w-100"

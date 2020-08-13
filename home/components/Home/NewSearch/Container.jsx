@@ -34,6 +34,9 @@ const formSearch = {
   facility: { value: [] },
 };
 
+const MIN_PRICE = 0;
+const MAX_PRICE = 1000000000;
+
 const SearchBox = ({ searchType }) => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState(formSearch);
@@ -116,7 +119,7 @@ const SearchBox = ({ searchType }) => {
     if (searchType === "2") {
       const data = {
         ...search,
-        property_for: { value: e },
+        property_for: { value: "Sale" },
         status: { value: [] },
         period: { value: [] }
       };
@@ -140,7 +143,9 @@ const SearchBox = ({ searchType }) => {
     if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
     if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
     if(price.value[0] !== 0) q = q + `min_price=${price.value[0]}&`
-    if(price.value[1] !== 0) q = q + `max_price=${price.value[1]}&`
+
+    if(price.value[1] !== 0 && price.value[1] !== MAX_PRICE) q = q + `max_price=${price.value[1]}&`
+
     if(bedroom.value) if(bedroom.value.length !== 0) q = q + `bedroom=${bedroom.value}&`
     if(bathroom.value) if(bathroom.value.length !== 0) q = q + `bathroom=${bathroom.value}&`
     if(facility.value) if(facility.value.length !== 0) q = q + `facility=${facility.value.join(",")}`
@@ -228,7 +233,7 @@ const SearchBox = ({ searchType }) => {
                 </td>
                 <td className="pr-0 py-0">
                   <p className="font-weight-bold text-dark card-text float-right">
-                    IDR{`${formatter.format(price.value[1])}`}
+  IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </td>
               </tr>
@@ -237,8 +242,8 @@ const SearchBox = ({ searchType }) => {
           <Slider
             range
             tooltipVisible={false}
-            min={0}
-            max={1000000000}
+            min={MIN_PRICE}
+            max={MAX_PRICE}
             step={10}
             value={price.value}
             onChange={e => searchChangeHandler(e, "price")}

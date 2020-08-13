@@ -406,8 +406,8 @@ const AllProperties = ({ searchQuery }) => {
     let check = q.slice(-1)
     if(check === "&") check = q.slice(0, -1)
     else check = q
-    // setActive(1)
-    // setCurrent_postition({})
+    setActive(1)
+    setCurrent_postition({})
 
     Router.replace(`/all-properties${check}`)
   }
@@ -479,7 +479,7 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
   //====== SEARCH ======//
 
   if (loadError) return "Error";
-  if (!isLoaded) return "Loading...";
+  if (!isLoaded) return "";
 
   const GMapsOptionsMobile = {
     zoomControl: true,

@@ -40,9 +40,17 @@ const authLogout = (state, action) => {
     data: null,
   });
 };
+const getUserStart = (state, action) => {
+  return updateObject(state, { error: null });
+};
 const getUserSuccess = (state, action) => {
   return updateObject(state, {
     data: action.data,
+  });
+};
+const getUserFail = (state, action) => {
+  return updateObject(state, {
+    error: action.error,
   });
 };
 const refreshTokenSuccess = (state, action) => {
@@ -59,8 +67,12 @@ const reducer = (state = initialState, action) => {
       return authFail(state, action);
     case actionType.AUTH_LOGOUT:
       return authLogout(state, action);
+    case actionType.GET_USER_START:
+      return getUserStart(state, action);
     case actionType.GET_USER:
       return getUserSuccess(state, action);
+    case actionType.GET_USER_FAIL:
+      return getUserFail(state, action);
     case actionType.REFRESH_TOKEN:
       return refreshTokenSuccess(state, action);
     default:

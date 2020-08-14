@@ -52,11 +52,7 @@ const Login = ({ viewed, reset, closed }) => {
           });
           dispatch(actions.getUser())
           dispatch(actions.authSuccess(access_token, refresh_token, username));
-          swal({
-            icon: "success", title: `Welcome ${username}`, timer: 3000,
-          }).then(() => {
-            Router.reload("/");
-          });
+          Router.reload("/");
         })
         .catch((err) => {
           setLoading(false);

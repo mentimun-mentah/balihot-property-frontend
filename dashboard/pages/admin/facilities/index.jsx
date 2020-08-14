@@ -62,7 +62,7 @@ const Facilities = () => {
           .delete(`/facility/crud/${id}`, headerCfg)
           .then((res) => {
             dispatch(actions.getFacility())
-            swal({ title: "Yuhuu!", text: res.data.message, icon: "success", timer: 3000, });
+            swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
           })
           .catch((err) => {
             if (err.response && err.response.data) {

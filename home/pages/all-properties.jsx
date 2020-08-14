@@ -145,7 +145,6 @@ const AllProperties = ({ searchQuery }) => {
   //====== PAGINATION ======//
 
   let q = '?'
-  q = q + "per_page=1&"
   if(current_position.lat) q = q + `lat=${current_position.lat}&`
   if(current_position.lng) q = q + `lng=${current_position.lng}&`
   if(radius) q = q + `radius=${radius}&`
@@ -419,7 +418,6 @@ const AllProperties = ({ searchQuery }) => {
 
   const searchHandler = () => {
     let q = '?'
-    q = q + "per_page=1&"
     if(location.value) q = q + `location=${location.value}&`
     if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
     if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
@@ -439,7 +437,6 @@ const AllProperties = ({ searchQuery }) => {
 
   const searchHandlerMobile = () => {
     let q = '?'
-    q = q + "per_page=1&"
     if(location.value) q = q + `location=${location.value}&`
     if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
     if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
@@ -462,7 +459,7 @@ const AllProperties = ({ searchQuery }) => {
 
 
   const priceMenu = (
-    <Menu style={{ width: "50vh" }}>
+    <Menu className="price-menu-body">
       <div
         className="col-12 justify-content-center px-0"
         onClick={e => e.stopPropagation()}
@@ -640,7 +637,7 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
                   mouseLeave={() => setIsHover(false)}
                 />
               </div>
-              <div className="d-block d-sm-block d-md-block d-lg-none d-xl-none">
+              <div className="d-sm-block d-md-block d-lg-none d-xl-none">
                 <ContainerCardProperty 
                   dataProperty={property} 
                   horizontal={false} 
@@ -784,7 +781,7 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
           {property && property.data && property.data.map(prop => (
             <Marker 
               key={prop.id} 
-              icon={markerOptions} 
+              icon={sessionProperty.cookies.hasOwnProperty(prop.slug) ? markerClicked : markerOptions} 
               position={{ lat: prop.latitude, lng: prop.longitude }} 
               onClick={() => onClickMarkerHandler(prop)}
             />
@@ -1015,6 +1012,50 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
           color: #a3a3a3;
           vertical-align: 0;
         }
+        :global(.price-menu-body){
+          width: 55vh;
+        }
+        @media only screen 
+          and (min-width: 1024px) 
+          and (max-height: 768px) {
+            :global(.price-menu-body){
+              width: 55vh !important;
+            }
+        }
+        /* ----------- iPad Pro ----------- */
+        /* Portrait and Landscape */
+        @media only screen 
+          and (min-width: 1024px) 
+          and (max-height: 1366px) 
+          and (-webkit-min-device-pixel-ratio: 1.5) {
+            :global(.price-menu-body){
+              width: 30vh;
+            }
+        }
+
+        /* Portrait */
+        @media only screen 
+          and (min-width: 1024px) 
+          and (max-height: 1366px) 
+          and (orientation: portrait) 
+          and (-webkit-min-device-pixel-ratio: 1.5) {
+            :global(.price-menu-body){
+              width: 30vh;
+            }
+        }
+
+        /* Landscape */
+        @media only screen 
+          and (min-width: 1024px) 
+          and (max-height: 1366px) 
+          and (orientation: landscape) 
+          and (-webkit-min-device-pixel-ratio: 1.5) {
+            :global(.price-menu-body){
+              width: 30vh;
+            }
+        }
+        /* ----------- iPad Pro ----------- */
+
       `}</style>
     </>
   );

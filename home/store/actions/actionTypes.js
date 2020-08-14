@@ -4,7 +4,9 @@ export const AUTH_SUCCESS = "AUTH_SUCCESS";
 export const AUTH_FAIL = "AUTH_FAIL";
 export const AUTH_LOGOUT = "AUTH_LOGOUT";
 export const REFRESH_TOKEN = "REFRESH_TOKEN";
+export const GET_USER_START = "GET_USER_START";
 export const GET_USER = "GET_USER";
+export const GET_USER_FAIL = "GET_USER_FAIL";
 
 //REGION
 export const GET_REGION_START = 'GET_REGION_START'

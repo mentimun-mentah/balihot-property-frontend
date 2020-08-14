@@ -46,7 +46,7 @@ const AddFacility = () => {
       }
       axios.post('/facility/create', data, headerCfg)
         .then(res => {
-          swal({ title: "Yuhuu!", text: res.data.message, icon: "success", timer: 3000 });
+          swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setFacility(formFacility);
           dispatch(actions.getFacility())
         })
@@ -99,7 +99,7 @@ const AddFacility = () => {
                     <Form.Label>
                       Icon Fontawesome Name{" "}
                       <i
-                        className="far fa-map-marker-question hov_pointer text-primary"
+                        className="far fa-map-marker-question hov_pointer text-primary ml-2"
                         onClick={showInfoHandler}
                       />
                     </Form.Label>

@@ -26,10 +26,18 @@ export const authLogout = () => {
 };
 
 /*** GET_USER ***/
+export const getUserStart = () => {
+  return { type: actionType.GET_USER_START };
+};
 export const getUserSuccess = (data) => {
   return { type: actionType.GET_USER, data: data };
 };
-
+export const getUserFail = (error) => {
+  return {
+    type: actionType.GET_USER_FAIL,
+    error: error,
+  };
+};
 /*** REFRESH_TOKEN ***/
 export const refreshTokenSuccess = (access_token) => {
   return { type: actionType.REFRESH_TOKEN, access_token: access_token };
@@ -61,7 +69,7 @@ export const authCheckState = (ctx) => {
       }
       else if(access_token && refresh_token && username) {
         dispatch(authSuccess(access_token, refresh_token, username));
-        dispatch(getUser(ctx))
+        // dispatch(getUser(ctx))
       }
     } else {
       dispatch(authLogout())
@@ -74,6 +82,7 @@ export const authCheckState = (ctx) => {
 
 export const getUser = (ctx) => {
   return (dispatch) => {
+    dispatch(getUserStart());
     const { access_token, refresh_token } = cookies.get(ctx);
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     if (access_token && refresh_token) {
@@ -81,7 +90,9 @@ export const getUser = (ctx) => {
       .then(res => {
         dispatch(getUserSuccess(res.data))
       })
-      .catch(() => {})
+      .catch(err => {
+        dispatch(getUserFail(err.response))
+      })
     }
   }
 }

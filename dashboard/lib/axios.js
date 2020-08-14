@@ -28,48 +28,58 @@ instance.interceptors.request.use(function (config) {
     return config;
   }, function (error) {
     // Do something with request error
-    console.log("========== REQUEST ============", error.response)
     return Promise.reject(error);
   });
 
 // Add a response interceptor
 instance.interceptors.response.use(function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response;
-  }, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    const headerRefresh = {
-      headers: { Authorization: `Bearer ${refresh_token}` }
-    }
-
-    if(error.response.data.msg === "Token has been revoked"){
-      destroyCookie(null, "access_token")
-      destroyCookie(null, "refresh_token")
-      destroyCookie(null, "username")
-      Router.reload("/")
-    }
-
-    if(error.response.data.msg === "Token has expired"){
-      instance.post('/refresh', null, headerRefresh)
+  // Any status code that lie within the range of 2xx cause this function to trigger
+  // Do something with response data
+  return response;
+}, async function (error) {
+  // Any status codes that falls outside the range of 2xx cause this function to trigger
+  // Do something with response error
+  const headerRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } }
+  if(error.response.status == 401 && error.response.data.msg === "Token has expired"){
+    if(refresh_token){
+      await instance.post('/refresh', null, headerRefresh)
         .then(res => {
           setCookie(null, "access_token", res.data.access_token, {
             maxAge: 30 * 24 * 60 * 60,
             path: "/",
           })
-          return Promise.resolve()
+          return Promise.resolve(error.config)
         })
-        .catch(err => {
-          if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
-            destroyCookie(null, "access_token")
-            destroyCookie(null, "refresh_token")
-            destroyCookie(null, "username")
-            Router.reload("/")
-          }
+        .catch(() => {
+          destroyCookie(null, "access_token", { path: "/" })
+          destroyCookie(null, "refresh_token", { path: "/" })
+          destroyCookie(null, "username", { path: "/" })
+          process.browser && Router.reload()
         })
+        .then(() => {
+          return Promise.resolve(error.config)
+        })
+    } else {
+      destroyCookie(null, "access_token", { path: "/" })
+      destroyCookie(null, "refresh_token", { path: "/" })
+      destroyCookie(null, "username", { path: "/" })
+      process.browser && Router.reload()
     }
-    return Promise.reject(error);
-  });
+  }
+  if(error.response.status == 401 && error.response.data.msg === "Token has been revoked"){
+    destroyCookie(null, "access_token", { path: "/" })
+    destroyCookie(null, "refresh_token", { path: "/" })
+    destroyCookie(null, "username", { path: "/" })
+    process.browser && Router.reload()
+  }
+  if(error.response.status == 422 && error.response.data.msg === "Not enough segments"){
+    destroyCookie(null, "access_token", { path: "/" })
+    destroyCookie(null, "refresh_token", { path: "/" })
+    destroyCookie(null, "username", { path: "/" })
+    process.browser && Router.reload()
+  }
+
+  return Promise.reject(error);
+});
 
 export default instance;

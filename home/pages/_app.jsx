@@ -15,7 +15,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "react-multi-carousel/lib/styles.css";
 import "render-smooth-image-react/build/style.css";
 import "react-responsive-carousel/lib/styles/carousel.css";
-import '@brainhubeu/react-carousel/lib/style.css';
 
 const App = ({ Component, pageProps, store }) => {
 

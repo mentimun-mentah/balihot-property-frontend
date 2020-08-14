@@ -290,7 +290,7 @@ const Property = () => {
 
       axios.post('/property/create', formData, headerCfgFormData)
         .then(res => {
-          swal({ title: "Yuhuu!", text: res.data.message, icon: "success", timer: 3000 });
+          swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setProperty(formProperty);
           setImageList(formImage);
         })
@@ -609,7 +609,7 @@ const Property = () => {
                   <Form.Group>
                     <Form.Label>
                       Youtube
-                      <i className="far fa-map-marker-question hov_pointer text-primary ml-1" onClick={showInfoHandler}/>
+                      <i className="far fa-map-marker-question hov_pointer text-primary ml-2" onClick={showInfoHandler}/>
                     </Form.Label>
                     <Form.Control type="text"
                       placeholder="Youtube embed link"

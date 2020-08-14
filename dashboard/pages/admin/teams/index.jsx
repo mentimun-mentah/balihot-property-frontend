@@ -63,7 +63,7 @@ const Teams = () => {
           .delete(`/team/crud/${id}`, headerCfg)
           .then((res) => {
             dispatch(actions.getTeam())
-            swal({ title: "Yuhuu!", text: res.data.message, icon: "success", timer: 3000, });
+            swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
           })
           .catch((err) => {
             if (err.response && err.response.data) {

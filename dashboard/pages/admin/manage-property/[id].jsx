@@ -367,7 +367,7 @@ const EditProperty = ({dataProperty}) => {
       axios.put(`/property/crud/${dataProperty.id}`, formData, headerCfgFormData)
         .then(res => {
           Router.push("/admin/manage-property", "/admin/manage-property")
-          swal({ title: "Yuhuu!", text: res.data.message, icon: "success", timer: 3000 });
+          swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           if(removedImage.length > 0){
             const dataDeleted = { images: removedImage }
             axios.post(`/property/delete-images/${dataProperty.id}`, dataDeleted, headerCfg)

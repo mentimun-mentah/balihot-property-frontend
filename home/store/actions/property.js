@@ -197,7 +197,7 @@ export const loveProperty = (id, slug, ctx) => {
       .then(res => {
         dispatch(lovePropertySuccess())
         notification['success']({
-          message: 'Yuhuu!!!',
+          message: 'Success',
           description: res.data.message,
           placement: 'bottomRight',
         });
@@ -214,7 +214,7 @@ export const loveProperty = (id, slug, ctx) => {
         dispatch(lovePropertyFail(err.response))
         notification['error']({
           message: 'Opps...',
-          description: err.response.data.message,
+          description: err.response.data.message ? err.response.data.message : 'Something went wrong',
           placement: 'bottomRight',
         });
       })
@@ -230,7 +230,7 @@ export const unLoveProperty = (id, slug, ctx) => {
       .then(res => {
         dispatch(unLovePropertySuccess(ctx))
         notification['success']({
-          message: 'Yuhuu!!!',
+          message: 'Success',
           description: res.data.message,
           placement: 'bottomRight',
         });
@@ -250,7 +250,7 @@ export const unLoveProperty = (id, slug, ctx) => {
         dispatch(unLovePropertyFail(err.response))
         notification['error']({
           message: 'Opps...',
-          description: err.response.data.message,
+          description: err.response.data.message ? err.response.data.message : 'Something went wrong',
           placement: 'bottomRight',
         });
       })

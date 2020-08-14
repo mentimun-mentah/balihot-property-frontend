@@ -41,7 +41,7 @@ const Account = () => {
           setLoading(false); 
           dispatch(actions.getUser())
           notification['success']({
-            message: 'Yuhuu!!!',
+            message: 'Success',
             description: res.data.message,
             placement: 'bottomRight',
             duration: 2,
@@ -118,7 +118,7 @@ const Account = () => {
             setLoading(false)
             dispatch(actions.getUser())
             notification['success']({
-              message: 'Yuhuu!!!',
+              message: 'Success',
               description: res.data.message,
               placement: 'bottomRight',
             });
@@ -156,7 +156,7 @@ const Account = () => {
             setLoading(false)
             dispatch(actions.getUser())
             notification['success']({
-              message: 'Yuhuu!!!',
+              message: 'Success',
               description: res.data.message,
               placement: 'bottomRight',
             });
@@ -204,7 +204,7 @@ const Account = () => {
             setLoading(false)
             dispatch(actions.getUser())
             notification['success']({
-              message: 'Yuhuu!!!',
+              message: 'Success',
               description: res.data.message,
               placement: 'bottomRight',
             });
@@ -532,7 +532,7 @@ const Account = () => {
 
                     <Card.Body className="pb-33 pb-12-pro">
                       <small className="fs-10 text-secondary font-italic">
-                        click the image to change your avatar.
+                        click remove icon on the image to change your avatar.
                       </small>
                       <p className="fs-14 mb-0 text-secondary mt-2">
                         Image size: maks. 4 MB
@@ -614,12 +614,42 @@ const Account = () => {
         // Large devices (ipad pro)
         @media (max-width: 1200px) {
           :global(.pb-12-pro) {
-            padding-bottom: 12px !important;
+            padding-bottom: 2px !important;
+          }
+        }
+        @media (min-width: 1366px) {
+          :global(.pb-12-pro) {
+            padding-top: 34px !important;
           }
         }
         :global(.pb-33) {
           padding-bottom: 33px;
         }
+        /* ----------- iPad ----------- */
+        /* Portrait and Landscape */
+        @media only screen 
+          and (min-width: 768px) 
+          and (max-height: 1024px) 
+          and (-webkit-min-device-pixel-ratio: 1.5) {
+            :global(.pb-12-pro) {
+              padding-top: 41px !important;
+              padding-bottom : 41px !important;
+            }
+        }
+
+        /* Portrait */
+        @media only screen 
+          and (min-width: 768px) 
+          and (max-height: 1024px) 
+          and (orientation: portrait) 
+          and (-webkit-min-device-pixel-ratio: 1.5) {
+            :global(.pb-12-pro) {
+              padding-top: 41px !important;
+              padding-bottom : 42px !important;
+            }
+        }
+
+        /* ----------- iPad ----------- */
       `}</style>
     </>
   );

@@ -97,7 +97,7 @@ const AddRegion = () => {
 
       axios.post("/region/create", formData, headerCfgFormData)
         .then(res => {
-          swal({ title: "Yuhuu!", text: res.data.message, icon: "success", timer: 3000 });
+          swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setRegion(formRegion);
           dispatch(actions.getRegion())
         })

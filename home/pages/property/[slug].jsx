@@ -43,8 +43,10 @@ const formatter = new Intl.NumberFormat(["ban", "id"]);
 const Property = () => {
   const dispatch = useDispatch();
   const propertyData = useSelector(state => state.property.slug);
+  const dataFacilities = useSelector(state => state.facilities.facilities);
 
-  const { id, slug, name, type_id, property_for, land_size, youtube, description, hotdeal, price, love } = propertyData;
+  const { id, slug, name, type_id, property_for, land_size } = propertyData;
+  const { youtube, description, hotdeal, price, love } = propertyData;
   const { status } = propertyData; // For Sale
   const { period } = propertyData; // For Rent
   const { facilities, bathroom, bedroom, building_size } = propertyData; // For villa
@@ -72,6 +74,7 @@ const Property = () => {
   const [selected, setSelected] = useState(villaPrice[0]);
   const [isMoreText, setIsMoreText] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [facilityShow, setFacilityShow] = useState(false);
   const [fav, setFav] = useState(love);
   const [current_distance, setCurrent_distance] = useState(cur_dis_list);
   const [distance_from, setDistance_from] = useState(distance_from_list);
@@ -80,6 +83,13 @@ const Property = () => {
   const markerClickHandler = () => setMarker_click(true);
   const showVideoHandler = () => setShowVideo(!showVideo);
   const showAllPhotoHandler = () => setShowAllPhoto(!showAllPhoto);
+  const facilityShowHandler = () => setFacilityShow(!facilityShow);
+  const facilitiesNotInclude = dataFacilities.filter(({ id: id1 }) => (
+    !propertyData.facilities.some(({ id: id2 }) => id2 === id1))
+  )
+
+  const FA_LENGTH = facilities.length
+  const FA_LENGTH_NOT = facilitiesNotInclude.length
 
   const onSelectTagPrice = data => {
     const objData = JSON.parse(data);
@@ -195,6 +205,7 @@ const Property = () => {
 
   useEffect(() => {
     setSelected(villaPrice[0]);
+    console.log(FA_LENGTH)
   }, []);
 
   if (villaPrice.length > 0 && selected !== undefined) {
@@ -374,12 +385,13 @@ const Property = () => {
     });
     setDistance_from(distance);
   }
+
   /** GET DISTANCE **/
   useEffect(() => {
     setTimeout(() => {
-      // getDistanceTo()
-    }, 2000)
-  },[])
+      getDistanceTo()
+    }, 5000)
+  },[mapRef])
 
   if (loadError) return "Error";
   if (!isLoaded) return "Loading...";
@@ -504,7 +516,7 @@ const Property = () => {
 
               <Card className="shadow-none m-t-25 m-border-0 m-t-0-s">
                 <Card.Body className="p-l-0-s p-r-0-s property-overview">
-                  <Card.Title className="fs-16-s">Property Overview</Card.Title>
+                  <Card.Title className="fs-16-s m-b-20-m">Property Overview</Card.Title>
                   <div className="divide-title"></div>
                   <Row>
                     <Col lg={4} md={6} sm={6} className="mb-2">
@@ -560,7 +572,7 @@ const Property = () => {
 
               <Card className="shadow-none m-t-35 m-border-0 m-t-0-s">
                 <Card.Body className="p-l-0-s p-r-0-s mb-2 property-description">
-                  <Card.Title className="fs-16-s property-content-title">
+                  <Card.Title className="fs-16-s property-content-title m-b-20-m">
                     Property Description
                   </Card.Title>
                   <div className="divide-title"></div>
@@ -601,21 +613,15 @@ const Property = () => {
 
               {type_id == 1 && (
                 <Card className="shadow-none m-t-35 m-border-0 m-t-0-s">
-                  <Card.Body className="p-l-0-s p-r-0-s mb-2 property-amenities">
-                    <Card.Title className="fs-16-s property-content-title">
+                  <Card.Body className="p-l-0-s p-r-0-s property-amenities">
+                    <Card.Title className="fs-16-s property-content-title m-b-20-m">
                       Property Facilities
                     </Card.Title>
                     <div className="divide-title"></div>
                     <Row>
                       {facilities &&
                         facilities.slice(0, 10).map(fa => (
-                          <Col
-                            lg={4}
-                            md={6}
-                            sm={6}
-                            className="mb-2 fs-16"
-                            key={fa.id}
-                          >
+                          <Col lg={4} md={6} sm={6} className="mb-2 fs-16" key={fa.id} >
                             <h4 className="fs-14">
                               <i className={`${fa.icon} mr-2 fs-16`} />
                               <span className="font-weight-normal ml-1">
@@ -624,11 +630,24 @@ const Property = () => {
                             </h4>
                           </Col>
                         ))}
+                      {FA_LENGTH < 10 && facilitiesNotInclude &&
+                        facilitiesNotInclude.slice(0, 10 - FA_LENGTH).map(fa => (
+                          <Col lg={4} md={6} sm={6} className="mb-2 fs-16" key={fa.id} >
+                            <h4 className="fs-14 prop-label">
+                              <s>
+                                <i className={`${fa.icon} mr-2 fs-16`} />
+                                <span className="font-weight-normal ml-1">
+                                  {fa.name}
+                                </span>
+                              </s>
+                            </h4>
+                          </Col>
+                        ))}
                     </Row>
                   </Card.Body>
-                  {facilities && facilities.length > 10 && (
+                  {facilities && FA_LENGTH + FA_LENGTH_NOT > 10 && (
                     <Card.Footer className="bg-transparent border-0 mb-2 pt-0 pl-30px">
-                      <Button className="show-amenities m-btn-block m-ft-14">
+                      <Button size="sm" className="show-amenities m-btn-block m-ft-14" onClick={facilityShowHandler}>
                         Show all facilities
                       </Button>
                     </Card.Footer>
@@ -640,7 +659,7 @@ const Property = () => {
 
               <Card className="shadow-none m-t-35 m-border-0 m-t-0-s">
                 <Card.Body className="p-l-0-s p-r-0-s mb-2 property-distance">
-                  <Card.Title className="fs-16-s property-content-title">
+                  <Card.Title className="fs-16-s property-content-title m-b-20-m">
                     Distance to:
                   </Card.Title>
                   <div className="divide-title"></div>
@@ -704,7 +723,7 @@ const Property = () => {
                     options={GMapsOptions}
                     onClick={onMapClick}
                     onLoad={onMapLoad}
-                    // onIdle={getDistanceTo}
+                    onIdle={getDistanceTo}
                     center={center}
                     zoom={16}
                   >
@@ -801,10 +820,10 @@ const Property = () => {
       <section className="pt-1">
         <Container>
           <Row className="mb-4">
-            <Col className="d-block d-sm-block d-md-block d-lg-none d-xl-none">
+            <Col className="d-block d-sm-block d-md-block d-lg-none d-xl-none align-self-end">
               <h3 className="fs-16">Similar listings</h3>
             </Col>
-            <Col className="d-none d-sm-none d-md-none d-lg-block d-xl-block">
+            <Col className="d-none d-sm-none d-md-none d-lg-block d-xl-block align-self-end">
               <h3 className="fs-20">Other properties for similar listings</h3>
             </Col>
             <Col>
@@ -834,6 +853,41 @@ const Property = () => {
         onClose={showAllPhotoHandler}
         wrap={false}
       />
+
+      {/* SHOW ALL FACILITIES */}
+      <BootsModal show={facilityShow} onHide={facilityShowHandler} size="lg" centered>
+        <BootsModal.Header closeButton>
+          <BootsModal.Title className="fs-16">All Facilities</BootsModal.Title>
+        </BootsModal.Header>
+        <BootsModal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
+          <Row>
+            {facilities &&
+              facilities.map(fa => (
+                <Col lg={4} md={6} sm={6} className="mb-2 fs-16" key={fa.id} >
+                  <h4 className="fs-14">
+                    <i className={`${fa.icon} mr-2 fs-16`} />
+                    <span className="font-weight-normal ml-1">
+                      {fa.name}
+                    </span>
+                  </h4>
+                </Col>
+              ))}
+            {facilitiesNotInclude &&
+              facilitiesNotInclude.map(fa => (
+                <Col lg={4} md={6} sm={6} className="mb-2 fs-16" key={fa.id} >
+                  <h4 className="fs-14 prop-label">
+                    <s>
+                      <i className={`${fa.icon} mr-2 fs-16`} />
+                      <span className="font-weight-normal ml-1">
+                        {fa.name}
+                      </span>
+                    </s>
+                  </h4>
+                </Col>
+              ))}
+          </Row>
+        </BootsModal.Body>
+      </BootsModal>
 
       {/* SHOW VIDEO */}
       <BootsModal show={showVideo} onHide={showVideoHandler} size="lg" centered>
@@ -1042,6 +1096,8 @@ const Property = () => {
 Property.getInitialProps = async ctx => {
   const { slug } = ctx.query;
   try {
+    const resFacilities = await axios.get('/facilities');
+    ctx.store.dispatch(actions.getFacilitySuccess(resFacilities.data)); 
     const { access_token } = cookie.get(ctx);
     const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
     if (access_token) {

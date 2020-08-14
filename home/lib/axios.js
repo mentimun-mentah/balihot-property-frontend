@@ -29,7 +29,6 @@ instance.interceptors.request.use(function (config) {
     return config;
   }, function (error) {
     // Do something with request error
-    console.log("REQUEST AXIOS LIB ##### => ", error.response)
     return Promise.reject(error);
   });
 
@@ -42,7 +41,6 @@ instance.interceptors.response.use(function (response) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     const headerRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } }
-    console.log("AXIOS LIB ##### => ", error.response)
     if(error.response.status == 401 && error.response.data.msg === "Token has expired"){
       if(refresh_token){
         await instance.post('/refresh', null, headerRefresh)
@@ -51,17 +49,16 @@ instance.interceptors.response.use(function (response) {
               maxAge: 30 * 24 * 60 * 60,
               path: "/",
             })
-            return Promise.resolve()
+            return Promise.resolve(error.config)
           })
-          .catch((err) => {
-            console.log("ERROR REFRESH AXIOS LIB ##### +++> ", err.response.status, err.response.data)
+          .catch(() => {
             destroyCookie(null, "access_token", { path: "/" })
             destroyCookie(null, "refresh_token", { path: "/" })
             destroyCookie(null, "username", { path: "/" })
             process.browser && Router.reload()
           })
           .then(() => {
-            return Promise.resolve()
+            return Promise.resolve(error.config)
           })
       } else {
         destroyCookie(null, "access_token", { path: "/" })

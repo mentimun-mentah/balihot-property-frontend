@@ -44,6 +44,23 @@ const Property = () => {
   const dispatch = useDispatch();
   const propertyData = useSelector(state => state.property.slug);
   const dataFacilities = useSelector(state => state.facilities.facilities);
+  const dataType = useSelector((state) => state.types.types);
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
+  let PROPERTY_TYPE = null;
+
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].id === propertyData.type_id){
+      PROPERTY_TYPE = dataType[key].name
+    }
+  }
 
   const { id, slug, name, type_id, property_for, land_size } = propertyData;
   const { youtube, description, hotdeal, price, love } = propertyData;
@@ -130,7 +147,7 @@ const Property = () => {
   }, []);
   // MAP
 
-  if (type_id == 1) {
+  if (type_id !== LAND_CHECK_ID) {
     let tmp = [];
     for (let key in price) {
       if (price[key]) {
@@ -178,7 +195,7 @@ const Property = () => {
     }
   }
 
-  if (type_id == 2) {
+  if (type_id == LAND_CHECK_ID) {
     let tmp = [];
     for (let key in price) {
       if (price[key]) {
@@ -205,7 +222,6 @@ const Property = () => {
 
   useEffect(() => {
     setSelected(villaPrice[0]);
-    console.log(FA_LENGTH)
   }, []);
 
   if (villaPrice.length > 0 && selected !== undefined) {
@@ -219,7 +235,7 @@ const Property = () => {
   }
 
   let price_list, land_total_price;
-  if (type_id === 2 && status === "Free Hold") {
+  if (type_id === LAND_CHECK_ID && status === "Free Hold") {
     price_list = landPrice.map((data, i) => {
       land_total_price = data.price * land_size;
       return (
@@ -247,7 +263,7 @@ const Property = () => {
       );
     });
   }
-  if (type_id === 2 && status === "Lease Hold") {
+  if (type_id === LAND_CHECK_ID && status === "Lease Hold") {
     price_list = landPrice.map((data, i) => {
       land_total_price = data.price * land_size;
       return (
@@ -523,12 +539,11 @@ const Property = () => {
                       <h4 className="fs-14">
                         Land size:
                         <span className="font-weight-normal ml-1">
-                          {land_size}{" "}
-                          {type_id == 1 ? "are" : type_id == 2 ? "m²" : ""}
+                          {land_size} are
                         </span>
                       </h4>
                     </Col>
-                    {type_id == 1 && (
+                    {type_id !== LAND_CHECK_ID && (
                       <>
                         <Col lg={4} md={6} sm={6} className="mb-2">
                           <h4 className="fs-14">
@@ -538,22 +553,26 @@ const Property = () => {
                             </span>
                           </h4>
                         </Col>
-                        <Col lg={4} md={6} sm={6} className="mb-2">
-                          <h4 className="fs-14">
-                            Bedrooms:
-                            <span className="font-weight-normal ml-1">
-                              {bedroom}
-                            </span>
-                          </h4>
-                        </Col>
-                        <Col lg={4} md={6} sm={6} className="mb-2">
-                          <h4 className="fs-14">
-                            Bathrooms:
-                            <span className="font-weight-normal ml-1">
-                              {bathroom}
-                            </span>
-                          </h4>
-                        </Col>
+                        {bedroom && (
+                          <Col lg={4} md={6} sm={6} className="mb-2">
+                            <h4 className="fs-14">
+                              Bedrooms:
+                              <span className="font-weight-normal ml-1">
+                                {bedroom}
+                              </span>
+                            </h4>
+                          </Col>
+                        )}
+                        {bathroom && (
+                          <Col lg={4} md={6} sm={6} className="mb-2">
+                            <h4 className="fs-14">
+                              Bathrooms:
+                              <span className="font-weight-normal ml-1">
+                                {bathroom}
+                              </span>
+                            </h4>
+                          </Col>
+                        )}
                       </>
                     )}
                     <Col lg={4} md={6} sm={6} className="mb-2">
@@ -611,7 +630,7 @@ const Property = () => {
 
               <div className="divider"></div>
 
-              {type_id == 1 && (
+              {type_id !== LAND_CHECK_ID && (
                 <Card className="shadow-none m-t-35 m-border-0 m-t-0-s">
                   <Card.Body className="p-l-0-s p-r-0-s property-amenities">
                     <Card.Title className="fs-16-s property-content-title m-b-20-m">
@@ -761,7 +780,7 @@ const Property = () => {
                   )}
 
                   <Card.Title className="fs-18 mb-1 pb-1 text-uppercase">
-                    {(type_id == 1 && "Villa") || (type_id == 2 && "Land")} Property
+                    {PROPERTY_TYPE} Property
                   </Card.Title>
                   <Card.Subtitle className="fs-14 mt-1 text-muted">
                     For {pf.length > 0 && pf[0] !== "" && <>{pf.join(" & ")}</>}{" "}
@@ -776,7 +795,7 @@ const Property = () => {
                     </span>
                   </h4>
                   {price_list}
-                  {type_id == 1 && (
+                  {type_id !== LAND_CHECK_ID && (
                     <>
                       <h4 className="fs-14 text-left">
                         Price tag:
@@ -1096,6 +1115,8 @@ const Property = () => {
 Property.getInitialProps = async ctx => {
   const { slug } = ctx.query;
   try {
+    const resType = await axios.get('/types');
+    ctx.store.dispatch(actions.getTypeSuccess(resType.data)); 
     const resFacilities = await axios.get('/facilities');
     ctx.store.dispatch(actions.getFacilitySuccess(resFacilities.data)); 
     const { access_token } = cookie.get(ctx);

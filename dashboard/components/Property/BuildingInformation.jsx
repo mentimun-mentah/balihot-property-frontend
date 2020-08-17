@@ -7,7 +7,9 @@ import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import InputGroup from "react-bootstrap/InputGroup";
 
-const BuildingInformation = ({bedroom, bathroom, building_size, land_size, facilities, facility_list, onChange}) => {
+const BuildingInformation = (
+  {bedroom, bathroom, building_size, land_size, facilities, facility_list, onChange, except_villa}
+) => {
   const invalidBedroom = cx({ "is-invalid": !bedroom.isValid });
   const invalidBathroom = cx({ "is-invalid": !bathroom.isValid });
   const invalidFacility = cx({ "is-invalid": !facilities.isValid });
@@ -26,12 +28,15 @@ const BuildingInformation = ({bedroom, bathroom, building_size, land_size, facil
               <Form>
                 <Form.Row>
                   <Form.Group as={Col}>
-                    <Form.Label>Bedroom</Form.Label>
+                    <Form.Label>
+                      Bedroom
+                      {except_villa && <i className="text-primary ml-2">optional</i>}
+                    </Form.Label>
                     <Form.Control type="number"
                       placeholder="Bedroom"
                       name="bedroom"
                       className={invalidBedroom}
-                      value={bedroom.value}
+                      value={bedroom.value && bedroom.value}
                       onChange={e => onChange(e, "input")}
                     />
                     {bedroom.message && (
@@ -40,12 +45,15 @@ const BuildingInformation = ({bedroom, bathroom, building_size, land_size, facil
                   </Form.Group>
 
                   <Form.Group as={Col}>
-                    <Form.Label>Bathroom</Form.Label>
+                    <Form.Label>
+                      Bathroom
+                      {except_villa && <i className="text-primary ml-2">optional</i>}
+                    </Form.Label>
                     <Form.Control type="number"
                       placeholder="Bathroom"
                       name="bathroom"
                       className={invalidBathroom}
-                      value={bathroom.value}
+                      value={bathroom.value && bathroom.value}
                       onChange={e => onChange(e, "input")}
                     />
                     {bathroom.message && (

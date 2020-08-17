@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import CardMarker from "./CardMarker";
 const CardMarkerMemo = React.memo(CardMarker);
 
@@ -5,9 +6,23 @@ const ContainerCardProperty = ({ dataProperty }) => {
   const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = dataProperty;
   const {status, period, price, hotdeal, location, created_at} = dataProperty;
 
+  const dataType = useSelector((state) => state.types.types);
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
+
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+  }
+
   let villaPrice = []
   let landPrice = []
-  if(type_id == 1){
+  if(type_id !== LAND_CHECK_ID){
     let tmp = []
     for(let key in price){
       if(price[key]){
@@ -54,7 +69,7 @@ const ContainerCardProperty = ({ dataProperty }) => {
       }
     } 
   }
-  if(type_id == 2){
+  if(type_id == LAND_CHECK_ID){
     let tmp = []
     for(let key in price){
       if(price[key]){
@@ -85,6 +100,7 @@ const ContainerCardProperty = ({ dataProperty }) => {
       building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
       villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
       location={location} created_at={created_at}
+      VILLA_CHECK_ID={VILLA_CHECK_ID} LAND_CHECK_ID={LAND_CHECK_ID}
     />
   )
 };

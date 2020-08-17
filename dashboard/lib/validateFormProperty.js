@@ -17,7 +17,7 @@ export const propertyImageIsValid = (imageList, setImageList) => {
   return isGood;
 }
 
-export const propertyFormIsValid = (property, setProperty) => {
+export const propertyFormIsValid = (property, setProperty, VILLA_CHECK_ID, LAND_CHECK_ID) => {
   const name = {...property.name}
   const type_id = {...property.type_id}
   const region_id = {...property.region_id}
@@ -103,13 +103,13 @@ export const propertyFormIsValid = (property, setProperty) => {
   if(status.value !== null && validator.isIn("Free Hold", status.value) && 
      validator.isEmpty(freehold_price.value === null ? "" : freehold_price.value.toString()) ){
     freehold_price.isValid = false;
-    freehold_price.message = type_id.value == 2 ? "Price / are can't be empty" : "Free Hold price can't be empty"
+    freehold_price.message = type_id.value == LAND_CHECK_ID ? "Price / are can't be empty" : "Free Hold price can't be empty"
     isGood = false;
   }
   if(status.value !== null && validator.isIn("Lease Hold", status.value) &&
      validator.isEmpty(leasehold_price.value === null ? "" : leasehold_price.value.toString()) ){
     leasehold_price.isValid = false;
-    leasehold_price.message = type_id.value == 2 ? "Price / are / year can't be empty" : "Lease Hold price can't be empty";
+    leasehold_price.message = type_id.value == LAND_CHECK_ID ? "Price / are / year can't be empty" : "Lease Hold price can't be empty";
     isGood = false;
   }
   if(status.value !== null && validator.isIn("Lease Hold", status.value) && validator.isEmpty(leasehold_period.value)){
@@ -153,23 +153,35 @@ export const propertyFormIsValid = (property, setProperty) => {
     isGood = false
   }
 
+  // FOR ANY TYPE EXCEPT VILLA AND LAND
+  if(type_id.value !== VILLA_CHECK_ID && type_id.value !== LAND_CHECK_ID && validator.isEmpty(bathroom.value.toString())){
+    bathroom.isValid = true;
+    bathroom.message = null;
+    isGood = true;
+  }
+  if(type_id.value !== VILLA_CHECK_ID && type_id.value !== LAND_CHECK_ID && validator.isEmpty(bedroom.value.toString())){
+    bedroom.isValid = true;
+    bedroom.message = null;
+    isGood = true;
+  }
+
   // FOR VILLA
-  if(type_id.value == 1 && validator.isEmpty(bathroom.value)){
+  if(type_id.value == VILLA_CHECK_ID && validator.isEmpty(bathroom.value.toString())){
     bathroom.isValid = false;
     bathroom.message = "Bathroom can't be empty";
     isGood = false;
   }
-  if(type_id.value == 1 && validator.isEmpty(bedroom.value)){
+  if(type_id.value == VILLA_CHECK_ID && validator.isEmpty(bedroom.value.toString())){
     bedroom.isValid = false;
     bedroom.message = "Bedroom can't be empty";
     isGood = false;
   }
-  if(type_id.value == 1 && validator.isEmpty(building_size.value)){
+  if(type_id.value !== LAND_CHECK_ID && validator.isEmpty(building_size.value.toString())){
     building_size.isValid = false;
     building_size.message = "Building size can't be empty";
     isGood = false;
   }
-  if(type_id.value == 1 && facilities.value.length < 1){
+  if(type_id.value !== LAND_CHECK_ID && facilities.value.length < 1){
     facilities.isValid = false;
     facilities.message = "Facility can't be empty";
     isGood = false;

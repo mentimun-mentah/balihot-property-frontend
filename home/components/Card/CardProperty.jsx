@@ -24,7 +24,7 @@ const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
 
 const CardContainer = ({
   id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
-  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, love
+  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, love, VILLA_CHECK_ID, LAND_CHECK_ID
 }) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
@@ -73,7 +73,7 @@ const CardContainer = ({
   }
 
   let amenities, price_list, land_total_price, land_leasehold;
-  if(type_id === 2 && status === "Free Hold"){
+  if(type_id === LAND_CHECK_ID && status === "Free Hold"){
     price_list = landPriceList.map((data, i) => {
     land_total_price = data.price * land_size
     return (
@@ -85,7 +85,7 @@ const CardContainer = ({
       </p>
     )})
   }
-  if(type_id === 2 && status === "Lease Hold"){
+  if(type_id === LAND_CHECK_ID && status === "Lease Hold"){
     price_list = landPriceList.map((data, i) => {
     land_total_price = data.price * land_size
     return (
@@ -104,7 +104,7 @@ const CardContainer = ({
     ))
   }
 
-  if(type_id === 1){
+  if(type_id !== LAND_CHECK_ID){
     price_list = (
       <p className="fw-500 fs-16 text-dark mb-1 fs-12-s">
         IDR {formatter.format(selected.price)} 
@@ -113,14 +113,18 @@ const CardContainer = ({
     
     amenities = (
       <>
-        <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-          <i className="far fa-bed fa-lg mr-2 fs-12-s" />
-          <span className="pr-1">{bedroom}</span>
-        </Badge>
-        <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-          <i className="far fa-bath fa-lg mr-2 fs-12-s" />
-          <span className="pr-1">{bathroom}</span>
-        </Badge>
+        {bedroom && (
+          <Badge className="font-weight-normal pl-0 mr-1 mb-2">
+            <i className="far fa-bed fa-lg mr-2 fs-12-s" />
+            <span className="pr-1">{bedroom}</span>
+          </Badge>
+        )}
+        {bathroom && (
+          <Badge className="font-weight-normal pl-0 mr-1 mb-2">
+            <i className="far fa-bath fa-lg mr-2 fs-12-s" />
+            <span className="pr-1">{bathroom}</span>
+          </Badge>
+        )}
         <Badge className="font-weight-normal pl-0 mr-1 mb-2">
           <i className="far fa-expand-arrows fa-lg mr-2 fs-12-s" />
           <span className="pr-1">{land_size} are</span>
@@ -132,7 +136,7 @@ const CardContainer = ({
       </>
     )
   }
-  if(type_id === 2){
+  if(type_id === LAND_CHECK_ID){
     amenities = (
       <>
         <Badge className="font-weight-normal pl-0 mr-1 mb-2">
@@ -176,12 +180,12 @@ const CardContainer = ({
               For {statusProperty.length > 0 && statusProperty[0] !== "" && `${statusProperty.join(" & ")}`}
             </span>
           </div>
-          {type_id === 2 && (
+          {type_id === LAND_CHECK_ID && (
             <div className="bottom-left">
               <h5 className="fs-16-s">IDR {formatter.format(land_total_price)}</h5>
             </div>
           )}
-          {type_id === 1 && (
+          {type_id !== LAND_CHECK_ID && (
             <div className="bottom-status">
               {buttonPrice}
             </div>
@@ -199,7 +203,7 @@ const CardContainer = ({
               </Card.Text>
               {amenities}
               {land_leasehold}
-              {type_id == 1 && status !== null && validator.isIn("Lease Hold", status.split(",")) && selected.period && (
+              {type_id !== LAND_CHECK_ID && status !== null && validator.isIn("Lease Hold", status.split(",")) && selected.period && (
                 <motion.span className="badge font-weight-normal pl-0 mr-1 mb-2"
                   animate={selected.period ? "in" : "out"}
                   variants={Fade}

@@ -41,6 +41,9 @@ const EditProperty = ({dataProperty}) => {
   const {period, daily_price, weekly_price, monthly_price, annually_price, hotdeal} = property; // Property for rent
   const {facilities, bedroom, bathroom, building_size} = property; // Data for Villa
   const {location, latitude, longitude} = property; // Data for Map
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
   //========= PROPERTY ==========//
   
   //========= PROPERTY INFORMATION ==========//
@@ -48,11 +51,20 @@ const EditProperty = ({dataProperty}) => {
   const dataRegion = useSelector((state) => state.region.region);
   const dataType = useSelector((state) => state.types.types);
 
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+  }
+
   const type_list = []; renderOptions(type_list, dataType, true)
   const region_list = []; renderOptions(region_list, dataRegion, true)
   const for_list = []; 
-  if(type_id.value == 1) renderOptions(for_list, for_data.villa) // 1 for villa
-  if(type_id.value == 2) renderOptions(for_list, for_data.land) // 2 for land
+  if(type_id.value.length !== 0 && type_id.value !== LAND_CHECK_ID) renderOptions(for_list, for_data.villa) // for any type except land
+  if(type_id.value.length !== 0 && type_id.value == LAND_CHECK_ID) renderOptions(for_list, for_data.land) // for type land
   const period_list = []; renderOptions(period_list, period_data)
   const status_list = []; renderOptions(status_list, status_data)
   const facility_list = []; renderOptions(facility_list, dataFacility, true)
@@ -227,11 +239,11 @@ const EditProperty = ({dataProperty}) => {
         }
       }
       if(dataProperty.type_id){
-        state.type_id.value = [dataProperty.type_id]
+        state.type_id.value = dataProperty.type_id
         state.type_id.isValid = true; state.type_id.message = null;
       }
       if(dataProperty.region_id){
-        state.region_id.value = [dataProperty.region_id]
+        state.region_id.value = dataProperty.region_id
         state.region_id.isValid = true; state.region_id.message = null;
       }
       if(dataProperty.period){
@@ -254,6 +266,18 @@ const EditProperty = ({dataProperty}) => {
         state.longitude.value = dataProperty.longitude;
         state.longitude.isValid = true; state.longitude.message = null;
       }
+      if(dataProperty.building_size || dataProperty.building_size == null){
+        state.building_size.value = dataProperty.building_size ? dataProperty.building_size : "";
+        state.building_size.isValid = true; state.building_size.message = null;
+      }
+      if(dataProperty.bedroom || dataProperty.bedroom == null){
+        state.bedroom.value = dataProperty.bedroom ? dataProperty.bedroom : "";
+        state.bedroom.isValid = true; state.bedroom.message = null;
+      }
+      if(dataProperty.bathroom || dataProperty.bathroom == null){
+        state.bathroom.value = dataProperty.bathroom ? dataProperty.bathroom : "";
+        state.bathroom.isValid = true; state.bathroom.message = null;
+      }
       if(dataProperty.facilities){
         let facilities =[]
         for(let key in dataProperty.facilities){
@@ -271,7 +295,8 @@ const EditProperty = ({dataProperty}) => {
   const submitHandler = (e) => {
     e.preventDefault()
     // if(true){
-    if(propertyImageIsValid(imageList, setImageList) && propertyFormIsValid(property, setProperty)){
+    if(propertyImageIsValid(imageList, setImageList) && 
+       propertyFormIsValid(property, setProperty, VILLA_CHECK_ID, LAND_CHECK_ID)){
       const date = moment(new Date()).format('DD MMMM YYYY')
       const formData = new FormData();
       imageList.image.value.forEach(file => {
@@ -289,12 +314,12 @@ const EditProperty = ({dataProperty}) => {
       formData.append('hotdeal', hotdeal.value);
 
       // #PORPERTY FOR SALE
-      if(type_id.value == 1 && validator.isIn("Sale", property_for.value)){
+      if(validator.isIn("Sale", property_for.value) && type_id.value !== LAND_CHECK_ID){ // for any type except land
         formData.append('status', status.value.join(","));
       }
-      if(type_id.value == 2 && validator.isIn("Sale", property_for.value)){
+      if(validator.isIn("Sale", property_for.value) && type_id.value === LAND_CHECK_ID){
         formData.append('status', status.value);
-      }
+      }  
       if(validator.isIn("Rent", property_for.value) && 
          !validator.isIn("Sale", property_for.value) && 
          status.value !== null && status.value.length < 1){
@@ -324,40 +349,44 @@ const EditProperty = ({dataProperty}) => {
       }
 
       // #PORPERTY FOR RENT
-      if(period.value !== null && period.value.length < 1 && type_id.value === 2) formData.append('period', 'Daily');
+      if(period.value !== null && period.value.length < 1 && type_id.value === LAND_CHECK_ID) formData.append('period', 'Daily');
       if(period.value !== null && period.value.length > 0) formData.append('period', period.value.join(","));
       
-      if(validator.isEmpty(daily_price.value === null ? "" : daily_price.value.toString()) && type_id.value === 2){
+      if(validator.isEmpty(daily_price.value === null ? "" : daily_price.value.toString()) && 
+         type_id.value === LAND_CHECK_ID){
         formData.append('daily_price', 1);
       }
       if(daily_price.value) formData.append('daily_price', +daily_price.value);
 
-      if(validator.isEmpty(weekly_price.value === null ? "" : weekly_price.value.toString()) && type_id.value === 2){
+      if(validator.isEmpty(weekly_price.value === null ? "" : weekly_price.value.toString()) &&
+         type_id.value === LAND_CHECK_ID){
         formData.append('weekly_price', 1);
       }
       if(weekly_price.value) formData.append('weekly_price', +weekly_price.value);
 
-      if(validator.isEmpty(monthly_price.value === null ? "" : monthly_price.value.toString()) && type_id.value === 2){
+      if(validator.isEmpty(monthly_price.value === null ? "" : monthly_price.value.toString()) && 
+         type_id.value === LAND_CHECK_ID){
         formData.append('monthly_price', 1);
       }
       if(monthly_price.value) formData.append('monthly_price', +monthly_price.value);
 
-      if(validator.isEmpty(annually_price.value === null ? "" : annually_price.value.toString()) && type_id.value === 2){
+      if(validator.isEmpty(annually_price.value === null ? "" : annually_price.value.toString()) && 
+         type_id.value === LAND_CHECK_ID){
         formData.append('annually_price', 1);
       }
       if(annually_price.value) formData.append('annually_price', +annually_price.value);
 
-      // #DATA FOR VILLA
-      if(type_id.value === 2 && facilities.value.length < 1) formData.append('facility', 1); // FOR LAND
+      // #DATA FOR VILLA AND ONTHER TYPE
+      if(type_id.value === LAND_CHECK_ID && facilities.value.length < 1) formData.append('facility', 1); // FOR LAND
       if(facilities.value.length > 0) formData.append('facility', facilities.value.join(","));
 
-      if(type_id.value === 2 && validator.isEmpty(bedroom.value)) formData.append('bedroom', 1); // FOR LAND
+      if(type_id.value === LAND_CHECK_ID && validator.isEmpty(bedroom.value)) formData.append('bedroom', 1); // FOR LAND
       if(bedroom.value) formData.append('bedroom', +bedroom.value);
 
-      if(type_id.value === 2 && validator.isEmpty(bathroom.value)) formData.append('bathroom', 1); // FOR LAND
+      if(type_id.value === LAND_CHECK_ID && validator.isEmpty(bathroom.value)) formData.append('bathroom', 1); // FOR LAND
       if(bathroom.value) formData.append('bathroom', +bathroom.value);
     
-      if(type_id.value === 2 && validator.isEmpty(building_size.value)) formData.append('building_size', 1); // FOR LAND
+      if(type_id.value === LAND_CHECK_ID && validator.isEmpty(building_size.value)) formData.append('building_size', 1);
       if(building_size.value) formData.append('building_size', +building_size.value);
 
       formData.append('location', location.value);
@@ -488,7 +517,7 @@ const EditProperty = ({dataProperty}) => {
                   </Form.Row>
 
                   <Form.Row>
-                    <Form.Group as={Col} xs={12} lg={6}>
+                    <Form.Group as={Col}>
                       <Form.Label>For</Form.Label>
                       <Select
                         mode="multiple"
@@ -506,7 +535,7 @@ const EditProperty = ({dataProperty}) => {
                       )}
                     </Form.Group>
 
-                    {type_id.value == 1 && // for villa
+                    {type_id.value.length !== 0 && type_id.value !== LAND_CHECK_ID && // for any type except land
                       validator.isIn("Rent", property_for.value) && (
                       <Form.Group as={Col}>
                         <Form.Label>Period</Form.Label>
@@ -531,10 +560,10 @@ const EditProperty = ({dataProperty}) => {
 
                   <Form.Row>
                     {validator.isIn("Sale", property_for.value) && (
-                      <Form.Group as={Col} xs={12} lg={6}>
+                      <Form.Group as={Col}>
                         <Form.Label>Status</Form.Label>
                         <Select
-                          mode={type_id.value == 2 ? "" : "multiple"} // for land
+                          mode={type_id.value == LAND_CHECK_ID ? "" : "multiple"} // for land
                           size="large"
                           style={{ width: "100%" }}
                           placeholder="Select status"
@@ -571,7 +600,7 @@ const EditProperty = ({dataProperty}) => {
                   {/* FREE HOLD & LEASE HOLD PRICE */}
                   <Form.Row>
                     {/*========= LAND =========*/}
-                    {type_id.value == 2 && // for land
+                    {type_id.value.length !== 0 && type_id.value == LAND_CHECK_ID && // for land
                       (validator.isIn("Free Hold", status.value) || 
                       validator.isIn("Lease Hold", status.value)) &&(
                       <>
@@ -586,7 +615,7 @@ const EditProperty = ({dataProperty}) => {
                               onChange={e => inputChangeHandler(e, "input")}
                             />
                             <InputGroup.Append>
-                              <InputGroup.Text className={invalidLand_size && "border-invalid"}>m²</InputGroup.Text>
+                              <InputGroup.Text className={invalidLand_size && "border-invalid"}>are</InputGroup.Text>
                             </InputGroup.Append>
                           </InputGroup>
                           {land_size.message && (
@@ -628,7 +657,7 @@ const EditProperty = ({dataProperty}) => {
                     {/*========= LAND =========*/}
 
                     {/*========= VILLA =========*/}
-                    {type_id.value == 1 && status && status.value !== null && status.value.map((name,i) => { 
+                    {type_id.value.length !== 0 && type_id.value !== LAND_CHECK_ID && status && status.value !== null && status.value.map((name,i) => { 
                       let names = `${name.split(" ").join("").toLowerCase()}_price`, invalid, message, value
                       const state = JSON.parse(JSON.stringify(property));
                       for(let x in state){ // leasehold_price & freehold_price for villa
@@ -721,7 +750,7 @@ const EditProperty = ({dataProperty}) => {
         </Row>
       </Container>
 
-      {type_id.value == 1 && (
+      {type_id.value.length !== 0 && type_id.value !== LAND_CHECK_ID && (
         <BuildingInformation 
           bedroom={bedroom} 
           bathroom={bathroom}
@@ -730,6 +759,7 @@ const EditProperty = ({dataProperty}) => {
           facilities={facilities}
           facility_list={facility_list}
           onChange={inputChangeHandler}
+          except_villa={type_id.value !== VILLA_CHECK_ID}
         />
       )}
 

@@ -9,7 +9,7 @@ const formPrice = { name: "", price: "", period: null }
 
 const CardMarker = ({ 
   type_id, slug, images, name, location, hotdeal, property_for, bedroom, bathroom, status, land_size, 
-  building_size, villaPriceList, selectedPrice, landPriceList
+  building_size, villaPriceList, selectedPrice, landPriceList, VILLA_CHECK_ID, LAND_CHECK_ID
 }) => {
 
   const [selected, setSelected] = useState(formPrice)
@@ -46,7 +46,7 @@ const CardMarker = ({
   }
   
   let amenities, price_list, land_total_price, land_leasehold;
-  if(type_id === 2 && status === "Free Hold"){
+  if(type_id === LAND_CHECK_ID && status === "Free Hold"){
     price_list = landPriceList.map((data, i) => {
     land_total_price = data.price * land_size
     return (
@@ -58,7 +58,7 @@ const CardMarker = ({
       </p>
     )})
   }
-  if(type_id === 2 && status === "Lease Hold"){
+  if(type_id === LAND_CHECK_ID && status === "Lease Hold"){
     price_list = landPriceList.map((data, i) => {
     land_total_price = data.price * land_size
     return (
@@ -71,7 +71,7 @@ const CardMarker = ({
     )})
   }
 
-  if(type_id === 1){
+  if(type_id !== LAND_CHECK_ID){
     price_list = <>IDR {formatter.format(selected.price)}</>
 
     amenities = (
@@ -95,7 +95,7 @@ const CardMarker = ({
       </div>
     )
   }
-  if(type_id === 2){
+  if(type_id === LAND_CHECK_ID){
     amenities = (
       <div className="text-dark">
         <Badge className="font-weight-normal pl-0 mr-1">
@@ -135,12 +135,12 @@ const CardMarker = ({
               For {statusProperty.length > 0 && statusProperty[0] !== "" && `${statusProperty.join(" & ")}`}
             </span>
           </div>
-          {type_id === 2 && (
+          {type_id === LAND_CHECK_ID && (
             <div className="bottom-left bottom-left-marker">
               <h5>IDR {formatter.format(land_total_price)}</h5>
             </div>
           )}
-          {type_id === 1 && (
+          {type_id !== LAND_CHECK_ID && (
             <div className="bottom-status">
               {buttonPrice}
             </div>

@@ -16,6 +16,19 @@ const PropertyCardMemo = React.memo(PropertyCard);
 const ManageProperty = () => {
   const dispatch = useDispatch();
   const dataProperty = useSelector((state) => state.property.property);
+  const dataType = useSelector((state) => state.types.types);
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
+
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+  }
 
   const deletePropertyHandler = id => {
     swal({
@@ -53,7 +66,7 @@ const ManageProperty = () => {
             const {status, period, price, hotdeal, location} = data;
             let villaPrice = []
             let landPrice = []
-            if(type_id == 1){
+            if(type_id !== LAND_CHECK_ID){
               let tmp = []
               for(let key in price){
                 if(price[key]){
@@ -100,7 +113,7 @@ const ManageProperty = () => {
                 }
               } 
             }
-            if(type_id == 2){
+            if(type_id == LAND_CHECK_ID){
               let tmp = []
               for(let key in price){
                 if(price[key]){
@@ -131,7 +144,8 @@ const ManageProperty = () => {
                   type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
                   building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
                   villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
-                  onDelete={() => deletePropertyHandler(id)} location={location}
+                  onDelete={() => deletePropertyHandler(id)} location={location} VILLA_CHECK_ID={VILLA_CHECK_ID}
+                  LAND_CHECK_ID={LAND_CHECK_ID}
                 />
               </Col>
             )
@@ -145,8 +159,10 @@ const ManageProperty = () => {
 };
 
 ManageProperty.getInitialProps = async ctx => {
-  let resProperty = await axios.get('/properties');
+  let resProperty = await axios.get('/properties?per_page=100');
   ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+  let resType = await axios.get('/types');
+  ctx.store.dispatch(actions.getTypeSuccess(resType.data)); 
 }
 
 export default withAuth(ManageProperty);

@@ -13,6 +13,19 @@ const PropertyCardHorizontalMemo = React.memo(PropertyCardHorizontal)
 
 const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeave }) => {
   const loading = useSelector(state => state.property.loading)
+  const dataType = useSelector((state) => state.types.types);
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
+
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+  }
   return (
     <>
       <Row>
@@ -21,7 +34,7 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
           const {status, period, price, hotdeal, location, created_at, love} = data;
           let villaPrice = []
           let landPrice = []
-          if(type_id == 1){
+          if(type_id !== LAND_CHECK_ID){
             let tmp = []
             for(let key in price){
               if(price[key]){
@@ -68,7 +81,7 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
               }
             } 
           }
-          if(type_id == 2){
+          if(type_id == LAND_CHECK_ID){
             let tmp = []
             for(let key in price){
               if(price[key]){
@@ -107,6 +120,7 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
                     villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
                     location={location} created_at={created_at} love={love}
                     mouseEnter={() => mouseEnter(data)} mouseLeave={mouseLeave} 
+                    VILLA_CHECK_ID={VILLA_CHECK_ID} LAND_CHECK_ID={LAND_CHECK_ID}
                   />
                 )}
               </Col>
@@ -124,6 +138,7 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
                     building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
                     villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
                     location={location} created_at={created_at} love={love}
+                    VILLA_CHECK_ID={VILLA_CHECK_ID} LAND_CHECK_ID={LAND_CHECK_ID}
                   />
                 )}
               </Col>

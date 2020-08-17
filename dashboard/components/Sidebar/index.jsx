@@ -12,6 +12,7 @@ const Sidebar = () => {
   const [visible, setVisible] = useState(false);
   const { pathname } = useRouter();
   const dashboard = pathname === "/admin"
+  const type = pathname.startsWith("/admin/type")
   const region = pathname.startsWith("/admin/region")
   const teams = pathname.startsWith("/admin/teams")
   const property = pathname.startsWith("/admin/property")
@@ -55,6 +56,11 @@ const Sidebar = () => {
                 Administration
               </h6>
 
+              <Link href={`${ADMIN_ROUTE}/type`} as={`${ADMIN_ROUTE}/type`}>
+                <Nav.Link as="a" className={type ? "hov_pointer active" : "hov_pointer"}>
+                  <i className="far fa-folder-plus" /> Add Type
+                </Nav.Link>
+              </Link>
               <Link href={`${ADMIN_ROUTE}/region`} as={`${ADMIN_ROUTE}/region`}>
                 <Nav.Link as="a" className={region ? "hov_pointer active" : "hov_pointer"}>
                   <i className="far fa-compass text-danger" /> Add Region
@@ -96,7 +102,7 @@ const Sidebar = () => {
             General
           </h6>
           <Link href={ADMIN_ROUTE} as={ADMIN_ROUTE}>
-            <Nav.Link as="a" className={dashboard ? "hov_pointer active mb-1" : "hov_pointer mb-1"}>
+            <Nav.Link as="a" className={dashboard ? "hov_pointer active mb-1" : "hov_pointer mb-1"} onClick={onClose}>
               <i className="far fa-house-flood" /> Dashboard
             </Nav.Link>
           </Link>
@@ -109,27 +115,27 @@ const Sidebar = () => {
           </h6>
 
           <Link href={`${ADMIN_ROUTE}/region`} as={`${ADMIN_ROUTE}/region`}>
-            <Nav.Link as="a" className={region ? "hov_pointer active mb-1" : "hov_pointer mb-1"}>
+            <Nav.Link as="a" className={region ? "hov_pointer active mb-1" : "hov_pointer mb-1"} onClick={onClose}>
               <i className="far fa-compass text-danger" /> Add Region
             </Nav.Link>
           </Link>
           <Link href={`${ADMIN_ROUTE}/teams`} as={`${ADMIN_ROUTE}/teams`}>
-            <Nav.Link as="a" className={teams ? "hov_pointer active my-1" : "hov_pointer my-1"}>
+            <Nav.Link as="a" className={teams ? "hov_pointer active my-1" : "hov_pointer my-1"} onClick={onClose}>
               <i className="far fa-users-crown" /> Add Teams
             </Nav.Link>
           </Link>
           <Link href={`${ADMIN_ROUTE}/property`} as={`${ADMIN_ROUTE}/property`}>
-            <Nav.Link as="a" className={property ? "hov_pointer active my-1" : "hov_pointer my-1"}>
+            <Nav.Link as="a" className={property ? "hov_pointer active my-1" : "hov_pointer my-1"} onClick={onClose}>
               <i className="far fa-file-plus text-info" /> Add Property
             </Nav.Link>
           </Link>
           <Link href={`${ADMIN_ROUTE}/facilities`} as={`${ADMIN_ROUTE}/facilities`}>
-            <Nav.Link as="a" className={facilities ? "hov_pointer active my-1" : "hov_pointer my-1"}>
+            <Nav.Link as="a" className={facilities ? "hov_pointer active my-1" : "hov_pointer my-1"} onClick={onClose}>
               <i className="far fa-sitemap text-primary"></i> Add Facilities
             </Nav.Link>
           </Link>
           <Link href={`${ADMIN_ROUTE}/manage-property`} as={`${ADMIN_ROUTE}/manage-property`}>
-            <Nav.Link as="a" className={manage_property ? "hov_pointer active my-1" : "hov_pointer my-1"}>
+            <Nav.Link as="a" className={manage_property ? "hov_pointer active my-1" : "hov_pointer my-1"} onClick={onClose}>
               <i className="far fa-tasks text-warning"></i> Manage Property
             </Nav.Link>
           </Link>

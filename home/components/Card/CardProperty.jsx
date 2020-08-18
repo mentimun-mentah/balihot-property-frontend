@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Modal, Button } from 'antd';
 
@@ -31,6 +31,14 @@ const CardContainer = ({
   const [fav, setFav] = useState(love)
   const [showModal, setShowModal] = useState(false)
   const [activeItemIndex, setActiveItemIndex] = useState(0);
+  const currency = useSelector(state => state.currency.currency)
+  let currencySymbol = null
+  let currencyValue = 1
+
+  if(currency){
+    currencySymbol = Object.keys(currency.rates)
+    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+  }
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
@@ -75,10 +83,10 @@ const CardContainer = ({
   let amenities, price_list, land_total_price, land_leasehold;
   if(type_id === LAND_CHECK_ID && status === "Free Hold"){
     price_list = landPriceList.map((data, i) => {
-    land_total_price = data.price * land_size
+    land_total_price = data.price * land_size * currencyValue
     return (
       <p className="fw-500 fs-16 text-dark mb-1 fs-12-s" key={i}>
-        IDR {formatter.format(data.price)} 
+      {currencySymbol} {formatter.format(data.price * currencyValue)} 
         <small className="fs-14 fs-12-s">
           {" "}/ are
         </small>
@@ -87,10 +95,10 @@ const CardContainer = ({
   }
   if(type_id === LAND_CHECK_ID && status === "Lease Hold"){
     price_list = landPriceList.map((data, i) => {
-    land_total_price = data.price * land_size
+    land_total_price = data.price * land_size * currencyValue
     return (
       <p className="fw-500 fs-16 text-dark mb-1 fs-12-s" key={i}>
-        IDR {formatter.format(data.price)}
+        {currencySymbol} {formatter.format(data.price * currencyValue)}
         <small className="fs-14 fs-12-s">
           {" "}/ are / year
         </small>
@@ -107,7 +115,7 @@ const CardContainer = ({
   if(type_id !== LAND_CHECK_ID){
     price_list = (
       <p className="fw-500 fs-16 text-dark mb-1 fs-12-s">
-        IDR {formatter.format(selected.price)} 
+        {currencySymbol} {formatter.format(selected.price * currencyValue)} 
       </p>
     )
     
@@ -152,12 +160,12 @@ const CardContainer = ({
   }
   const renderImages = imageCard.map((img, i) => (
     <img src={`${process.env.API_URL}/static/properties/${slug}/${img}`} 
-    className="w-100 img-fit h-230 bor-rad-top-10" key={i} />
+    className="w-100 img-fit h-230" key={i} />
   ))
   return (
     <>
-      <Card className="pos-unset border-0 shadow-card bor-rad-top-10 hov_none mt-2 mb-2">
-        <div className="position-relative overflow-hidden">
+      <Card className="pos-unset border-0 shadow-card hov_none mt-2 mb-2 bor-rad-top-10">
+        <div className="position-relative overflow-hidden bor-rad-top-10">
           {hotdeal && <div className="ribbon font-weight-normal fs-11-s">HOT DEAL</div> }
           <ItemsCarousel
             requestToChangeActive={setActiveItemIndex}
@@ -182,7 +190,7 @@ const CardContainer = ({
           </div>
           {type_id === LAND_CHECK_ID && (
             <div className="bottom-left">
-              <h5 className="fs-16-s">IDR {formatter.format(land_total_price)}</h5>
+              <h5 className="fs-16-s">{currencySymbol} {formatter.format(land_total_price)}</h5>
             </div>
           )}
           {type_id !== LAND_CHECK_ID && (

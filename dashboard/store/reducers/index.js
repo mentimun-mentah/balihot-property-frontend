@@ -5,6 +5,7 @@ import typeReducer from "./types";
 import regionReducer from "./region";
 import facilityReducer from "./facilities";
 import propertyReducer from "./property";
+import dashboardReducer from "./dashboard";
 
 const reducers = {
   auth: authReducer,
@@ -13,6 +14,7 @@ const reducers = {
   region: regionReducer,
   facility: facilityReducer,
   property: propertyReducer,
+  dashboard: dashboardReducer,
 };
 
 export default combineReducers(reducers);

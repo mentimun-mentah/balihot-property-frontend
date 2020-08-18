@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import { Container, Navbar, Nav, Button, Modal, Form, Dropdown } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer } from 'antd';
+import { Drawer, Select } from 'antd';
 import { BackdropModal } from "../Transition";
+import { parseCookies, setCookie } from "nookies";
 
 import Link from "next/link";
 import Router from "next/router";
@@ -14,6 +15,8 @@ import Register from "./register";
 import Reset from "./reset";
 
 const IMAGE = "/static/images/";
+const { Option } = Select;
+
 const Header = () => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -22,6 +25,7 @@ const Header = () => {
   const [resetView, setResetView] = useState(false);
   const [modalShow, setModalShow] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [currency, setCurrency] = useState();
   const user = useSelector((state) => state.auth.data);
   const { pathname } = router;
 
@@ -49,6 +53,7 @@ const Header = () => {
       setChangeView(true);
       setModalShow(true);
     }
+    setVisible(false);
     document.body.classList.add("modal-open");
   };
 
@@ -69,6 +74,7 @@ const Header = () => {
 
   const onLogout = () => dispatch(actions.logout());
   const logouthandler = () => {
+    setVisible(false);
     onLogout();
     Router.replace("/")
   };
@@ -76,16 +82,44 @@ const Header = () => {
   const showDrawer = () => { setVisible(true); };
   const onClose = () => { setVisible(false); };
 
+  const changeCurrencyHandler = e => {
+    setCurrency(e)
+  }
+
+  useEffect(() => {
+    if(currency){
+      dispatch(actions.getCurrency(currency))
+    }
+  },[currency])
+
+  useEffect(() => {
+    const cookie = parseCookies()
+    if(!cookie.currency){
+      setCookie(null, 'currency', 'USD', {
+        maxAge: 30 * 24 * 60 * 60,
+        path: '/',
+      })
+      setCurrency("USD")
+    } else {
+      setCurrency(cookie.currency)
+    }
+  },[])
 
   let btnAccount = "btn-account dropdown-text-turncate";
+  let currencyNavbar = "text-white";
   if (isTop && pathname === "/")
     btnAccount = "btn-account text-white dropdown-text-turncate bg-white";
+    currencyNavbar = "text-white";
 
   let btnNavbar = "btn-navbar-top";
   if (!isTop) btnNavbar = "btn-navbar";
+  if (!isTop) currencyNavbar = "text-black";
 
   let navCss = isTop ? "navbar-default" : "navbar-scrolled";
-  if (pathname !== "/") navCss = "navbar-scrolled";
+  if (pathname !== "/") {
+    navCss = "navbar-scrolled";
+    currencyNavbar = "text-black";
+  }
 
   let navLogo = isTop
     ? `${IMAGE}balihot-property-logo-white.png`
@@ -160,13 +194,13 @@ const Header = () => {
     authMobile = (
       <>
         <Link href="/account" as="/account">
-          <Nav.Link as="a" className="border-bottom nav-mobile">
+          <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
             Account
           </Nav.Link>
         </Link>
         {user.admin && (
           <Link href="/admin" as="/admin">
-            <Nav.Link as="a" className="border-bottom nav-mobile">
+            <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
               Admin
             </Nav.Link>
           </Link>
@@ -208,13 +242,17 @@ const Header = () => {
           </Navbar.Toggle>
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto align-items-center">
-              {/*
-              <Nav.Link>
-                <img src={`${IMAGE}indonesia.png`} width="28" className="hov_pointer mr-2" />
-                {"/"}
-                <img src={`${IMAGE}australia.png`} width="28" className="hov_pointer ml-2" />
-              </Nav.Link>
-              */}
+              <Select 
+                value={currency}
+                className={currencyNavbar}
+                bordered={false} 
+                onChange={changeCurrencyHandler}
+                suffixIcon={<i className={"far fa-angle-down " + currencyNavbar} />}
+              >
+                <Option value="USD">USD</Option>
+                <Option value="IDR">IDR</Option>
+              </Select>
+
               <Link href="/#home" as="/#home">
                 <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
                   Home
@@ -310,17 +348,17 @@ const Header = () => {
       >
         <Nav defaultActiveKey="/home" className="flex-column">
           <Link href="/#home" as="/#home">
-            <Nav.Link as="a" className="border-bottom nav-mobile">
+            <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
               Home
             </Nav.Link>
           </Link>
           <Link href="/#property" as="/#property">
-            <Nav.Link as="a" className="border-bottom nav-mobile">
+            <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
               Property
             </Nav.Link>
           </Link>
           <Link href="/#contact-us" as="/#contact-us">
-            <Nav.Link as="a" className="border-bottom nav-mobile">
+            <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
               Contact
             </Nav.Link>
           </Link>
@@ -351,6 +389,9 @@ const Header = () => {
         }
         :global(.navbar-light .navbar-toggler) {
           border-color: #6c757d;
+        }
+        :global(.text-black){
+          color: black !important;
         }
 
         .signup-button {

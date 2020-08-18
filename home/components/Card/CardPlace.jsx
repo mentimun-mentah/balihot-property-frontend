@@ -1,5 +1,6 @@
 import Card from "react-bootstrap/Card";
 import Router from "next/router";
+import { Tooltip } from 'antd';
 
 const CardPlace = ({ id, name, image, listing}) => {
   const searchHandler = () => {
@@ -25,8 +26,11 @@ const CardPlace = ({ id, name, image, listing}) => {
           <Card.ImgOverlay>
             <Card.Body>
               <h4 className="text-capitalize text-white fs-18-s">{name}</h4>
-              <h6 className="text-white fs-14-s">{listing} Listing</h6>
-              <i className="far fa-angle-right" onClick={searchHandler} />
+              <h6 className="text-white fs-14-s">{listing} Listing </h6>
+              <Tooltip placement="bottomRight" title="Area information">
+                <i className="fas fa-info infoarea-btn" />
+              </Tooltip>
+              <i className="far fa-angle-right angle-btn" onClick={searchHandler} />
             </Card.Body>
           </Card.ImgOverlay>
         </Card>
@@ -50,7 +54,26 @@ const CardPlace = ({ id, name, image, listing}) => {
           z-index: 1;
           padding: 0 24px 22px 24px;
         }
-        :global(.popular-place .card .card-body i) {
+        :global(.popular-place .card .card-body .infoarea-btn) {
+          position: absolute;
+          right: 12px;
+          bottom: 368px;
+          border: 1px solid #e0e1e6;
+          padding: 5px 5px;
+          color: #fff;
+          border-radius: 100%;
+          height: 20px;
+          width: 20px;
+          font-size: 8px;
+          text-align: center;
+          transition: all 0.1s linear !important;
+        }
+        :global(.popular-place .card .infoarea-btn:hover, .popular-cities .card:focus .infoarea-btn) {
+          background: #fff;
+          color: black;
+          border-color: transparent;
+        }
+        :global(.popular-place .card .card-body .angle-btn) {
           position: absolute;
           right: 24px;
           bottom: 31px;
@@ -64,7 +87,7 @@ const CardPlace = ({ id, name, image, listing}) => {
           text-align: center;
           transition: all 0.1s linear !important;
         }
-        :global(.popular-place .card:hover i, .popular-cities .card:focus i) {
+        :global(.popular-place .card .angle-btn:hover, .popular-cities .card:focus .angle-btn) {
           background: #fff;
           color: black;
           border-color: transparent;

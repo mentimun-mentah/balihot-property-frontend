@@ -7,3 +7,4 @@ export { authCheckState, authSuccess, refreshToken, getUserSuccess } from "./aut
 
 export { getTotalVisitor, getTotalVisitorSuccess } from "./dashboard";
 export { getPropertyVisitor, getPropertyVisitorSuccess } from "./dashboard";
+export { getPropertyLoved, getPropertyLovedSuccess } from "./dashboard";

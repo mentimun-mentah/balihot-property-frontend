@@ -45,6 +45,15 @@ const Property = () => {
   const propertyData = useSelector(state => state.property.slug);
   const dataFacilities = useSelector(state => state.facilities.facilities);
   const dataType = useSelector((state) => state.types.types);
+  const currency = useSelector(state => state.currency.currency)
+
+  let currencySymbol = null
+  let currencyValue = 1
+
+  if(currency){
+    currencySymbol = Object.keys(currency.rates)
+    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+  }
 
   let VILLA_CHECK_ID = null;
   let LAND_CHECK_ID = null;
@@ -237,7 +246,7 @@ const Property = () => {
   let price_list, land_total_price;
   if (type_id === LAND_CHECK_ID && status === "Free Hold") {
     price_list = landPrice.map((data, i) => {
-      land_total_price = data.price * land_size;
+      land_total_price = data.price * land_size * currencyValue;
       return (
         <div key={i}>
           <h4 className="fs-14 text-left">
@@ -249,14 +258,14 @@ const Property = () => {
           <h4 className="fs-14 text-left">
             Price:
             <span className="font-weight-normal ml-1">
-              IDR {formatter.format(data.price)}
+              {currencySymbol} {formatter.format(data.price * currencyValue)}
               <small className="fs-14 fs-12-s"> / are</small>
             </span>
           </h4>
           <h4 className="fs-14 text-left">
             Total Price:
             <span className="font-weight-normal ml-1">
-              IDR {formatter.format(land_total_price)}
+              {currencySymbol} {formatter.format(land_total_price)}
             </span>
           </h4>
         </div>
@@ -265,7 +274,7 @@ const Property = () => {
   }
   if (type_id === LAND_CHECK_ID && status === "Lease Hold") {
     price_list = landPrice.map((data, i) => {
-      land_total_price = data.price * land_size;
+      land_total_price = data.price * land_size * currencyValue;
       return (
         <div key={i}>
           <h4 className="fs-14 text-left">
@@ -277,14 +286,14 @@ const Property = () => {
           <h4 className="fs-14 text-left">
             Price:
             <span className="font-weight-normal ml-1">
-              IDR {formatter.format(data.price)}
+              {currencySymbol} {formatter.format(data.price * currencyValue)}
               <small className="fs-14 fs-12-s"> / are / year</small>
             </span>
           </h4>
           <h4 className="fs-14 text-left">
             Total Price:
             <span className="font-weight-normal ml-1">
-              IDR {formatter.format(land_total_price)}
+              {currencySymbol} {formatter.format(land_total_price)}
             </span>
           </h4>
           <h4 className="fs-14 text-left">
@@ -338,7 +347,7 @@ const Property = () => {
     }
   };
   // Callback
-  //
+  
   // Distance
   const getDistanceTo = () => {
     if (!mapRef.current) return false;
@@ -405,7 +414,7 @@ const Property = () => {
   /** GET DISTANCE **/
   useEffect(() => {
     setTimeout(() => {
-      getDistanceTo()
+      // getDistanceTo()
     }, 5000)
   },[mapRef])
 
@@ -742,7 +751,7 @@ const Property = () => {
                     options={GMapsOptions}
                     onClick={onMapClick}
                     onLoad={onMapLoad}
-                    onIdle={getDistanceTo}
+                    // onIdle={getDistanceTo}
                     center={center}
                     zoom={16}
                   >
@@ -816,7 +825,7 @@ const Property = () => {
                       <h4 className="fs-14 text-left">
                         Price:
                         <span className="font-weight-normal ml-1">
-                          IDR {formatter.format(selected.price)}
+                          {currencySymbol} {formatter.format(selected.price * currencyValue)}
                         </span>
                       </h4>
                       {selected.period && (

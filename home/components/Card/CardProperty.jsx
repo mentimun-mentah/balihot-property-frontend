@@ -160,12 +160,12 @@ const CardContainer = ({
   }
   const renderImages = imageCard.map((img, i) => (
     <img src={`${process.env.API_URL}/static/properties/${slug}/${img}`} 
-    className="w-100 img-fit h-230 bor-rad-top-10" key={i} />
+    className="w-100 img-fit h-230" key={i} />
   ))
   return (
     <>
-      <Card className="pos-unset border-0 shadow-card bor-rad-top-10 hov_none mt-2 mb-2">
-        <div className="position-relative overflow-hidden">
+      <Card className="pos-unset border-0 shadow-card hov_none mt-2 mb-2 bor-rad-top-10">
+        <div className="position-relative overflow-hidden bor-rad-top-10">
           {hotdeal && <div className="ribbon font-weight-normal fs-11-s">HOT DEAL</div> }
           <ItemsCarousel
             requestToChangeActive={setActiveItemIndex}

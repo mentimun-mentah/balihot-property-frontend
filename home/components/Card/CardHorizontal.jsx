@@ -160,7 +160,7 @@ const CardContainer = ({
   }
   const renderImages = imageCard.map((img, i) => (
     <img src={`${process.env.API_URL}/static/properties/${slug}/${img}`} 
-    className="w-100 card-img h-230 img-fit bor-rad-left-10 bor-rad-right-0" key={i} />
+    className="w-100 card-img h-230 img-fit bor-rad-right-0" key={i} />
   ))
 
   return (
@@ -168,7 +168,7 @@ const CardContainer = ({
       <Card className="mb-3 border-0 shadow-card bor-rad-left-10" onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
         <Row noGutters>
           <Col xl={5} lg={5} md={5} sm={5} xs={5} className="card-horizontal">
-            <div className="position-relative overflow-hidden carousel-horizontal">
+            <div className="position-relative overflow-hidden carousel-horizontal bor-rad-left-10">
               {hotdeal && <div className="ribbon font-weight-normal">HOT DEAL</div> }
               <ItemsCarousel
                 infiniteLoop

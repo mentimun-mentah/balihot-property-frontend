@@ -29,3 +29,5 @@ export { getType, getTypeSuccess } from "./types";
 export { getRegion, getRegionSuccess } from "./region";
 
 export { getFacility, getFacilitySuccess } from "./facilities";
+
+export { getCurrency } from "./currency";

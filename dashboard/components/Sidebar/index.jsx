@@ -58,7 +58,7 @@ const Sidebar = () => {
 
               <Link href={`${ADMIN_ROUTE}/type`} as={`${ADMIN_ROUTE}/type`}>
                 <Nav.Link as="a" className={type ? "hov_pointer active" : "hov_pointer"}>
-                  <i className="far fa-folder-plus" /> Add Type
+                  <i className="far fa-folder-plus text-default" /> Add Type
                 </Nav.Link>
               </Link>
               <Link href={`${ADMIN_ROUTE}/region`} as={`${ADMIN_ROUTE}/region`}>

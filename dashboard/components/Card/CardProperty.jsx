@@ -50,7 +50,7 @@ const CardContainer = ({
     land_total_price = data.price * land_size
     return (
       <p className="fs-15 text-dark mb-0" key={i}>
-        IDR {formatter.format(data.price)} 
+        USD {formatter.format(data.price)} 
         <small className="fs-14">
           {" "}/ are
         </small>
@@ -62,7 +62,7 @@ const CardContainer = ({
     land_total_price = data.price * land_size
     return (
       <p className="fs-15 text-dark mb-0" key={i}>
-        IDR {formatter.format(data.price)}
+        USD {formatter.format(data.price)}
         <small className="fs-14">
           {" "}/ are / year
         </small>
@@ -79,7 +79,7 @@ const CardContainer = ({
   if(type_id !== LAND_CHECK_ID){
     price_list = (
       <p className="fs-15 text-dark mb-0">
-        IDR {formatter.format(selected.price)} 
+        USD {formatter.format(selected.price)} 
       </p>
     )
     
@@ -151,7 +151,7 @@ const CardContainer = ({
           </div>
           {type_id === LAND_CHECK_ID && (
             <div className="bottom-left">
-              <h5>IDR {formatter.format(land_total_price)}</h5>
+              <h5>USD {formatter.format(land_total_price)}</h5>
             </div>
           )}
           {type_id !== LAND_CHECK_ID && (
@@ -160,7 +160,7 @@ const CardContainer = ({
             </div>
           )}
         </div>
-        <Link href="#" as="#">
+        <Link href="/property/[slug]" as={`/property/${slug}`}>
           <a className="text-decoration-none">
             <Card.Body className="text-dark p-20 match-height">
               <Card.Title className="text-dark fw-500 mb-0 hov_pointer fs-18 text-truncate">

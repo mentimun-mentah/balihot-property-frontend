@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import { renderArrow } from "./CarouselButton";
@@ -13,6 +14,14 @@ const CardMarker = ({
 }) => {
 
   const [selected, setSelected] = useState(formPrice)
+  const currency = useSelector(state => state.currency.currency)
+  let currencySymbol = null
+  let currencyValue = 1
+
+  if(currency){
+    currencySymbol = Object.keys(currency.rates)
+    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+  }
 
   useEffect(() => {
     if(selectedPrice){
@@ -48,10 +57,10 @@ const CardMarker = ({
   let amenities, price_list, land_total_price, land_leasehold;
   if(type_id === LAND_CHECK_ID && status === "Free Hold"){
     price_list = landPriceList.map((data, i) => {
-    land_total_price = data.price * land_size
+    land_total_price = data.price * land_size * currencyValue 
     return (
       <p className="fw-500 fs-14 text-dark mb-1" key={i}>
-        IDR {formatter.format(data.price)} 
+      {currencySymbol} {formatter.format(data.price * currencyValue)} 
         <small className="fs-14">
           {" "}/ are
         </small>
@@ -60,10 +69,10 @@ const CardMarker = ({
   }
   if(type_id === LAND_CHECK_ID && status === "Lease Hold"){
     price_list = landPriceList.map((data, i) => {
-    land_total_price = data.price * land_size
+    land_total_price = data.price * land_size * currencyValue
     return (
       <p className="fw-500 fs-14 text-dark mb-1" key={i}>
-        IDR {formatter.format(data.price)}
+        {currencySymbol} {formatter.format(data.price * currencyValue)}
         <small className="fs-14">
           {" "}/ are / year
         </small>
@@ -72,7 +81,7 @@ const CardMarker = ({
   }
 
   if(type_id !== LAND_CHECK_ID){
-    price_list = <>IDR {formatter.format(selected.price)}</>
+    price_list = <>{currencySymbol} {formatter.format(selected.price * currencyValue)}</>
 
     amenities = (
       <div className="text-dark">
@@ -137,7 +146,7 @@ const CardMarker = ({
           </div>
           {type_id === LAND_CHECK_ID && (
             <div className="bottom-left bottom-left-marker">
-              <h5>IDR {formatter.format(land_total_price)}</h5>
+              <h5>{currencySymbol} {formatter.format(land_total_price)}</h5>
             </div>
           )}
           {type_id !== LAND_CHECK_ID && (

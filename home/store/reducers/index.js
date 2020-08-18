@@ -5,6 +5,7 @@ import propertyReducer from "./property";
 import teamReducer from "./teams";
 import typeReducer from "./types";
 import facilityReducer from "./facilities";
+import currencyReducer from "./currency";
 
 const reducers = {
   auth: authReducer,
@@ -13,6 +14,7 @@ const reducers = {
   team: teamReducer,
   types: typeReducer,
   facilities: facilityReducer,
+  currency: currencyReducer,
 };
 
 export default combineReducers(reducers);

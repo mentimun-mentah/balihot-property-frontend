@@ -16,6 +16,25 @@ export const getPropertyVisitorSuccess = propertyVisitor => {
   }
 }
 
+export const getPropertyLovedSuccess = propertyLoved => {
+  return {
+    type: actionType.GET_LOVED_PROPERTIES,
+    propertyLoved: propertyLoved
+  }
+}
+
+export const getPropertyLoved = (ctx) => {
+  return dispatch => {
+    const { access_token } = cookies.get(ctx);
+    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+    axios.get('/dashboard/loved-properties', headerCfg)
+      .then(res => {
+        dispatch(getPropertyLovedSuccess(res.data))
+      })
+      .catch(() => {})
+  }
+}
+
 export const getPropertyVisitor = (ctx) => {
   return dispatch => {
     const { access_token } = cookies.get(ctx);

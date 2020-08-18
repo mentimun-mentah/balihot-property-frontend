@@ -16,6 +16,7 @@ import { chartOptions, parseOptions } from "../../components/Chart/chart-pro";
 
 const App = () => {
   const propertyVisitorData = useSelector(state => state.dashboard.propertyVisitor)
+  const propertyLovedData = useSelector(state => state.dashboard.propertyLoved)
 
   parseOptions(Chart, chartOptions());
   return (
@@ -56,7 +57,7 @@ const App = () => {
             <div className="card-header">
               <Row>
                 <Col>
-                  <h3 className="mb-0">Most visitor properties</h3>
+                  <h3 className="mb-0">Most visited</h3>
                 </Col>
               </Row>
             </div>
@@ -91,7 +92,7 @@ const App = () => {
             <div className="card-header">
               <Row>
                 <Col>
-                  <h3 className="mb-0">Most loved properties</h3>
+                  <h3 className="mb-0">Most loved</h3>
                 </Col>
               </Row>
             </div>
@@ -105,10 +106,14 @@ const App = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...Array(3)].map((_, i) => (
+                  {propertyLovedData && propertyLovedData.map((data, i) => (
                     <tr key={i}>
-                      <th>Villa test 1</th>
-                      <td>2000</td>
+                      <th>
+                        <Link href="/property/[slug]" as={`/property/${data.slug}`}>
+                          <a className="text-dark"> {data.name} </a>
+                        </Link>
+                      </th>
+                      <td>{data.loved}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -129,6 +134,8 @@ App.getInitialProps = async ctx => {
     ctx.store.dispatch(actions.getTotalVisitorSuccess(resTotalVisitor.data)); 
     let resPropertyVisitor = await axios.get('/dashboard/visitor-properties', headerCfg);
     ctx.store.dispatch(actions.getPropertyVisitorSuccess(resPropertyVisitor.data)); 
+    let resPropertyLoved = await axios.get('/dashboard/loved-properties', headerCfg);
+    ctx.store.dispatch(actions.getPropertyLovedSuccess(resPropertyLoved.data)); 
   } catch {}
 }
 

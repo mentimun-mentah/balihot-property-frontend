@@ -100,6 +100,15 @@ const AllProperties = ({ searchQuery }) => {
 
   const { location, type_id, property_for, status, period, price, bedroom, bathroom, hotdeal, facility } = search;
   const { region_id } = search;
+  const currency = useSelector(state => state.currency.currency)
+
+  let currencySymbol = null
+  let currencyValue = 1
+
+  if(currency){
+    currencySymbol = Object.keys(currency.rates)
+    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+  }
 
   let VILLA_CHECK_ID = null;
   let LAND_CHECK_ID = null;
@@ -487,12 +496,12 @@ const AllProperties = ({ searchQuery }) => {
               <tr>
                 <td className="pl-0 py-0">
                   <p className="font-weight-bold text-dark card-text">
-                    IDR{formatter.format(price.value[0])}
+                    {currencySymbol} {formatter.format(price.value[0])}
                   </p>
                 </td>
                 <td className="pr-0 py-0">
                   <p className="font-weight-bold text-dark card-text float-right">
-IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </td>
               </tr>

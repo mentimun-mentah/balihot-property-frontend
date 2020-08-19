@@ -168,6 +168,7 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
 
   const searchHandler = () => {
     let q = '?'
+    if(searchType == 0) if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
     if(searchType) q = q + `type_id=${searchType}&`
     if(location.value) q = q + `location=${location.value}&`
     if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`

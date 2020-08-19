@@ -194,7 +194,7 @@ const SearchBox = () => {
                         </Nav.Link>
                       </Nav.Item>
                       <Nav.Item>
-                        <Nav.Link eventKey="9" className="btn-search-tab business">
+                        <Nav.Link eventKey="" className="btn-search-tab business">
                           Business
                         </Nav.Link>
                       </Nav.Item>

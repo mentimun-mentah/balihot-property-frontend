@@ -41,15 +41,26 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
   const dataFacilities = useSelector(state => state.facilities.facilities.slice(0,16));
   const listLocation = useSelector(state => state.property.location);
 
-  const { location, property_for, status, period, price, facility, bedroom, bathroom } = search;
+  const { type_id, location, property_for, status, period, price, facility, bedroom, bathroom } = search;
 
   //====== SEARCH ======//
   const type_list = []; renderOptions(type_list, dataType, true);
   const for_list = [];
-  if (searchType == VILLA_CHECK_ID) renderOptions(for_list, for_data.villa); // 1 for villa
+  if (searchType !== LAND_CHECK_ID) renderOptions(for_list, for_data.villa); // 1 for villa
   if (searchType == LAND_CHECK_ID) renderOptions(for_list, for_data.land); // 2 for land
   const period_list = []; renderOptions(period_list, period_data)
   const status_list = []; renderOptions(status_list, status_data)
+  const businessData = []
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() !== "villa" && dataType[key].name.toLowerCase() !== "land"){
+      businessData.push(dataType[key])
+    }
+  }
+  const business_list = []
+  if(businessData){
+    renderOptions(business_list, businessData, true)
+  }
+
   const currency = useSelector(state => state.currency.currency)
 
   let currencySymbol = null
@@ -61,6 +72,21 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
   }
 
   const searchChangeHandler = (e, category) => {
+    if (category === "type_id") {
+      const data = { 
+        ...search, 
+        type_id: { value: e }, 
+        property_for: { value: [] },
+        status: { value: [] }, 
+        period: { value: [] }, 
+        price: { value: [0, 0] },
+        facility: { value: [] }, 
+        bedroom: { value: [] },
+        bathroom: { value: [] },
+      };
+      setSearch(data);
+    }
+
     if (category === "location") {
       const data = {
         ...search,
@@ -269,6 +295,18 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
         variants={Fade}
       >
         <Row>
+          {searchType == 0 && (
+            <Col className="pr-0">
+              <Select
+                placeholder="Type"
+                className="w-100 text-left"
+                onChange={e => searchChangeHandler(e, "type_id")}
+                value={type_id.value}
+              >
+                {business_list}
+              </Select>
+            </Col>
+          )}
           <Col className="pr-0">
             <AutoComplete
               className="search-input w-100"
@@ -283,7 +321,7 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
               <Input size="large" placeholder="Location" />
             </AutoComplete>
           </Col>
-          <Col className="pr-0 col-md-2 col-auto">
+          <Col className={searchType == 0 ? "pr-0" : "pr-0 col-md-2 col-auto"}>
             <Select
               placeholder="For"
               className="w-100 text-left"
@@ -293,7 +331,7 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
               {for_list}
             </Select>
           </Col>
-          <Col md={2} className="pr-0">
+          <Col md={2} className={searchType == 0 ? "pr-0 col-auto" : "pr-0"}>
             <Select
               placeholder={
                 searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? "Status" : 
@@ -336,7 +374,7 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
               </Button>
             </Dropdown>
           </Col>
-          {searchType == VILLA_CHECK_ID && (
+          {searchType !== LAND_CHECK_ID && (
             <Col className="align-self-center col-auto">
               <Dropdown
                 overlay={advancedMenu}

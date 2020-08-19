@@ -193,6 +193,11 @@ const SearchBox = () => {
                           Land
                         </Nav.Link>
                       </Nav.Item>
+                      <Nav.Item>
+                        <Nav.Link eventKey="9" className="btn-search-tab business">
+                          Business
+                        </Nav.Link>
+                      </Nav.Item>
                       <Nav.Item onClick={searchHandler}>
                         <Nav.Link className="btn-search-tab">
                           Hot Deals
@@ -301,6 +306,9 @@ const SearchBox = () => {
           -o-transform: rotate(45deg);
           -ms-transform: rotate(45deg);
           transform: rotate(45deg);
+        }
+        :global(.nav-item > a.business.active:before) {
+          margin-left: 28px;
         }
         :global(.ant-select
             .ant-select-lg

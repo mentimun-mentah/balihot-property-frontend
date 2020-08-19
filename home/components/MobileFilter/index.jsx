@@ -24,6 +24,15 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
   const dataFacility = useSelector((state) => state.facilities.facilities);
   const dataType = useSelector((state) => state.types.types);
   const listLocation = useSelector(state => state.property.location);
+  const currency = useSelector(state => state.currency.currency)
+
+  let currencySymbol = null
+  let currencyValue = 1
+
+  if(currency){
+    currencySymbol = Object.keys(currency.rates)
+    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+  }
 
   let VILLA_CHECK_ID = null;
   let LAND_CHECK_ID = null;
@@ -141,14 +150,16 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
               <Col>
                 <Card.Body className="pb-2 pl-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MIN</h5>
-                  <p className="text-dark card-text">IDR{formatter.format(price.value[0])}</p>
+                  <p className="text-dark card-text">
+                    {currencySymbol} {formatter.format(price.value[0])}
+                  </p>
                 </Card.Body>
               </Col>
               <Col>
                 <Card.Body className="pb-2 px-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MAX</h5>
                   <p className="text-dark card-text">
-  IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </Card.Body>
               </Col>

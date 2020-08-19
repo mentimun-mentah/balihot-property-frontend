@@ -79,7 +79,7 @@ const formSearch = {
 const AllProperties = ({ searchQuery }) => {
   const dispatch = useDispatch();
   const property = useSelector(state => state.property.property)
-  const dataType = useSelector((state) => state.types.types);
+  const dataType = useSelector(state => state.types.types);
   const listLocation = useSelector(state => state.property.location);
 
   const [search, setSearch] = useState(formSearch);
@@ -100,6 +100,22 @@ const AllProperties = ({ searchQuery }) => {
 
   const { location, type_id, property_for, status, period, price, bedroom, bathroom, hotdeal, facility } = search;
   const { region_id } = search;
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
+  let PROPERTY_TYPE = null;
+
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].id == type_id.value){
+      PROPERTY_TYPE = dataType[key].name
+    }
+  }
 
   const showDrawer = () => { setVisible(true); };
   const onClose = () => { setVisible(false); };
@@ -269,10 +285,8 @@ const AllProperties = ({ searchQuery }) => {
   const status_list = []; renderOptions(status_list, status_data)
   const period_list = []; renderOptions(period_list, period_data)
   const for_list = [];
-  if (type_id.value == 1 || type_id.value == [] || type_id.value == ""){
-    renderOptions(for_list, for_data.villa); // 1 for villa
-  }
-  if (type_id.value == 2) renderOptions(for_list, for_data.land); // 2 for land
+  if (type_id.value !== LAND_CHECK_ID) renderOptions(for_list, for_data.villa); // 1 for villa
+  if (type_id.value == LAND_CHECK_ID) renderOptions(for_list, for_data.land); // 2 for land
 
   const searchChangeHandler = (e, category) => {
     if (category === "location"){
@@ -457,7 +471,6 @@ const AllProperties = ({ searchQuery }) => {
     setChildVisible(false)
   }
 
-
   const priceMenu = (
     <Menu className="price-menu-body">
       <div
@@ -619,7 +632,7 @@ IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `
 
           <div className="d-block d-sm-block d-md-block d-lg-none d-xl-none">
             <h5 className="pt-3">
-              {property.data && property.data.length > 0 ? property.data.length : '0'} Result for {type_id.value == 1 ? "Villa" : "Land"}
+              {property.data && property.data.length > 0 ? property.data.length : '0'} Result for {PROPERTY_TYPE ? PROPERTY_TYPE : 'all'}
             </h5>
           </div>
 

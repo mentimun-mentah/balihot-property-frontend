@@ -24,14 +24,26 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
   const dataFacility = useSelector((state) => state.facilities.facilities);
   const dataType = useSelector((state) => state.types.types);
   const listLocation = useSelector(state => state.property.location);
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
+
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+  }
   
   const type_list = []; renderOptions(type_list, dataType, true)
   const period_list = []; renderOptions(period_list, period_data)
   const status_list = []; renderOptions(status_list, status_data)
   const facility_list = []; renderOptions(facility_list, dataFacility, true)
   const for_list = [];
-  if(type_id.value == 1) renderOptions(for_list, for_data.villa) // 1 for villa
-  if(type_id.value == 2) renderOptions(for_list, for_data.land) // 2 for land
+  if(type_id.value !== LAND_CHECK_ID) renderOptions(for_list, for_data.villa) // 1 for villa
+  if(type_id.value == LAND_CHECK_ID) renderOptions(for_list, for_data.land) // 2 for land
 
   useEffect(() => {
     let qLoct = '?'
@@ -107,7 +119,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
           </Select>
         </Col>
       )}
-      {type_id.value == 1 && (
+      {type_id.value.length !== 0 && type_id.value !== LAND_CHECK_ID && (
         <Col xs={12} sm={12} md={12} className="mb-3">
           <Form.Label className="fw-600">Facilities</Form.Label>
           <Select

@@ -34,10 +34,7 @@ const formSearch = {
   facility: { value: [] },
 };
 
-const MIN_PRICE = 0;
-const MAX_PRICE = 1000000000;
-
-const SearchBox = ({ searchType }) => {
+const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_PRICE }) => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState(formSearch);
   const dataType = useSelector(state => state.types.types);
@@ -49,8 +46,8 @@ const SearchBox = ({ searchType }) => {
   //====== SEARCH ======//
   const type_list = []; renderOptions(type_list, dataType, true);
   const for_list = [];
-  if (searchType == 1) renderOptions(for_list, for_data.villa); // 1 for villa
-  if (searchType == 2) renderOptions(for_list, for_data.land); // 2 for land
+  if (searchType == VILLA_CHECK_ID) renderOptions(for_list, for_data.villa); // 1 for villa
+  if (searchType == LAND_CHECK_ID) renderOptions(for_list, for_data.land); // 2 for land
   const period_list = []; renderOptions(period_list, period_data)
   const status_list = []; renderOptions(status_list, status_data)
 
@@ -116,7 +113,7 @@ const SearchBox = ({ searchType }) => {
   };
 
   useEffect(() => {
-    if (searchType === "2") {
+    if (searchType == LAND_CHECK_ID) {
       const data = {
         ...search,
         property_for: { value: "Sale" },
@@ -136,7 +133,6 @@ const SearchBox = ({ searchType }) => {
 
   const searchHandler = () => {
     let q = '?'
-    q = q + "per_page=1&"
     if(searchType) q = q + `type_id=${searchType}&`
     if(location.value) q = q + `location=${location.value}&`
     if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
@@ -291,27 +287,27 @@ const SearchBox = ({ searchType }) => {
           <Col md={2} className="pr-0">
             <Select
               placeholder={
-                searchType === "1" && property_for.value === "Sale" ? "Status" : 
-                searchType === "1" && property_for.value === "Rent" ? "Period" : 
-                searchType === "2" && property_for.value === "Sale" ? "Status" : "Status"
+                searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? "Status" : 
+                searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? "Period" : 
+                searchType == LAND_CHECK_ID && property_for.value === "Sale" ? "Status" : "Status"
               }
               className="w-100 text-left"
               onChange={
-                searchType === "1" && property_for.value === "Sale" ? e => searchChangeHandler(e, "status") : 
-                searchType === "1" && property_for.value === "Rent" ? e => searchChangeHandler(e, "period") : 
-                searchType === "2" && property_for.value === "Sale" ? e => searchChangeHandler(e, "status") : e => searchChangeHandler(e, "status")
+                searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? e => searchChangeHandler(e, "status") :
+                searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? e => searchChangeHandler(e, "period") :
+                searchType == LAND_CHECK_ID && property_for.value === "Sale" ? e => searchChangeHandler(e, "status") : e => searchChangeHandler(e, "status")
                 
               }
               value={
-                searchType === "1" && property_for.value === "Sale" ? status.value : 
-                searchType === "1" && property_for.value === "Rent" ? period.value : 
-                searchType === "2" && property_for.value === "Sale" ? status.value : status.value
+                searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? status.value : 
+                searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? period.value : 
+                searchType == LAND_CHECK_ID && property_for.value === "Sale" ? status.value : status.value
               }
             >
               {
-                searchType === "1" && property_for.value === "Sale" ? <>{status_list}</> : 
-                searchType === "1" && property_for.value === "Rent" ? <>{period_list}</> : 
-                searchType === "2" && property_for.value === "Sale" ? <>{status_list}</> : <>{status_list}</>
+                searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? <>{status_list}</> : 
+                searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? <>{period_list}</> : 
+                searchType == LAND_CHECK_ID && property_for.value === "Sale" ? <>{status_list}</> : <>{status_list}</>
               }
             </Select>
           </Col>
@@ -331,7 +327,7 @@ const SearchBox = ({ searchType }) => {
               </Button>
             </Dropdown>
           </Col>
-          {searchType === "1" && (
+          {searchType == VILLA_CHECK_ID && (
             <Col className="align-self-center col-auto">
               <Dropdown
                 overlay={advancedMenu}

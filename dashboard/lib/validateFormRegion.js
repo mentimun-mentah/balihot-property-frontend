@@ -26,3 +26,21 @@ export const formIsValid = (region, setRegion) => {
   if (!isGood) setRegion({ ...region, name, image });
   return isGood;
 };
+
+export const formDescIsValid = (content, setContent) => {
+  const description = { ...content.description };
+  let isGood = true;
+
+  if (validator.isEmpty(description.value)) {
+    description.isValid = false;
+    description.message = "Description can't be empty";
+    isGood = false;
+  }
+  if (!validator.isLength(description.value, {min: 3, max: undefined})) {
+    description.isValid = false;
+    description.message = "Description minimum 3 characters";
+    isGood = false;
+  }
+  if (!isGood) setContent({ description });
+  return isGood;
+};

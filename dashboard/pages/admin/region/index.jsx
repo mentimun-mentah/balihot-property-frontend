@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { withAuth } from "../../../hoc/withAuth"
 import { useDispatch, useSelector } from "react-redux";
-import { formRegion } from "../../../components/Region/regionData";
+import { formRegion, formDescription } from "../../../components/Region/regionData";
 
 import * as actions from "../../../store/actions";
 import swal from "sweetalert";
@@ -19,13 +19,14 @@ const Region = () => {
   const dispatch = useDispatch();
   const [showEdit, setShowEdit] = useState(false);
   const [currentRegion, setCurrentRegion] = useState(formRegion);
+  const [currentContent, setCurrentContent] = useState(formDescription)
 
   const dataRegion = useSelector((state) => state.region.region);
 
   const editRegionHandler = region => {
     axios.get(`/region/crud/${region.id}`, headerCfg)
       .then(res => {
-        const {id, image, name} = res.data;
+        const {id, image, name, description} = res.data;
         const data = {
           id: id,
           image: { 
@@ -38,7 +39,11 @@ const Region = () => {
           },
           name: { value: name, isValid: true, message: null }
         }
+        const dataDesc = {
+          description: { value: description, isValid: true, message: null }
+        }
         setCurrentRegion(data);
+        setCurrentContent(dataDesc);
         setShowEdit(true);
       })
       .catch(err => {
@@ -105,6 +110,7 @@ const Region = () => {
           show={showEdit}
           close={() => setShowEdit(false)}
           currentRegion={currentRegion}
+          currentContent={currentContent}
         />
       )}
 

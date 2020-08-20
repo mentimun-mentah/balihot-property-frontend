@@ -16,6 +16,7 @@ import Reset from "./reset";
 
 const IMAGE = "/static/images/";
 const { Option } = Select;
+const sendEnquiryBtn = () => document.getElementById("send-enquiry-btn").click();
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -84,6 +85,7 @@ const Header = () => {
 
   const changeCurrencyHandler = e => {
     setCurrency(e)
+    setVisible(false);
   }
 
   useEffect(() => {
@@ -253,6 +255,20 @@ const Header = () => {
                 <Option value="IDR">IDR</Option>
               </Select>
 
+              {/*
+                <Nav.Link>
+                  <img src={`${IMAGE}indonesia.png`} width="28" 
+                    className="hov_pointer mr-2" 
+                    onClick={() => changeCurrencyHandler("IDR")} 
+                  />
+                  {"/"}
+                  <img src={`${IMAGE}australia.png`} width="28" 
+                    className="hov_pointer ml-2" 
+                    onClick={() => changeCurrencyHandler("USD")} 
+                  />
+                </Nav.Link>
+              */}
+
               <Link href="/#home" as="/#home">
                 <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
                   Home
@@ -263,11 +279,9 @@ const Header = () => {
                   Property
                 </Nav.Link>
               </Link>
-              <Link href="/#contact-us" as="/#contact-us">
-                <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
-                  Contact
-                </Nav.Link>
-              </Link>
+              <Nav.Link as="a" className={btnNavbar + " hov_pointer"} onClick={sendEnquiryBtn}>
+                Contact
+              </Nav.Link>
               {auth}
             </Nav>
           </Navbar.Collapse>
@@ -363,6 +377,16 @@ const Header = () => {
             </Nav.Link>
           </Link>
           {authMobile}
+          <Select 
+            value={currency}
+            className="pl-1 text-dark"
+            bordered={false} 
+            onChange={changeCurrencyHandler}
+            suffixIcon={<i className={"far fa-angle-down"} />}
+          >
+            <Option value="USD">USD</Option>
+            <Option value="IDR">IDR</Option>
+          </Select>
         </Nav>
       </Drawer>
       <style global jsx>{`

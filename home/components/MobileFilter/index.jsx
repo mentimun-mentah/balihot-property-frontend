@@ -24,14 +24,35 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
   const dataFacility = useSelector((state) => state.facilities.facilities);
   const dataType = useSelector((state) => state.types.types);
   const listLocation = useSelector(state => state.property.location);
+  const currency = useSelector(state => state.currency.currency)
+
+  let currencySymbol = null
+  let currencyValue = 1
+
+  if(currency){
+    currencySymbol = Object.keys(currency.rates)
+    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+  }
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
+
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+  }
   
   const type_list = []; renderOptions(type_list, dataType, true)
   const period_list = []; renderOptions(period_list, period_data)
   const status_list = []; renderOptions(status_list, status_data)
   const facility_list = []; renderOptions(facility_list, dataFacility, true)
   const for_list = [];
-  if(type_id.value == 1) renderOptions(for_list, for_data.villa) // 1 for villa
-  if(type_id.value == 2) renderOptions(for_list, for_data.land) // 2 for land
+  if(type_id.value !== LAND_CHECK_ID) renderOptions(for_list, for_data.villa) // 1 for villa
+  if(type_id.value == LAND_CHECK_ID) renderOptions(for_list, for_data.land) // 2 for land
 
   useEffect(() => {
     let qLoct = '?'
@@ -107,7 +128,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
           </Select>
         </Col>
       )}
-      {type_id.value == 1 && (
+      {type_id.value.length !== 0 && type_id.value !== LAND_CHECK_ID && (
         <Col xs={12} sm={12} md={12} className="mb-3">
           <Form.Label className="fw-600">Facilities</Form.Label>
           <Select
@@ -129,14 +150,16 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
               <Col>
                 <Card.Body className="pb-2 pl-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MIN</h5>
-                  <p className="text-dark card-text">IDR{formatter.format(price.value[0])}</p>
+                  <p className="text-dark card-text">
+                    {currencySymbol} {formatter.format(price.value[0])}
+                  </p>
                 </Card.Body>
               </Col>
               <Col>
                 <Card.Body className="pb-2 px-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MAX</h5>
                   <p className="text-dark card-text">
-  IDR<>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </Card.Body>
               </Col>

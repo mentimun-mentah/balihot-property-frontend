@@ -2,22 +2,26 @@ import { useState, useEffect } from "react";
 import { Upload } from "antd";
 import { useDispatch } from "react-redux";
 import { uploadButton } from "../../lib/imageUploader";
-import { formIsValid } from "../../lib/validateFormRegion";
+import { formIsValid, formDescIsValid } from "../../lib/validateFormRegion";
 
 import * as actions from "../../store/actions";
 import axios, {headerCfgFormData} from '../../lib/axios'
 import cx from 'classnames'
+import dynamic from 'next/dynamic'
 import Form from 'react-bootstrap/Form'
 import Modal from "react-bootstrap/Modal";
 import Button from 'react-bootstrap/Button'
+const Editor = dynamic(import('../Editor'), { ssr: false })
 
 const EditModal = props => {
   const dispatch = useDispatch();
   const [region, setRegion] = useState(props.currentRegion);
   const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState(props.currentContent)
 
   useEffect(() => {
     setRegion(props.currentRegion);
+    setContent(props.currentContent);
   },[props])
 
   // Function for validating image to the backend
@@ -65,6 +69,12 @@ const EditModal = props => {
     setRegion(data);
   };
 
+  const descriptionHandler = content => {
+    setContent({
+      description: { value: content, message: null, isValid: true }
+    });
+  }
+
   const imageChangeHandler = ({ fileList: newFileList }) => {
     const data = {
       ...region,
@@ -76,7 +86,8 @@ const EditModal = props => {
   const submitHandler = e => {
     e.preventDefault()
     const {name, image} = region;
-    if(formIsValid(region, setRegion)){
+    const {description} = content;
+    if(formIsValid(region, setRegion) && formDescIsValid(content, setContent)){
       const formData = new FormData();
       _.forEach(image.value, (file) => {
         if(!file.hasOwnProperty('url')){
@@ -84,6 +95,7 @@ const EditModal = props => {
         }
       })
       formData.append("name", name.value);
+      formData.append("description", description.value);
       axios.put(`/region/crud/${region.id}`, formData, headerCfgFormData)
         .then(() => {
           dispatch(actions.getRegion())
@@ -91,20 +103,26 @@ const EditModal = props => {
         })
         .catch(err => {
           const state = JSON.parse(JSON.stringify(region));
+          const contentState = JSON.parse(JSON.stringify(content));
           if (err.response && err.response.data) {
-            const { image, name } = err.response.data;
-            if (name) {
+            const { image, name, description } = err.response.data;
+            if(name) {
               state.name.isValid = false;
               state.name.message = name;
             }
-            if (image) {
+            if(image) {
               state.image.isValid = false;
-              state.image.message = image;
               state.image.value = [];
+              message.error(image);
+            }
+            if(description) {
+              contentState.description.isValid = false;
+              contentState.description.message = description;
             }
           }
           setRegion(state);
-        })
+          setContent(contentState)
+        });
     }
   }
 
@@ -113,7 +131,7 @@ const EditModal = props => {
   const invalidImage = cx({ "invalid-upload": !image.isValid });
   
   return(
-    <Modal show={props.show} onHide={props.close}>
+    <Modal size="lg" show={props.show} onHide={props.close}>
       <Modal.Header closeButton className="border-bottom">
         <Modal.Title>Edit {props.currentRegion.name.value}</Modal.Title>
       </Modal.Header>
@@ -135,7 +153,7 @@ const EditModal = props => {
               <Form.Text className="text-muted fs-12 mb-n2 mt--2">{image.message}</Form.Text>
             )}
           </Form.Group>
-          <Form.Group className="mb-0 mt-1">
+          <Form.Group className="mt-1">
             <Form.Label>Region Name</Form.Label>
             <Form.Control
               type="text"
@@ -148,6 +166,14 @@ const EditModal = props => {
             {!name.isValid && (
               <Form.Text className="text-muted fs-12 mb-n2 mt-0">{name.message}</Form.Text>
             )}
+          </Form.Group>
+          <Form.Group className="mb-0">
+            <Form.Label>Description</Form.Label>
+            <Editor 
+              initialValue={content.description.value}
+              setContent={descriptionHandler} 
+              height="200"
+            />
           </Form.Group>
         </Form>
       </Modal.Body>

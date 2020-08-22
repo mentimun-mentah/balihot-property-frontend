@@ -71,7 +71,7 @@ const App = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {propertyVisitorData && propertyVisitorData.map((data, i) => (
+                  {propertyVisitorData && propertyVisitorData.length > 0 ? propertyVisitorData.map((data, i) => (
                     <tr key={i}>
                       <th>
                         <Link href="/property/[slug]" as={`/property/${data.slug}`}>
@@ -80,7 +80,25 @@ const App = () => {
                       </th>
                       <td>{data.visitor}</td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td colSpan="2">
+                        <Container>
+                          <Card className="text-muted mt-2 pt-5 shadow-none border-0">
+                            <Card.Img variant="top" 
+                              src="/static/images/no-data.png" 
+                              className="img-size mx-auto"
+                            />
+                            <Card.Body>
+                              <Card.Title className="text-center text-black-50">
+                                No data
+                              </Card.Title>
+                            </Card.Body>
+                          </Card>
+                        </Container>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -106,7 +124,7 @@ const App = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {propertyLovedData && propertyLovedData.map((data, i) => (
+                  {propertyLovedData && propertyLovedData.length > 0 ? propertyLovedData.map((data, i) => (
                     <tr key={i}>
                       <th>
                         <Link href="/property/[slug]" as={`/property/${data.slug}`}>
@@ -115,7 +133,25 @@ const App = () => {
                       </th>
                       <td>{data.loved}</td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td colSpan="2">
+                        <Container>
+                          <Card className="text-muted mt-2 pt-5 shadow-none border-0">
+                            <Card.Img variant="top" 
+                              src="/static/images/no-data.png" 
+                              className="img-size mx-auto"
+                            />
+                            <Card.Body>
+                              <Card.Title className="text-center text-black-50">
+                                No data
+                              </Card.Title>
+                            </Card.Body>
+                          </Card>
+                        </Container>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

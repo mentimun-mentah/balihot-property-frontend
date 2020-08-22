@@ -1,6 +1,5 @@
 import getConfig from 'next/config';
 import axios from "axios";
-import * as actions from "../store/actions";
 import Router from "next/router";
 import {parseCookies, setCookie, destroyCookie} from "nookies";
 
@@ -41,7 +40,7 @@ instance.interceptors.response.use(function (response) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     const headerRefresh = { headers: { Authorization: `Bearer ${refresh_token}` } }
-    if(error.response.status == 401 && error.response.data.msg === "Token has expired"){
+    if(error.response && error.response.status == 401 && error.response.data.msg === "Token has expired"){
       if(refresh_token){
         await instance.post('/refresh', null, headerRefresh)
           .then(res => {
@@ -67,13 +66,13 @@ instance.interceptors.response.use(function (response) {
         process.browser && Router.reload()
       }
     }
-    if(error.response.status == 401 && error.response.data.msg === "Token has been revoked"){
+    if(error.response && error.response.status == 401 && error.response.data.msg === "Token has been revoked"){
       destroyCookie(null, "access_token", { path: "/" })
       destroyCookie(null, "refresh_token", { path: "/" })
       destroyCookie(null, "username", { path: "/" })
       process.browser && Router.reload()
     }
-    if(error.response.status == 422 && error.response.data.msg === "Not enough segments"){
+    if(error.response && error.response.status == 422 && error.response.data.msg === "Not enough segments"){
       destroyCookie(null, "access_token", { path: "/" })
       destroyCookie(null, "refresh_token", { path: "/" })
       destroyCookie(null, "username", { path: "/" })

@@ -29,7 +29,8 @@ const Header = () => {
                   </Breadcrumb.Item>
                   <Breadcrumb.Item>Administration</Breadcrumb.Item>
                   <Breadcrumb.Item active className="text-capitalize">
-                    {pathname === "/admin/manage-property" ? "" : pathname === "/admin/manage-property/[id]" ? "" : "Add"} {finalPage}
+                    {pathname.startsWith("/admin/manage-") ? "" : pathname.startsWith("/admin/manage-") ? "" : "Add"} 
+                    {" "}{finalPage}
                   </Breadcrumb.Item>
                 </Breadcrumb>
               </Col>

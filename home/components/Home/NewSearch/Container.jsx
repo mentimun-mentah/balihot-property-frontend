@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Container, Card } from "react-bootstrap";
 import ButtonBoot from "react-bootstrap/Button";
 import { motion } from "framer-motion";
 
@@ -205,6 +205,18 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
                     <Checkbox value={item.id}>{item.name}</Checkbox>
                   </Col>
                 ))}
+                {dataFacilities && dataFacilities.length == 0 && (
+                  <Container>
+                    <Card className="text-muted shadow-none border-0">
+                      <Card.Img variant="top" src="/static/images/no-facility.png" className="img-size mx-auto" />
+                      <Card.Body>
+                        <Card.Title className="text-center">
+                          There is no facility
+                        </Card.Title>
+                      </Card.Body>
+                    </Card>
+                  </Container>
+                )}
               </Row>
               </Checkbox.Group>
               <Row>
@@ -308,20 +320,22 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
               </Select>
             </Col>
           )}
-          <Col className="pr-0">
-            <AutoComplete
-              className="search-input w-100"
-              options={listLocation}
-              filterOption={(inputValue, option) =>
-                option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-                -1
-              }
-              value={location.value}
-              onChange={e => searchChangeHandler(e, "location")}
-            >
-              <Input size="large" placeholder="Location" />
-            </AutoComplete>
-          </Col>
+          {searchType !== 0 && (
+            <Col className="pr-0">
+              <AutoComplete
+                className="search-input w-100"
+                options={listLocation}
+                filterOption={(inputValue, option) =>
+                  option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+                  -1
+                }
+                value={location.value}
+                onChange={e => searchChangeHandler(e, "location")}
+              >
+                <Input size="large" placeholder="Location" />
+              </AutoComplete>
+            </Col>
+          )}
           <Col className={searchType == 0 ? "pr-0" : "pr-0 col-md-2 col-auto"}>
             <Select
               placeholder="For"
@@ -333,31 +347,59 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
             </Select>
           </Col>
           <Col md={2} className={searchType == 0 ? "pr-0 col-auto" : "pr-0"}>
-            <Select
-              placeholder={
-                searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? "Status" : 
-                searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? "Period" : 
-                searchType == LAND_CHECK_ID && property_for.value === "Sale" ? "Status" : "Status"
-              }
-              className="w-100 text-left"
-              onChange={
+            {searchType !== 0 ? (
+              <Select
+                placeholder={
+                  searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? "Status" : 
+                  searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? "Period" : 
+                  searchType == LAND_CHECK_ID && property_for.value === "Sale" ? "Status" : "Status"
+                }
+                className="w-100 text-left"
+                onChange={
                 searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? e => searchChangeHandler(e, "status") :
                 searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? e => searchChangeHandler(e, "period") :
                 searchType == LAND_CHECK_ID && property_for.value === "Sale" ? e => searchChangeHandler(e, "status") : e => searchChangeHandler(e, "status")
-                
-              }
-              value={
-                searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? status.value : 
-                searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? period.value : 
-                searchType == LAND_CHECK_ID && property_for.value === "Sale" ? status.value : status.value
-              }
-            >
-              {
-                searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? <>{status_list}</> : 
-                searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? <>{period_list}</> : 
-                searchType == LAND_CHECK_ID && property_for.value === "Sale" ? <>{status_list}</> : <>{status_list}</>
-              }
-            </Select>
+                  
+                }
+                value={
+                  searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? status.value : 
+                  searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? period.value : 
+                  searchType == LAND_CHECK_ID && property_for.value === "Sale" ? status.value : status.value
+                }
+              >
+                {
+                  searchType == VILLA_CHECK_ID && property_for.value === "Sale" ? <>{status_list}</> : 
+                  searchType == VILLA_CHECK_ID && property_for.value === "Rent" ? <>{period_list}</> : 
+                  searchType == LAND_CHECK_ID && property_for.value === "Sale" ? <>{status_list}</> : <>{status_list}</>
+                }
+              </Select>
+            ) : (
+              <Select
+                placeholder={
+                  property_for.value === "Sale" ? "Status" : 
+                  property_for.value === "Rent" ? "Period" : 
+                  property_for.value === "Sale" ? "Status" : "Status"
+                }
+                className="w-100 text-left"
+                onChange={
+                  property_for.value === "Sale" ? e => searchChangeHandler(e, "status") :
+                  property_for.value === "Rent" ? e => searchChangeHandler(e, "period") :
+                  property_for.value === "Sale" ? e => searchChangeHandler(e, "status") : e => searchChangeHandler(e, "status")
+                  
+                }
+                value={
+                  property_for.value === "Sale" ? status.value : 
+                  property_for.value === "Rent" ? period.value : 
+                  property_for.value === "Sale" ? status.value : status.value
+                }
+              >
+                {
+                  property_for.value === "Sale" ? <>{status_list}</> : 
+                  property_for.value === "Rent" ? <>{period_list}</> : 
+                  property_for.value === "Sale" ? <>{status_list}</> : <>{status_list}</>
+                }
+              </Select>
+            )}
           </Col>
           <Col md={2} className="pr-0">
             <Dropdown

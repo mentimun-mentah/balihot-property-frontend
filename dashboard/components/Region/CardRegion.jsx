@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { Fade } from "../Transition";
+import Link from "next/link";
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 
-const Region = ({name, image, edit, onDelete}) => {
+const Region = ({id, name, image, onDelete}) => {
   return (
     <>
       <motion.div
@@ -18,9 +19,11 @@ const Region = ({name, image, edit, onDelete}) => {
           />
           <Card.Body>
             <Card.Title>{name}</Card.Title>
-            <Button variant="default" size="sm" onClick={edit}>
-              Edit
-            </Button>
+            <Link href="manage-region/[id]" as={`manage-region/${id}`}>
+              <Button variant="default" size="sm">
+                Edit
+              </Button>
+            </Link>
             <Button variant="danger" size="sm" onClick={onDelete}>
               Delete
             </Button>
@@ -32,4 +35,3 @@ const Region = ({name, image, edit, onDelete}) => {
 };
 
 export default Region;
-

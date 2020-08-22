@@ -18,6 +18,7 @@ const Sidebar = () => {
   const property = pathname.startsWith("/admin/property")
   const facilities = pathname.startsWith("/admin/facilities")
   const manage_property = pathname.startsWith("/admin/manage-property")
+  const manage_region = pathname.startsWith("/admin/manage-region")
 
   const clickHandle = () => {
     document.location.href = process.env.BASE_URL;
@@ -84,6 +85,11 @@ const Sidebar = () => {
               <Link href={`${ADMIN_ROUTE}/manage-property`} as={`${ADMIN_ROUTE}/manage-property`}>
                 <Nav.Link as="a" className={manage_property ? "hov_pointer active" : "hov_pointer"}>
                   <i className="far fa-tasks text-warning"></i> Manage Property
+                </Nav.Link>
+              </Link>
+              <Link href={`${ADMIN_ROUTE}/manage-region`} as={`${ADMIN_ROUTE}/manage-region`}>
+                <Nav.Link as="a" className={manage_region ? "hov_pointer active" : "hov_pointer"}>
+                  <i className="far fa-cogs"></i> Manage Region
                 </Nav.Link>
               </Link>
             </Nav>

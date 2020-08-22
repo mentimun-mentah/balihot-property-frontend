@@ -30,7 +30,7 @@ const BuildingInformation = (
                   <Form.Group as={Col}>
                     <Form.Label>
                       Bedroom
-                      {except_villa && <i className="text-primary ml-2">optional</i>}
+                      {except_villa && <i className="text-info ml-2">optional</i>}
                     </Form.Label>
                     <Form.Control type="number"
                       placeholder="Bedroom"
@@ -47,7 +47,7 @@ const BuildingInformation = (
                   <Form.Group as={Col}>
                     <Form.Label>
                       Bathroom
-                      {except_villa && <i className="text-primary ml-2">optional</i>}
+                      {except_villa && <i className="text-info ml-2">optional</i>}
                     </Form.Label>
                     <Form.Control type="number"
                       placeholder="Bathroom"

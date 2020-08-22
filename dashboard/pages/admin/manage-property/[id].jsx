@@ -790,18 +790,21 @@ const EditProperty = ({dataProperty}) => {
 
 EditProperty.getInitialProps = async ctx => {
   const { id } = ctx.query;
-  const { access_token } = cookie.get(ctx);
-  const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
-  let resProperty = await axios.get(`/property/crud/${id}`, headerCfgServer)
-  let resFacility = await axios.get('/facilities');
-  ctx.store.dispatch(actions.getFacilitySuccess(resFacility.data)); 
-  let resRegion = await axios.get('/regions');
-  ctx.store.dispatch(actions.getRegionSuccess(resRegion.data)); 
-  let resType = await axios.get('/types');
-  ctx.store.dispatch(actions.getTypeSuccess(resType.data)); 
-  return{
-    dataProperty: resProperty.data,
+  try{
+    const { access_token } = cookie.get(ctx);
+    const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
+    let resProperty = await axios.get(`/property/crud/${id}`, headerCfgServer)
+    let resFacility = await axios.get('/facilities');
+    ctx.store.dispatch(actions.getFacilitySuccess(resFacility.data)); 
+    let resRegion = await axios.get('/regions');
+    ctx.store.dispatch(actions.getRegionSuccess(resRegion.data)); 
+    let resType = await axios.get('/types');
+    ctx.store.dispatch(actions.getTypeSuccess(resType.data)); 
+    return{
+      dataProperty: resProperty.data,
+    }
   }
+  catch {}
 }
 
 export default withAuth(EditProperty);

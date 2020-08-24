@@ -109,6 +109,7 @@ const AddTeams = () => {
           const state = JSON.parse(JSON.stringify(team));
           if(err.response && err.response.data) {
             const { image, name, title, phone } = err.response.data;
+            state.image.value = [];
             if(image){
               state.image.isValid = false;
               state.image.value = [];

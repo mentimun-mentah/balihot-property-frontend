@@ -26,7 +26,7 @@ export { getTeam, getTeamSuccess } from "./teams";
 
 export { getType, getTypeSuccess } from "./types";
 
-export { getRegion, getRegionSuccess } from "./region";
+export { getRegion, getRegionSuccess, slugRegion, slugRegionSuccess } from "./region";
 
 export { getFacility, getFacilitySuccess } from "./facilities";
 

@@ -65,6 +65,9 @@ const App = ({ Component, pageProps, store }) => {
         .h-50 {
           height: 50px !important;
         }
+        .mt-6 {
+          margin-top: 6rem!important;
+        }
         .bor-rad-10 {
           border-radius: 10px !important;
         }

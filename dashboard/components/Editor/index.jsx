@@ -5,7 +5,7 @@ const Editor = ({ setContent, height, initialValue }) => {
     setContent(content)
   };
   return (
-    <div>
+    <div suppressContentEditableWarning={true}>
       <SunEditor
         setContents={initialValue}
         onChange={handleChange}

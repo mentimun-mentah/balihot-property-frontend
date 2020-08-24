@@ -547,7 +547,7 @@ const Property = () => {
                         {validator.isIn("Lease Hold", status.value) && (
                           <Form.Group as={Col}>
                             <Form.Label>Price / are / year</Form.Label>
-                            <InputNumber formatter={value => `USD${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            <InputNumber formatter={value => `USD ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                               parser={value => value.replace(/\USD\s?|(,*)/g, "")}
                               className={`${invalidLeasehold_price} w-100`}
                               value={leasehold_price.value}

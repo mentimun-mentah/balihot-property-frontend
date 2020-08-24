@@ -100,6 +100,11 @@ const App = ({ Component, pageProps, store }) => {
         :global(.gm-control-active.gm-fullscreen-control) {
           border-radius: 8px !important;
         }
+        :global(.img-size) {
+          width: auto;
+          height: 100px;
+          opacity: 0.5;
+        }
       `}</style>
     </>
   );

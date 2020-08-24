@@ -133,7 +133,7 @@ const EditModal = props => {
       <Modal.Body className="pt-3">
         <Form>
           <Form.Group className="mb-0">
-            <Form.Label>288 x 360 pixels</Form.Label>
+            <Form.Label>366 × 457 pixels</Form.Label>
             <Upload
               accept="image/*"
               listType="picture-card"

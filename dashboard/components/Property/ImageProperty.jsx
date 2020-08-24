@@ -83,10 +83,10 @@ const ImageProperty = ({imageList, setImageList, onRemove}) => {
             <Card className="hov_none">
                 <Card.Header>
                   <h3 className="mb-0">
-                    Add Image Properties <small> (min. 5 photos)</small>
+                    Add Image Properties <small> (min. 5 photos & size 1200 × 800 pixels)</small>
                   </h3>
                   <small className="text-muted fs-12">
-                    Image format .jpg. Jpeg .png and maximum image size are 4 MB
+                    Image format .jpg. Jpeg .png and maximum image file size are 4 MB
                   </small>
                 </Card.Header>
               <Card.Body>

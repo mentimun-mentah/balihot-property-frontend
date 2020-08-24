@@ -19,23 +19,23 @@ export const getRegionFail = (error) => {
   }
 }
 
-/* GET DATA REGION */
-export const getDataRegionStart = () => {
-  return { type: actionType.GET_DATA_REGION_START }
+/* SLUG REGION */
+export const slugRegionStart = () => {
+  return { type: actionType.SLUG_REGION_START }
 }
-export const getDataRegionSuccess = data => {
+export const slugRegionSuccess = slug => {
   return {
-    type: actionType.GET_DATA_REGION_SUCCESS,
-    data: data
+    type: actionType.SLUG_REGION_SUCCESS,
+    slug: slug 
   }
 }
-export const getDataRegionFail = error => {
+export const slugRegionFail = error => {
   return {
-    type: actionType.GET_DATA_REGION_FAIL,
+    type: actionType.SLUG_REGION_FAIL,
     error: error
   }
 }
-/* SLUG PROPERTY */
+/* SLUG REGION*/
 
 export const getRegion = () => {
   return dispatch => {
@@ -50,19 +50,15 @@ export const getRegion = () => {
   }
 }
 
-export const getDataRegion = (id, ctx) => {
+export const slugRegion = (slug) => {
   return dispatch => {
-    const { access_token } = cookies.get(ctx);
-    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
-    dispatch(getDataRegionStart())
-    if(access_token){
-      axios.get(`/region/crud/${id}`, headerCfg)
-        .then(res => {
-          dispatch(getDataRegionSuccess(res.data))
-        })
-        .catch(err => {
-          dispatch(getDataRegionFail(err.response))
-        })
-    }
+    dispatch(slugRegionStart())
+    axios.get(`/region/${slug}`)
+      .then(res => {
+        dispatch(slugRegionSuccess(res.data))
+      })
+      .catch(err => {
+        dispatch(slugRegionFail(err.response))
+      })
   }
 }

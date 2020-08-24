@@ -9,7 +9,6 @@ import { formIsValid } from "../../lib/validateFormLogin";
 
 import cx from "classnames";
 import cookie from "nookies";
-import swal from "sweetalert";
 import Router from "next/router";
 import axios from "../../lib/axios";
 import * as actions from "../../store/actions";
@@ -189,14 +188,12 @@ const Login = ({ viewed, reset, closed }) => {
             </Col>
 
             <Col md={12} lg={6}>
-              <a href={`${process.env.API_URL}/login/facebook`} className="text-decoration-none">
-                <button className="btn-login">
+                <button className="btn-login" disabled>
                   <div className="btn-login-icon">
                     <LogoFacebook />
                   </div>
                   <span>Sign in with Facebook</span>
                 </button>
-              </a>
             </Col>
           </Row>
 

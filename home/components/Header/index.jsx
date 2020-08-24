@@ -16,7 +16,6 @@ import Reset from "./reset";
 
 const IMAGE = "/static/images/";
 const { Option } = Select;
-const sendEnquiryBtn = () => document.getElementById("send-enquiry-btn").click();
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -279,9 +278,11 @@ const Header = () => {
                   Property
                 </Nav.Link>
               </Link>
-              <Nav.Link as="a" className={btnNavbar + " hov_pointer"} onClick={sendEnquiryBtn}>
-                Contact
-              </Nav.Link>
+              <Link href="#contact" as="#contact">
+                <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
+                  Contact
+                </Nav.Link>
+              </Link>
               {auth}
             </Nav>
           </Navbar.Collapse>
@@ -371,7 +372,7 @@ const Header = () => {
               Property
             </Nav.Link>
           </Link>
-          <Link href="/#contact-us" as="/#contact-us">
+          <Link href="#contact" as="#contact">
             <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
               Contact
             </Nav.Link>

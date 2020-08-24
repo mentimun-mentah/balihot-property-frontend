@@ -256,7 +256,7 @@ const CardContainer = ({
         bodyStyle={{padding: "10px 0px"}}
         width="400px"
       >
-        <ShareModal propertyShareLink={propertyShareLink} />
+        <ShareModal link={propertyShareLink} />
       </Modal>
 
       <style jsx>{`

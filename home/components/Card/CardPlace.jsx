@@ -1,8 +1,9 @@
 import Card from "react-bootstrap/Card";
 import Router from "next/router";
+import Link from "next/link";
 import { Tooltip } from 'antd';
 
-const CardPlace = ({ id, name, image, listing}) => {
+const CardPlace = ({ id, slug, name, image, listing }) => {
   const searchHandler = () => {
     Router.push({
       pathname: "/all-properties",
@@ -26,10 +27,12 @@ const CardPlace = ({ id, name, image, listing}) => {
           <Card.ImgOverlay>
             <Card.Body>
               <h4 className="text-capitalize text-white fs-18-s">{name}</h4>
-              <h6 className="text-white fs-14-s">{listing} Listing </h6>
-              <Tooltip placement="bottomRight" title="Area information">
-                <i className="fas fa-info infoarea-btn" />
-              </Tooltip>
+              <h6 className="text-white fs-14-s">{listing} Listing</h6>
+                <Link href="/region/[slug]" as={`/region/${slug}`}>
+                  <Tooltip placement="bottomRight" title="Area information">
+                    <i className="fas fa-info infoarea-btn" />
+                  </Tooltip>
+                </Link>
               <i className="far fa-angle-right angle-btn" onClick={searchHandler} />
             </Card.Body>
           </Card.ImgOverlay>

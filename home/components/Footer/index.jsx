@@ -1,4 +1,4 @@
-import { Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
+import { Container, Row, Col, Modal } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { BackdropModal } from "../Transition";
 import Link from "next/link";
@@ -45,34 +45,11 @@ const Footer = () => {
                   <li className="mb-2">
                     <i className="fal fa-phone mr-2"></i> (844) 380-8603
                   </li>
-                  <li id="send-enquiry-btn" className="hov_pointer underline w-fit-content" onClick={showModalHandler}>
-                    <i className="fal fa-envelope mr-2"></i>{" "}
+                  <li id="send-enquiry-btn" className="hov_pointer w-fit-content font-weight-bold text-bhp" onClick={showModalHandler}>
+                    <i className="fal fa-envelope mr-2 text-bhp font-weight-bold"></i>{" "}
                     Send us an enquiry
                   </li>
                 </ul>
-              {/*
-              <Form>
-                <Form.Row>
-                  <Form.Group as={Col} className="mb-2">
-                    <Form.Control className="bg-light" size="sm" type="text" placeholder="Name" />
-                  </Form.Group>
-                  <Form.Group as={Col} className="mb-2">
-                    <Form.Control className="bg-light" type="number" size="sm" placeholder="Phone Number" />
-                  </Form.Group>
-                </Form.Row>
-
-                <Form.Group className="mb-2">
-                  <Form.Control className="bg-light" type="email" size="sm" placeholder="Enter email" />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Control className="bg-light" as="textarea" rows="3" size="sm" placeholder="Write your message here" />
-                </Form.Group>
-
-              <Button className="mt-2 btn-red-hot" size="sm"  block>
-                Send message
-              </Button>
-              </Form>
-              */}
             </Col>
             <Col sm={12} md={2}>
               <h6>Quick Links</h6>
@@ -81,6 +58,9 @@ const Footer = () => {
                   <li className="mb-2 hov_pointer">About Us</li>
                 </Link>
                 <li className="mb-2 hov_pointer" onClick={showModalHandler}>Contact Us</li>
+                <Link href="/news" as="/news">
+                  <li className="mb-2 hov_pointer">News</li>
+                </Link>
                 <Link href="/#property" as="/#property">
                   <li className="hov_pointer">Property</li>
                 </Link>
@@ -90,7 +70,7 @@ const Footer = () => {
           <hr />
         </Container>
 
-        <Container>
+        <Container id="contact">
           <Row>
             <Col xs={12} sm={6} md={8}>
               <p className="copyright-text">

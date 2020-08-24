@@ -17,6 +17,7 @@ const Sidebar = () => {
   const teams = pathname.startsWith("/admin/teams")
   const property = pathname.startsWith("/admin/property")
   const facilities = pathname.startsWith("/admin/facilities")
+  const news = pathname.startsWith("/admin/news")
   const manage_property = pathname.startsWith("/admin/manage-property")
   const manage_region = pathname.startsWith("/admin/manage-region")
 
@@ -80,6 +81,11 @@ const Sidebar = () => {
               <Link href={`${ADMIN_ROUTE}/facilities`} as={`${ADMIN_ROUTE}/facilities`}>
                 <Nav.Link as="a" className={facilities ? "hov_pointer active" : "hov_pointer"}>
                   <i className="far fa-sitemap text-primary"></i> Add Facilities
+                </Nav.Link>
+              </Link>
+              <Link href={`${ADMIN_ROUTE}/news`} as={`${ADMIN_ROUTE}/news`}>
+                <Nav.Link as="a" className={news ? "hov_pointer active" : "hov_pointer"}>
+                  <i className="far fa-typewriter"></i> Add News Letter
                 </Nav.Link>
               </Link>
               <Link href={`${ADMIN_ROUTE}/manage-property`} as={`${ADMIN_ROUTE}/manage-property`}>

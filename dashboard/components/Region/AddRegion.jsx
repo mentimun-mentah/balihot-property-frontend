@@ -119,6 +119,7 @@ const AddRegion = () => {
           const contentState = JSON.parse(JSON.stringify(content));
           if (err.response && err.response.data) {
             const { image, name, description } = err.response.data;
+            state.image.value = [];
             if(name) {
               state.name.isValid = false;
               state.name.message = name;

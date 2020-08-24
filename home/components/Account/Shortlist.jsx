@@ -195,8 +195,6 @@ const Shortlist = () => {
           padding: 7px 12px;
         }
         :global(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector){
-          height: 38px !important;
-          padding: 8px 11px;
           border-radius: 0.25rem;
         }
       `}</style>

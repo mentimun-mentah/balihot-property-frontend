@@ -531,14 +531,16 @@ const Account = () => {
                     </Upload>
 
                     <Card.Body className="pb-33 pb-12-pro">
-                      <small className="fs-10 text-secondary font-italic">
-                        click remove icon on the image to change your avatar.
-                      </small>
-                      <p className="fs-14 mb-0 text-secondary mt-2">
+                      <p className="fs-14 mb-0 text-secondary mt-0">
                         Image size: maks. 4 MB
                       </p>
-                      <p className="fs-14 text-secondary">
+                      <p className="fs-14 text-secondary mb-0">
                         Image format: .JPEG, .JPG, .PNG
+                      </p>
+                      <p className="fs-12 text-secondary font-italic">
+                        <mark>
+                          click remove icon on the image to change your avatar.
+                        </mark>
                       </p>
                     </Card.Body>
                   </Card>
@@ -623,7 +625,7 @@ const Account = () => {
           }
         }
         :global(.pb-33) {
-          padding-bottom: 33px;
+          padding-bottom: 29px;
         }
         /* ----------- iPad ----------- */
         /* Portrait and Landscape */

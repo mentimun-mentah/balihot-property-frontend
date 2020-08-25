@@ -133,7 +133,15 @@ const EditModal = props => {
       <Modal.Body className="pt-3">
         <Form>
           <Form.Group className="mb-0">
-            <Form.Label>366 × 457 pixels</Form.Label>
+            <p className="mb-3 lh-100">
+              <small className="text-muted fs-12">
+                366 × 457 px
+              </small>
+              <br />
+              <small className="text-muted fs-12">
+                Image format .jpg. jpeg .png and maximum image size is 4 MB
+              </small>
+            </p>
             <Upload
               accept="image/*"
               listType="picture-card"

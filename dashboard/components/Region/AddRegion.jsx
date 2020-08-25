@@ -151,12 +151,16 @@ const AddRegion = () => {
           <Col xl={12} lg={12} mb={12}>
             <Card className="hov_none">
               <Card.Header>
-                <h4>Add Region</h4>
+                <h3 className="mb-0">
+                  Add Region <small> (2000 × 3000 px)</small>
+                </h3>
+                <small className="text-muted fs-12">
+                  Image format .jpg. jpeg .png and maximum image size is 4 MB
+                </small>
               </Card.Header>
               <Card.Body>
                 <Form>
                   <Form.Group className="mb-2">
-                    <Form.Label>2000 x 3000 pixels</Form.Label>
                     <Upload
                       accept="image/*"
                       listType="picture-card"

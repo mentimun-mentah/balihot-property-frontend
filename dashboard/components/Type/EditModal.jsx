@@ -4,7 +4,7 @@ import { formType } from "./formType";
 import { formIsValid } from "../../lib/validateFormTypes";
 
 import * as actions from "../../store/actions";
-import axios, {headerCfg} from '../../lib/axios'
+import axios, {jsonHeaderHandler} from '../../lib/axios'
 import cx from "classnames";
 import Form from 'react-bootstrap/Form'
 import Modal from "react-bootstrap/Modal";
@@ -35,15 +35,15 @@ const EditModal = props => {
     const {name} = type;
     if (formIsValid(type, setType)) {
       const data = { name: name.value };
-      axios.put(`/type/crud/${type.id}`, data, headerCfg)
-        .then(res => {
+      axios.put(`/type/crud/${type.id}`, data, jsonHeaderHandler())
+        .then(() => {
           dispatch(actions.getType())
           props.close()
         })
         .catch(err => {
           const state = JSON.parse(JSON.stringify(type));
           if (err.response && err.response.data) {
-            const {name, icon} = err.response.data;
+            const {name} = err.response.data;
             if(name){
               state.name.isValid = false;
               state.name.message = name;

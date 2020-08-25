@@ -81,14 +81,14 @@ const ImageProperty = ({imageList, setImageList, onRemove}) => {
         <Row>
           <Col xl={12} lg={12} mb={12}>
             <Card className="hov_none">
-                <Card.Header>
-                  <h3 className="mb-0">
-                    Add Image Properties <small> (min. 5 photos)</small>
-                  </h3>
-                  <small className="text-muted fs-12">
-                    Image format .jpg. Jpeg .png and maximum image size are 4 MB
-                  </small>
-                </Card.Header>
+              <Card.Header>
+                <h3 className="mb-0">
+                  Add Image Properties <small> (min. 5 photos & 1200 × 800 px)</small>
+                </h3>
+                <small className="text-muted fs-12">
+                  Image format .jpg. jpeg .png and maximum image size is 4 MB
+                </small>
+              </Card.Header>
               <Card.Body>
                 <Upload
                   accept="image/*"

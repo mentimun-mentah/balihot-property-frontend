@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Upload, message } from "antd";
+import { withAuth } from "../../../hoc/withAuth"
 import { formRegion, formDescription } from "../../../components/Region/regionData";
 import { formIsValid, formDescIsValid } from "../../../lib/validateFormRegion.js";
 import { uploadButton, getBase64 } from "../../../lib/imageUploader";
@@ -176,12 +177,16 @@ const EditRegion = ({ dataRegion }) => {
           <Col xl={12} lg={12} mb={12}>
             <Card className="hov_none">
               <Card.Header>
-                <h4>Edit Region</h4>
+                <h3 className="mb-0">
+                  Edit Region <small> (2000 × 3000 px)</small>
+                </h3>
+                <small className="text-muted fs-12">
+                  Image format .jpg. jpeg .png and maximum image size is 4 MB
+                </small>
               </Card.Header>
               <Card.Body>
                 <Form>
                   <Form.Group className="mb-2">
-                    <Form.Label>2000 x 3000 pixels</Form.Label>
                     <Upload
                       accept="image/*"
                       listType="picture-card"
@@ -250,4 +255,4 @@ EditRegion.getInitialProps = async ctx => {
   catch {}
 }
 
-export default EditRegion;
+export default withAuth(EditRegion);

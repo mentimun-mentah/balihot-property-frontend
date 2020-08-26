@@ -70,6 +70,8 @@ const Teams = () => {
               const {message} = err.response.data;
               if(message){
                 swal({ title: message, text: "", icon: "error", button: "Got it", dangerMode: true, });
+              } else {
+                swal({ title: "Upps!", icon: "error", timer: 3000, });
               }
             }
           });

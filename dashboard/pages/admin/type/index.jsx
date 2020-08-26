@@ -64,7 +64,9 @@ const Types = () => {
             if (err.response && err.response.data) {
               const {message} = err.response.data;
               if(message){
-                swal({ title: "Oops!", text: message, icon: "error", button: "Got it", dangerMode: true, });
+                swal({ title: message, text: "", icon: "error", button: "Got it", dangerMode: true, });
+              } else {
+                swal({ title: "Upps!", icon: "error", timer: 3000, });
               }
             }
           });

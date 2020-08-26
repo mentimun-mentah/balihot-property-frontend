@@ -1,23 +1,37 @@
 import Card from 'react-bootstrap/Card'
 import Link from 'next/link'
+import NoSSR from 'react-no-ssr'
+import moment from 'moment'
 
-const CardNews = () => {
+const CardNews = ({ slug, title, thumbnail, description, created_at }) => {
+  let plainText = description.replace(/<[^>]+>/g, ' ');
+  let finalText = plainText.replace(/&nbsp;/g, " ");
+
   return(
     <>
       <Card className="border-0 shadow-none">
-        <Card.Img variant="top" className="rounded img-fit" src="https://news.airbnb.com/wp-content/uploads/sites/4/2020/07/PJM013418Q412-20181007_Airbnb_Mallorca_DRE_3613_Featured.jpg?w=3003" height="220" />
+        <Card.Img 
+          variant="top" 
+          className="rounded img-fit" 
+          src={`${process.env.API_URL}/static/newsletters/${slug}/${thumbnail}`} 
+          height="220" 
+          alt={title}
+        />
         <Card.Body className="px-0">
-          <Link href="/news/[slug]" as={`/news/test`}>
+          <Link href="/news/[slug]" as={`/news/${slug}`}>
             <a className="text-reset">
-            <Card.Title className="text-dark">Travel the World Beyond Your Doorstep: 15 Ways Airbnb Can Transport You</Card.Title>
+              <Card.Title className="text-dark truncate-2">{title}</Card.Title>
             </a>
           </Link>
-          <p className="card-text mt-2 mb-2"><small className="text-muted">August, 18 2020</small></p>
+          <p className="card-text mt-2 mb-2">
+            <small className="text-muted">
+              <NoSSR>
+                {moment(created_at).format("DD MMMM YYYY")}
+              </NoSSR>
+            </small>
+          </p>
 
-          <Card.Text className="text-justify font-weight-light">
-          While globetrotting plans might be on hold, travelers can still experience the world with stays
-          that transport you to our most missed destinations or right at home through Online Experiences.
-          </Card.Text>
+          <Card.Text className="text-justify font-weight-light truncate-3">{finalText}</Card.Text>
         </Card.Body>
       </Card>
     </>

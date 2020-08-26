@@ -1,99 +1,76 @@
+import { Modal } from "antd";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import moment from "moment";
+import NoSSR from "react-no-ssr";
+import axios from "../../lib/axios";
+import parse from "html-react-parser";
 import Container from "react-bootstrap/Container";
+import * as actions from "../../store/actions";
+import ShareModal from "../../components/Card/ShareModal";
 
-const DetailNews = () => {
+const ShareModalMemo = React.memo(ShareModal);
+const DetailNewsletter = () => {
+  const newsletter = useSelector(state => state.newsletter.slug);
+
+  const [showModal, setShowModal] = useState(false);
+  const shareLink = `${process.env.BASE_URL}/news/${newsletter.slug}`;
+
+  console.error = (function(_error) {
+    return function(message) {
+      if (
+        typeof message !== "string" ||
+        message.indexOf("component is `contentEditable`") === -1
+      ) {
+        _error.apply(console, arguments);
+      }
+    };
+  })(console.error);
+
   return(
     <>
       <header>
         <div className="full-width-image">
           <img
-            src="https://news.airbnb.com/wp-content/uploads/sites/4/2020/07/PJM013418Q412-20181007_Airbnb_Mallorca_DRE_3613_Featured.jpg?w=3003"
+            src={`${process.env.API_URL}/static/newsletters/${newsletter.slug}/${newsletter.image}`}
             height="400"
-            alt=""
+            alt={newsletter.title}
           />
         </div>
       </header>
 
       <Container className="mt-6 mb-5">
-        <h1 className="text-capitalize fs-24-s fs-26-m fs-40-t">
-          for the first time since march, guests book 1 million nights in one
-          day
-        </h1>
+        <h1 className="text-capitalize fs-24-s fs-26-m fs-40-t">{newsletter.title}</h1>
         <div className="news-information font-weight-lighter fs-14 mt-3">
-          <span className="mr-1">17 Agustus 2020</span> 
+          <span className="mr-1">
+            <NoSSR>
+              {moment(newsletter.created_at).format("DD MMMM YYYY")}
+            </NoSSR>
+          </span> 
           {" "}&#8226;{" "}
-          <span className="share-news ml-1">
-            <a><i className="fal fa-share-square" /> Share</a>
+          <span className="mx-1">{newsletter.seen} views</span>
+          {" "}&#8226;{" "}
+          <span className="share-news ml-1" onClick={() => setShowModal(true)}>
+            <a><i className="fal fa-share-square" /><span className="ml-1">Share</span></a>
           </span>
         </div>
         <hr className="mt-4 mb-4" />
-        <div className="post__entryContent ">
-          <p>
-            At Airbnb, we believe that people’s desire to safely connect and be
-            with one another has only grown stronger while we’ve been apart. Our
-            business has not recovered, but we are seeing encouraging signs.
-          </p>
-          <p>
-            On July 8, guests booked more than 1 million nights’ worth of future
-            stays at Airbnb listings around the world. It’s the first day in
-            more than four months, since March 3, that the 1 million nights
-            threshold has been reached.
-          </p>
-          <p>
-            Guests booking on July 8 did so in over 175 different countries and
-            regions, including destinations in Togo, Angola, Bahrain, Svalbard
-            and Kyrgyzstan. Nights booked skew toward domestic travel.
-          </p>
-          <p>
-            Most guests are not traveling far: Approximately half of these
-            nights booked were for travel to destinations within 300 miles. Over
-            two-thirds were for travel to destinations within 500 miles, both
-            distances typically manageable by car. And in rural areas of the
-            US*,{" "}
-            <a href="https://news.airbnb.com/rural-stays-and-online-experiences-boost-host-income/">
-              hosts earned over $200 million in the month of June
-            </a>
-            , an increase of more than 25 percent over what hosts in these areas
-            earned in June 2019.
-          </p>
-          <p>
-            But they are looking to get away: Two-thirds of the nights booked
-            were at destinations outside of cities.&nbsp;&nbsp;
-          </p>
-          <p>
-            And many are looking to do so affordably: Slightly more than half of
-            the nights booked on July 8 were for listings costing no more than
-            $100 per night.&nbsp;
-          </p>
-          <p>
-            Pent-up demand may be playing a role. A significant portion of
-            nights booked were for travel beginning within 30 days: i.e., trips
-            that will start on or before August 7.
-          </p>
-          <p>
-            And, over 60 percent of the nights booked were for travel by people
-            traveling solo or with one other person. But there were over 17,000
-            nights booked by guests who are traveling in a group of 10 or
-            more.&nbsp;
-          </p>
-          <p>
-            Because short-term rentals are typically entire homes, guests get
-            more space for their money and more control over their environment,
-            including private entrances and amenities such as kitchens and
-            swimming pools. Combined with the availability of entire homes
-            within driving distance for travelers and the Airbnb Enhanced Clean
-            protocol for ensuring clean, sanitized accommodations, Airbnb’s
-            short-term rentals are recovering because consumers see them as a
-            safe, healthy and responsible way for guests to travel.
-          </p>
-          <p>
-            <em>
-              * Rural areas are defined as areas with fewer than 100 inhabitants
-              per square kilometer
-            </em>
-            .
-          </p>
-        </div>
+        {parse(newsletter.description)}
       </Container>
+
+      <Modal
+        centered
+        footer={null}
+        visible={showModal}
+        onCancel={() => setShowModal(false)}
+        title="Share"
+        closeIcon={<i className="fas fa-times" />}
+        bodyStyle={{ padding: "10px 0px" }}
+        width="400px"
+      >
+        <ShareModalMemo link={shareLink} />
+      </Modal>
+
 
       <style jsx>{`
         :global(.mt-6) {
@@ -126,4 +103,12 @@ const DetailNews = () => {
   )
 }
 
-export default DetailNews
+DetailNewsletter.getInitialProps = async ctx => {
+  const { slug } = ctx.query;
+  try {
+    const res = await axios.get(`/newsletter/${slug}`);
+    ctx.store.dispatch(actions.slugNewsletterSuccess(res.data));
+  } catch {}
+};
+
+export default DetailNewsletter

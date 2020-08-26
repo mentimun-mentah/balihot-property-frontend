@@ -6,7 +6,7 @@ import Container from "react-bootstrap/Container";
 
 import swal from "sweetalert";
 import * as actions from "../../../store/actions";
-import axios, { headerCfg } from '../../../lib/axios';
+import axios, { jsonHeaderHandler } from '../../../lib/axios';
 import CardNews from "../../../components/Card/CardNews";
 const CardNewsMemo = React.memo(CardNews);
 
@@ -25,7 +25,7 @@ const ManageNews = () => {
     .then((willDelete) => {
       if (willDelete) {
         axios
-          .delete(`/newsletter/crud/${id}`, headerCfg)
+          .delete(`/newsletter/crud/${id}`, jsonHeaderHandler())
           .then((res) => {
             dispatch(actions.getNewsletter())
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
@@ -35,6 +35,8 @@ const ManageNews = () => {
               const {message} = err.response.data;
               if(message){
                 swal({ title: message, text: "", icon: "error", button: "Got it", dangerMode: true, });
+              } else {
+                swal({ title: "Upps!", icon: "error", timer: 3000, });
               }
             }
           });

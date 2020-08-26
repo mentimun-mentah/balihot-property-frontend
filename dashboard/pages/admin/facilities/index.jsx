@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { formFacility } from "../../../components/Facilities/facilityData";
 
 import * as actions from "../../../store/actions";
-import axios, {headerCfg} from "../../../lib/axios";
+import axios, { jsonHeaderHandler } from "../../../lib/axios";
 import swal from "sweetalert";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -27,7 +27,7 @@ const Facilities = () => {
   const showInfoHandler = () => setShowInfo(!showInfo);
 
   const editFacilityHandler = id => {
-    axios.get(`/facility/crud/${id}`, headerCfg)
+    axios.get(`/facility/crud/${id}`, jsonHeaderHandler())
       .then(res => {
         const {id, name, icon} = res.data;
         const data = {
@@ -59,7 +59,7 @@ const Facilities = () => {
     .then((willDelete) => {
       if (willDelete) {
         axios
-          .delete(`/facility/crud/${id}`, headerCfg)
+          .delete(`/facility/crud/${id}`, jsonHeaderHandler())
           .then((res) => {
             dispatch(actions.getFacility())
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
@@ -69,6 +69,8 @@ const Facilities = () => {
               const {message} = err.response.data;
               if(message){
                 swal({ title: message, text: "", icon: "error", button: "Got it", dangerMode: true, });
+              } else {
+                swal({ title: "Upps!", icon: "error", timer: 3000, });
               }
             }
           });

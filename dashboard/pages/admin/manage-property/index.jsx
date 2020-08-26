@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Input, AutoComplete } from 'antd';
 import { withAuth } from "../../../hoc/withAuth"
 import { pagination_iter } from "../../../lib/paginationIter.js"
 
 import swal from "sweetalert";
-import axios, { headerCfg } from '../../../lib/axios';
+import axios, { jsonHeaderHandler } from '../../../lib/axios';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Pagination from 'react-bootstrap/Pagination'
@@ -13,6 +14,14 @@ import Container from "react-bootstrap/Container";
 
 import PropertyCard from "../../../components/Card/CardProperty"
 import StyleProperty from "../../../components/Property/style"
+
+const listLocation = [
+  { value: "BHP-VA100" },
+  { value: "BHP-AT2012" },
+  { value: "BHP-LD3542" },
+  { value: "BHP-VA432" },
+  { value: "BHP-VA324" }
+]
 
 const PropertyCardMemo = React.memo(PropertyCard);
 
@@ -45,7 +54,7 @@ const ManageProperty = () => {
     .then((willDelete) => {
       if (willDelete) {
         axios
-          .delete(`/property/crud/${id}`, headerCfg)
+          .delete(`/property/crud/${id}`, jsonHeaderHandler() )
           .then((res) => {
             dispatch(actions.getProperty())
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
@@ -55,6 +64,8 @@ const ManageProperty = () => {
               const {message} = err.response.data;
               if(message){
                 swal({ title: message, text: "", icon: "error", button: "Got it", dangerMode: true, });
+              } else {
+                swal({ title: "Upps!", icon: "error", timer: 3000, });
               }
             }
           });
@@ -105,6 +116,20 @@ const ManageProperty = () => {
   return (
     <>
       <Container fluid>
+        <Row className="mt--4 mb-4">
+          <Col className="col-md-auto col-lg-auto col-xl-auto col-sm-12 col-12 mr-auto">
+          </Col>
+          <Col className="col-md-auto col-lg-auto col-xl-auto col-sm-12 col-12 align-self-center">
+            <AutoComplete
+              className="w-100 search-code"
+              options={listLocation}
+              filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+            >
+              <Input.Search placeholder="Search property code" />
+            </AutoComplete>
+          </Col>
+        </Row>
+
         <Row>
           {dataProperty && dataProperty.data && dataProperty.data.map(data => {
             const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = data;
@@ -184,7 +209,7 @@ const ManageProperty = () => {
             }
 
             return(
-              <Col xl={4} lg={4} mb={4} sm={6} xs={12} key={id}>
+              <Col xl={4} lg={6} md={12} sm={12} xs={12} key={id}>
                 <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
                   type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
                   building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
@@ -209,7 +234,15 @@ const ManageProperty = () => {
         </Row>
       </Container>
 
-      <style jsx>{StyleProperty}</style>
+      {/*<style jsx>{StyleProperty}</style>*/}
+      <style jsx>{`
+        @media (min-width: 768px) {
+          :global(.search-code .ant-input-search) {
+            width: 300px !important;
+          }
+        }
+      `}
+      </style>
     </>
   );
 };

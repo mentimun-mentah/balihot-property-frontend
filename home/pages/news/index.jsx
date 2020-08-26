@@ -27,6 +27,7 @@ const Newsletter = () => {
 
   const searchChangeHandler = e => {
     setSearch(e)
+    setActive(1)
   }
 
   let isSearching = search.replace(/^\s+/, '').replace(/\s+$/, '').length !== 0
@@ -34,10 +35,8 @@ const Newsletter = () => {
   useEffect(() => {
     let q = '?'
     if(search) q += `q=${search}&`
-    if(active) q += `page=${active}&per_page=1`
+    if(active) q += `page=${active}`
     if(isSearching){
-      console.log(q)
-      setActive(newsletters.page)
       dispatch(actions.getTitle(q))
       dispatch(actions.getNewsletter(q))
     }else{

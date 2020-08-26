@@ -6,7 +6,7 @@ import { Container, Row, Col } from "react-bootstrap";
 
 import swal from "sweetalert";
 import * as actions from "../../../store/actions";
-import axios, {headerCfg} from "../../../lib/axios";
+import axios, { jsonHeaderHandler } from "../../../lib/axios";
 
 import AddTeams from "../../../components/Teams/AddTeams";
 import EditModal from "../../../components/Teams/EditModal";
@@ -21,7 +21,7 @@ const Teams = () => {
   const dataTeam = useSelector((state) => state.team.team);
 
   const editTeamHandler = id => {
-    axios.get(`/team/crud/${id}`, headerCfg)
+    axios.get(`/team/crud/${id}`, jsonHeaderHandler())
       .then(res => {
         const {id, image, name, title, phone} = res.data;
         const data = {
@@ -60,7 +60,7 @@ const Teams = () => {
     .then((willDelete) => {
       if (willDelete) {
         axios
-          .delete(`/team/crud/${id}`, headerCfg)
+          .delete(`/team/crud/${id}`, jsonHeaderHandler())
           .then((res) => {
             dispatch(actions.getTeam())
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });

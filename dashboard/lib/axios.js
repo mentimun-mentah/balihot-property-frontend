@@ -23,6 +23,22 @@ export const headerCfgFormData = {
   }
 }
 
+export const formHeaderHandler = () => {
+  let headerCfg;                                                                          
+  const cookies = parseCookies()                                                          
+  const { access_token } = cookies;
+  headerCfg = {headers: { Authorization: `Bearer ${access_token}`, "content-type": "multipart/form-data" }}
+  return headerCfg
+}
+
+export const jsonHeaderHandler = () => {
+  let headerCfg;                                                                          
+  const cookies = parseCookies()                                                          
+  const { access_token } = cookies;
+  headerCfg = {headers: { Authorization: `Bearer ${access_token}` }}
+  return headerCfg
+}
+
 instance.interceptors.request.use(function (config) {
     // Do something before request is sent
     return config;

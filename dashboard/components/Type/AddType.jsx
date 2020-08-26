@@ -4,7 +4,7 @@ import { formType } from "./formType";
 import { formIsValid } from "../../lib/validateFormTypes";
 
 import * as actions from "../../store/actions";
-import axios, { headerCfg } from "../../lib/axios";
+import axios, { jsonHeaderHandler } from "../../lib/axios";
 import cx from "classnames";
 import swal from "sweetalert";
 import Row from "react-bootstrap/Row";
@@ -17,9 +17,6 @@ import Container from "react-bootstrap/Container";
 const AddType = () => {
   const dispatch = useDispatch();
   const [type, setType] = useState(formType);
-  const [showInfo, setShowInfo] = useState(false);
-
-  const showInfoHandler = () => setShowInfo(!showInfo);
 
   const inputChangeHandler = event => {
     const { name, value } = event.target;
@@ -38,7 +35,7 @@ const AddType = () => {
     if(formIsValid(type, setType)){
       const {name} = type;
       const data = { name: name.value }
-      axios.post('/type/create', data, headerCfg)
+      axios.post('/type/create', data, jsonHeaderHandler())
         .then(res => {
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setType(formType);
@@ -51,6 +48,8 @@ const AddType = () => {
             if(name){
               state.name.isValid = false;
               state.name.message = name;
+            } else {
+              swal({ title: "Upps!", text: err.response.data.message, icon: "error", timer: 3000, });
             }
           }
           setType(state);

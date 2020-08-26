@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { formType } from "../../../components/Type/formType";
 
 import * as actions from "../../../store/actions";
-import axios, {headerCfg} from "../../../lib/axios";
+import axios, {jsonHeaderHandler} from "../../../lib/axios";
 import swal from "sweetalert";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -23,7 +23,7 @@ const Types = () => {
   const dataType = useSelector((state) => state.types.types);
 
   const editTypeHandler = id => {
-    axios.get(`/type/crud/${id}`, headerCfg)
+    axios.get(`/type/crud/${id}`, jsonHeaderHandler())
       .then(res => {
         const {id, name, icon} = res.data;
         const data = {
@@ -38,7 +38,7 @@ const Types = () => {
         if (err.response && err.response.data) {
           const {message} = err.response.data;
           if(message){
-            swal({ title: message, text: "", icon: "error", button: "Got it", dangerMode: true, });
+            swal({ title: "Oops!", text: message, icon: "error", button: "Got it", dangerMode: true, });
           }
         }
       })
@@ -55,7 +55,7 @@ const Types = () => {
     .then((willDelete) => {
       if (willDelete) {
         axios
-          .delete(`/type/crud/${id}`, headerCfg)
+          .delete(`/type/crud/${id}`, jsonHeaderHandler())
           .then((res) => {
             dispatch(actions.getType())
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
@@ -64,7 +64,7 @@ const Types = () => {
             if (err.response && err.response.data) {
               const {message} = err.response.data;
               if(message){
-                swal({ title: message, text: "", icon: "error", button: "Got it", dangerMode: true, });
+                swal({ title: "Oops!", text: message, icon: "error", button: "Got it", dangerMode: true, });
               }
             }
           });

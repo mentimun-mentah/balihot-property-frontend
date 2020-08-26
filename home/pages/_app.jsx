@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import { Provider } from "react-redux";
-import Router from "next/router";
 import React from "react";
 import Head from "next/head";
-import axios from "../lib/axios";
-import cookie from "nookies";
 import Layout from "../components/Layout";
 import * as actions from "../store/actions";
 import withReduxStore from "../lib/with-redux-store";
@@ -47,6 +44,36 @@ const App = ({ Component, pageProps, store }) => {
         </Layout>
       </Provider>
       <style global jsx>{`
+        blockquote {
+          border-left: 5px solid #ebebeb;
+          margin: 1.5em 0px;
+          padding: 0.5em 20px;
+        }
+        blockquote p::before {
+          content: open-quote;
+        }
+
+        blockquote p::after {
+          content: close-quote;
+        }
+        blockquote p {
+          display: inline;
+          font-size: 100%;
+        }
+        .truncate-2 {
+          -webkit-line-clamp: 2;
+          overflow : hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+        }
+        .truncate-3 {
+          -webkit-line-clamp: 3;
+          overflow : hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+        }
         .ant-upload-list-picture .ant-upload-list-item-error, .ant-upload-list-picture-card .ant-upload-list-item-error{
           border: 1px solid #d9d9d9;
         }

@@ -57,6 +57,11 @@ const App = ({ Component, pageProps, store }) => {
           border-top-color: #ff385c;
           border-left-color: #ff385c;
         }
+        .bd-right {
+          border-right: 1px solid #ddd;
+          border-radius: 0px;
+          margin-right: 0.4em;
+        }
 
         .bor-rad-10 {
           border-radius: 10px !important;

@@ -5,9 +5,8 @@ export {
   getUser,
   getUserSuccess,
   refreshToken,
-  refreshTokenSuccess,
+  refreshTokenSuccess
 } from "./auth";
-
 
 export {
   getProperty,
@@ -31,3 +30,16 @@ export { getRegion, getRegionSuccess, slugRegion, slugRegionSuccess } from "./re
 export { getFacility, getFacilitySuccess } from "./facilities";
 
 export { getCurrency } from "./currency";
+
+export {
+  getNewsletter,
+  getNewsletterSuccess,
+  slugNewsletter,
+  slugNewsletterSuccess,
+  popularNewsletter,
+  popularNewsletterSuccess,
+  oldNewsletter,
+  oldNewsletterSuccess,
+  getTitle,
+  getNewsletterBy,
+} from "./newsletter";

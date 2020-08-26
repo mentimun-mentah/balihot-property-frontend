@@ -49,11 +49,12 @@ const DetailRegion = () => {
           </span>
           {" "}&#8226;{" "}
           <span
-            className="share-news ml-1 hov_underline"
+            className="share-news ml-1 hov_underline ml-1"
             onClick={() => setShowModal(true)}
           >
             <a>
-              <i className="fal fa-share-square" /> Share
+              <i className="fal fa-share-square" /> 
+                <span className="ml-1">Share</span>
             </a>
           </span>
         </div>

@@ -592,6 +592,14 @@ const Property = () => {
                         </span>
                       </h4>
                     </Col>
+                    <Col lg={4} md={6} sm={6} className="mb-2">
+                      <h4 className="fs-14">
+                        Code:
+                        <span className="font-weight-normal ml-1 status-detail ">
+                          BHP-VR1
+                        </span>
+                      </h4>
+                    </Col>
                   </Row>
                 </Card.Body>
               </Card>
@@ -940,7 +948,7 @@ const Property = () => {
         bodyStyle={{ padding: "10px 0px" }}
         width="400px"
       >
-        <ShareModal propertyShareLink={propertyShareLink} />
+        <ShareModal link={propertyShareLink} />
       </Modal>
 
       <style jsx>{DetailPropertyStyle}</style>

@@ -1,4 +1,4 @@
-import { Container, Row, Col, Modal } from "react-bootstrap";
+import { Container, Row, Col, Modal, Button } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { BackdropModal } from "../Transition";
 import Link from "next/link";
@@ -45,9 +45,16 @@ const Footer = () => {
                   <li className="mb-2">
                     <i className="fal fa-phone mr-2"></i> (844) 380-8603
                   </li>
-                  <li id="send-enquiry-btn" className="hov_pointer w-fit-content font-weight-bold text-bhp" onClick={showModalHandler}>
-                    <i className="fal fa-envelope mr-2 text-bhp font-weight-bold"></i>{" "}
-                    Send us an enquiry
+                  <li id="send-enquiry-btn" className="hov_pointer w-fit-content d-none" onClick={showModalHandler}>
+                    <i className="fal fa-envelope-open-text mr-2 pl-2 pt-2 pb-2"></i>{" "}
+                    <span className="pt-2 pr-2 pb-2">Send us an enquiry</span>
+                  </li>
+                  <div className="hr-enquiry mb-2 d-none"></div>
+                  <li className="mt-2 mb-2">
+                    <Button className="rounded-0 btn-outline-enquiry">
+                    <i className="fal fa-envelope-open-text mr-2"></i>
+                      Send us an enquiry
+                    </Button>
                   </li>
                 </ul>
             </Col>
@@ -312,6 +319,30 @@ const Footer = () => {
       }
       .underline:hover {
         box-shadow: inset 0px -30px #ff408c3b;
+      }
+      :global(.btn-outline-enquiry) {
+          color: #021927;
+          background-color: #fff;
+          border-color: #021927;
+      }
+      :global(.btn-outline-enquiry:hover) {
+          color: #fff;
+          background-color: #021927;
+          border-color: #021927;
+      }
+      :global(.btn-outline-enquiry:active) {
+          color: #fff !important;
+          background-color: #021927 !important;
+          border-color: #021927 !important;
+      }
+      :global(.btn-outline-enquiry:focus) {
+          color: #fff;
+          background-color: #021927;
+          border-color: #021927;
+      }
+      :global(.hr-enquiry){
+        width: 201px;
+        border-top: 3px solid rgba(252, 56, 74, 1);
       }
 
       `}</style>

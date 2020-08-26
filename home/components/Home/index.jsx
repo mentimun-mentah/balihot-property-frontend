@@ -11,6 +11,7 @@ import Workflow from "./Workflow";
 import ContainerCardProperty from "../Card/ContainerCardProperty";
 import * as actions from "../../store/actions";
 import HomeStyle, {responsive, responsivePlace, ButtonGroupPlace} from "./style";
+import CardsNewHorizontal from "../../components/Card/CardNewsHorizontalHome";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const Home = () => {
   const region = useSelector(state => state.region.region)
   const team = useSelector(state => state.team.team)
   const property = useSelector(state => state.property.property)
+  const newsletters = useSelector(state => state.newsletter.newsletter.data.slice(0,2));
 
   const searchHandler = () => {
     let q = '?'
@@ -266,67 +268,33 @@ const Home = () => {
         <Container>
          <Row>
            <Col md={12} lg={4} xl={4}>
-            <h3 className="text-white">Property News</h3>
-            <p className="text-white mt-5 text-justify">
+            <h3 className="text-white fs-24-s">Property Market News</h3>
+            <p className="text-white mt-5 text-justify p-l-10-s p-r-10-s">
             Bali Hot Property network provides access to finest quality luxury real estate and businesses for sale to buyers around the globe. 
     We help you with the process of finding, renting, or buying property and businesses in Bali, whether a buyer, a seller, or an investor, we think of our clients as family. Bali Hot Property has all types of luxury villas, land and businesses available, from modern beachfront villas with infinite pools seamlessly stretching straight to the ocean to hillside villas with sprawling terraces of green paddies right before the doorstep. 
             </p>
             <Link href="/news" as="/news">
-              <Button variant="outline-light" className="text-center">Read More</Button>
+              <Button variant="outline-light" className="text-center rounded-0">Read More</Button>
             </Link>
            </Col>
-           <Col md={12} lg={7} xl={7} md={{ offset: 1 }} className="mt-5-s mt-5-tablets ml-0-tablets">
+           <Col md={12} lg={7} xl={7} md={{ offset: 1 }} className="d-none d-sm-none d-md-none d-lg-block d-xl-block mt-5-s mt-5-tablets ml-0-tablets">
             <Row>
-              <Col md={6} lg={12} xl={12}>
-                <Card className="mb-3">
-                  <Row>
-                    <Col lg={6} xl={6} className="order-12 order-md-12 order-lg-1 order-xl-1">
-                      <Card.Body className="mt-2-s pl-0-s">
-                        <Link href="/news/[slug]" as={`/news/slug`}>
-                          <a className="text-reset">
-                            <h5 className="card-title mb-2">Spike in tenants losing rental bond amid coronavirus pandemic</h5>
-                          </a>
-                        </Link>
-                        <p className="card-text mb-2"><small className="text-muted">August, 18 2020</small></p>
-                        <p className="card-text fs-14 text-justify font-weight-light">Almost one in five rental households across NSW are losing their entire bond, as the number of tenants ...</p>
-                        <Link href="/news/[slug]" as={`/news/slug`}>
-                          <Button variant="outline-dark">Read More +</Button>
-                        </Link>
-                      </Card.Body>
-                    </Col>
-                    <Col lg={6} xl={6} className="order-1 order-md-1 order-lg-12 order-xl-12">
-                      <a href="#">
-                      <img src="https://news.airbnb.com/wp-content/uploads/sites/4/2020/07/PJM013418Q412-20181007_Airbnb_Mallorca_DRE_3613_Featured.jpg?w=3003" className="card-img rounded-0 img-fit" width="100%" height="100%" />
-                      </a>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
-              <Col md={6} lg={12} xl={12}>
-                <Card className="mb-3">
-                  <Row>
-                    <Col lg={6} xl={6} className="order-1 order-md-1 order-lg-12 order-xl-12">
-                      <a href="#">
-                      <img src="https://news.airbnb.com/wp-content/uploads/sites/4/2020/07/PJM013418Q412-20181007_Airbnb_Mallorca_DRE_3613_Featured.jpg?w=3003" className="card-img rounded-0 img-fit" width="100%" height="100%" />
-                      </a>
-                    </Col>
-                    <Col lg={6} xl={6} className="order-1 order-md-1 order-lg-12 order-xl-12">
-                      <Card.Body className="mt-2-s pl-0-s">
-                        <Link href="/news/[slug]" as={`/news/slug`}>
-                          <a className="text-reset">
-                            <h5 className="card-title mb-2">Spike in tenants losing rental bond amid coronavirus pandemic</h5>
-                          </a>
-                        </Link>
-                        <p className="card-text mb-2"><small className="text-muted">August, 18 2020</small></p>
-                        <p className="card-text fs-14 text-justify font-weight-light">Almost one in five rental households across NSW are losing their entire bond, as the number of tenants ... </p>
-                        <Link href="/news/[slug]" as={`/news/slug`}>
-                          <Button variant="outline-dark">Read More +</Button>
-                        </Link>
-                      </Card.Body>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
+              {newsletters && newsletters.map((data, x) => {
+                const { id, slug, title, thumbnail, description, created_at } = data;
+                return(
+                  <Col md={12} lg={12} xl={12} key={id}>
+                    <CardsNewHorizontal 
+                      order={x}
+                      slug={slug}
+                      title={title}
+                      description={description}
+                      thumbnail={thumbnail}
+                      created_at={created_at}
+                    />
+                  </Col>
+                )
+              })}
+
             </Row>
            </Col>
          </Row>
@@ -549,6 +517,26 @@ const Home = () => {
           :global(.ml-0-tablets) {
             margin-left: 0!important;
           }
+        }
+        :global(.btn-outline-bhp) {
+            color: #021927;
+            background-color: #fff;
+            border-color: #021927;
+        }
+        :global(.btn-outline-bhp:hover) {
+            color: #fff;
+            background-color: #021927;
+            border-color: #021927;
+        }
+        :global(.btn-outline-bhp:active) {
+            color: #fff !important;
+            background-color: #021927 !important;
+            border-color: #021927 !important;
+        }
+        :global(.btn-outline-bhp:focus) {
+            color: #fff;
+            background-color: #021927;
+            border-color: #021927;
         }
       `}</style>
       <style jsx>{HomeStyle}</style>

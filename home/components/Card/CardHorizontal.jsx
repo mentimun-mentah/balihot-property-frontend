@@ -235,7 +235,7 @@ const CardContainer = ({
                 <Col className="col-auto">
                   <NoSSR>
                     <i className="fal fa-lg fa-calendar-check mr-2"></i> 
-                    {moment(created_at).startOf('hour').fromNow()}
+                    {moment(created_at).startOf().fromNow()}
                   </NoSSR>
                 </Col>
                 <Col className="text-right">

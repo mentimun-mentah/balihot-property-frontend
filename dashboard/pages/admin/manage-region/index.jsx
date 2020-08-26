@@ -1,12 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import { withAuth } from "../../../hoc/withAuth"
-import { pagination_iter } from "../../../lib/paginationIter.js"
 
 import swal from "sweetalert";
 import axios, { headerCfg } from '../../../lib/axios';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Pagination from 'react-bootstrap/Pagination'
 import * as actions from "../../../store/actions";
 import Container from "react-bootstrap/Container";
 
@@ -50,10 +48,10 @@ const ManageRegion = () => {
       <Container fluid>
         <Row>
           {dataRegion && dataRegion.map(data => {
-            const {id, name, image} = data;
+            const {id, slug, name, image} = data;
             return(
               <Col xl={3} lg={4} md={4} sm={6} xs={12} key={id} >
-                <RegionCardMemo id={id} 
+                <RegionCardMemo id={id} slug={slug}
                   name={name} image={image} 
                   onDelete={() => deleteRegionHandler(id)} 
                 />

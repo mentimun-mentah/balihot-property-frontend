@@ -30,14 +30,15 @@ export const formIsValid = (region, setRegion) => {
 export const formDescIsValid = (content, setContent) => {
   const description = { ...content.description };
   let plainText = description.value.replace(/<[^>]+>/g, '');
+  let finalText = plainText.replace(/&nbsp;/g, " ");
   let isGood = true;
 
-  if (validator.isEmpty(plainText)) {
+  if (validator.isEmpty(finalText)) {
     description.isValid = false;
     description.message = "Description can't be empty";
     isGood = false;
   }
-  if (!validator.isLength(plainText, {min: 3, max: undefined})) {
+  if (!validator.isLength(finalText, {min: 3, max: undefined})) {
     description.isValid = false;
     description.message = "Description minimum 3 characters";
     isGood = false;

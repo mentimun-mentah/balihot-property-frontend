@@ -1,5 +1,8 @@
 import { Provider } from "react-redux";
 
+import Router from 'next/router';
+import NProgress from 'nprogress'; //nprogress module
+import 'nprogress/nprogress.css'; //styles of nprogress
 import Head from "next/head";
 import cookie from "nookies";
 import axios from "../lib/axios";
@@ -12,7 +15,23 @@ import "antd/dist/antd.css";
 import "react-responsive-carousel/lib/styles/carousel.css";
 import 'suneditor/dist/css/suneditor.min.css';
 
+NProgress.configure({ showSpinner: false });
+Router.events.on('routeChangeStart', () => NProgress.start()); 
+Router.events.on('routeChangeComplete', () => NProgress.done()); 
+Router.events.on('routeChangeError', () => NProgress.done());
+
 const App = ({ Component, pageProps, store }) => {
+
+  console.error = (function(_error) {
+    return function(message) {
+      if (
+        typeof message !== "string" ||
+        message.indexOf("component is `contentEditable`") === -1
+      ) {
+        _error.apply(console, arguments);
+      }
+    };
+  })(console.error);
 
   return (
     <>
@@ -29,6 +48,16 @@ const App = ({ Component, pageProps, store }) => {
         </Layout>
       </Provider>
       <style global jsx>{`
+        #nprogress .bar {
+          background: #ff385c;
+          height: 3px;
+        }
+
+        #nprogress .spinner-icon {
+          border-top-color: #ff385c;
+          border-left-color: #ff385c;
+        }
+
         .bor-rad-10 {
           border-radius: 10px !important;
         }
@@ -54,7 +83,7 @@ const App = ({ Component, pageProps, store }) => {
         .ant-upload-list-picture .ant-upload-list-item-error, .ant-upload-list-picture-card .ant-upload-list-item-error{
           border: 1px solid #d9d9d9;
         }
-        .ant-tooltip-placement-bottom{
+        .ant-tooltip-placement-bottom, .ant-tooltip-placement-top{
           display: none;
         }
 

@@ -1,8 +1,10 @@
 import getConfig from 'next/config';
 import axios from "axios";
 import Router from "next/router";
+import NProgress from "nprogress"
 import {parseCookies, setCookie, destroyCookie} from "nookies";
 
+NProgress.configure({ showSpinner: false });
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
 const API_URL = serverRuntimeConfig.API_URL || publicRuntimeConfig.API_URL;
 
@@ -41,9 +43,11 @@ export const jsonHeaderHandler = () => {
 
 instance.interceptors.request.use(function (config) {
     // Do something before request is sent
+    process.browser && NProgress.start();
     return config;
   }, function (error) {
     // Do something with request error
+    process.browser && NProgress.done();
     return Promise.reject(error);
   });
 
@@ -51,6 +55,7 @@ instance.interceptors.request.use(function (config) {
 instance.interceptors.response.use(function (response) {
   // Any status code that lie within the range of 2xx cause this function to trigger
   // Do something with response data
+  process.browser && NProgress.done();
   return response;
 }, async function (error) {
   // Any status codes that falls outside the range of 2xx cause this function to trigger
@@ -95,6 +100,7 @@ instance.interceptors.response.use(function (response) {
     process.browser && Router.reload()
   }
 
+  process.browser && NProgress.done();
   return Promise.reject(error);
 });
 

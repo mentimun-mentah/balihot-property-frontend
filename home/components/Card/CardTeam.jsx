@@ -12,9 +12,9 @@ const Teams = ({ name, image, title, phone }) => {
           </Card.Subtitle>
         </Card.Body>
         <Card.Footer className="text-muted bg-transparent mx-3 pl-0 pr-1">
-          <a href="#" className="text-decoration-none fs-14 fs-12-s text-purple text-truncate">
+          <a className="text-decoration-none fs-14 fs-12-s text-purple text-truncate">
             <i className="far fa-phone-plus mr-1"></i>
-            <strong>+62{phone}</strong>
+            <strong>+62 {phone}</strong>
           </a>
         </Card.Footer>
       </Card>

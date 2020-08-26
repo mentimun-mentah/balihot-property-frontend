@@ -4,7 +4,7 @@ import Link from "next/link";
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 
-const Region = ({id, name, image, onDelete}) => {
+const Region = ({id, slug, name, image, onDelete}) => {
   return (
     <>
       <motion.div
@@ -18,7 +18,9 @@ const Region = ({id, name, image, onDelete}) => {
             src={`${process.env.API_URL}/static/regions/${image}`}
           />
           <Card.Body>
-            <Card.Title>{name}</Card.Title>
+            <Link href="/region/[slug]" as={`/region/${slug}`}>
+              <Card.Title className="hov_pointer">{name}</Card.Title>
+            </Link>
             <Link href="manage-region/[id]" as={`manage-region/${id}`}>
               <Button variant="default" size="sm">
                 Edit

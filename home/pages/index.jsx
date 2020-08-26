@@ -29,6 +29,8 @@ Home.getInitialProps = async (ctx) => {
   ctx.store.dispatch(actions.getTypeSuccess(resType.data)); 
   const resFacilities = await axios.get('/facilities');
   ctx.store.dispatch(actions.getFacilitySuccess(resFacilities.data)); 
+  const resNews = await axios.get(`/newsletters?per_page=2`);
+  ctx.store.dispatch(actions.getNewsletterSuccess(resNews.data)); 
 
   if(access_token && refresh_token){
     try{

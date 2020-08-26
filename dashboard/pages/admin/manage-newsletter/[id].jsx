@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { withAuth } from "../../../hoc/withAuth"
 import { Upload, message } from "antd";
-import { useDispatch } from "react-redux";
 import { uploadButton, getBase64 } from "../../../lib/imageUploader";
 import { formNews, formDescription } from "../../../components/Newsletter/newsData";
 import { formIsValid, formDescIsValid } from "../../../lib/validateFormNews.js";
 
+import _ from "lodash";
 import cx from "classnames";
+import cookie from "nookies";
+import Router from "next/router";
 import dynamic from 'next/dynamic'
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,16 +17,44 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import PreviewImage from "../../../components/PreviewImage";
+import axios, { headerCfgFormData } from "../../../lib/axios"
 
 const PreviewImageMemo = React.memo(PreviewImage)
 const Editor = dynamic(import('../../../components/Editor'), { ssr: false })
 
-const EditNewsLetter = () => {
+const EditNewsLetter = ({ dataNewsletter }) => {
   const [news, setNews] = useState(formNews);
   const [content, setContent] = useState(formDescription);
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewImage, setPreviewImage] = useState({ image: "", title: "" });
+
+  // Function for validating image to the backend
+  const validateImage = file => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    let promise = new Promise((resolve, reject) => {
+      setLoading(true);
+
+      axios.put(`/newsletter/crud/${dataNewsletter.id}`, formData, headerCfgFormData)
+        .then(() => { resolve(file); setLoading(false); })
+        .catch(err => {
+          if (err.response && err.response.data) {
+            const { image } = err.response.data;
+            if(image) {
+              message.error(image);
+              reject(file);
+              setLoading(false);
+            } else {
+              resolve(file);
+              setLoading(false);
+            }
+          }
+        });
+    });
+    return promise;
+  };
 
   // Function for show image preview
   const showPreviewHandler = async file => {
@@ -65,23 +95,80 @@ const EditNewsLetter = () => {
 
   const submitHandler = e => {
     e.preventDefault();
+    console.log('click')
     if(formIsValid(news, setNews) && formDescIsValid(content, setContent)){
-      const { image, title, short_description } = news;
+      const { image, title } = news;
       const { description } = content;
-      const data = {
-        image: image.value,
-        title: title.value,
-        short_description: short_description.value,
-        description: description.value
-      }
-      console.log(data)
+      const formData = new FormData();
+      _.forEach(image.value, (file) => {
+        if(!file.hasOwnProperty('url')){
+          formData.append('image', file.originFileObj)
+        }
+      })
+      formData.append('title', title.value)
+      formData.append('description', description.value)
+
+      axios.put(`/newsletter/crud/${dataNewsletter.id}`, formData, headerCfgFormData)
+        .then(res => {
+          Router.replace("/admin/manage-newsletter", "/admin/manage-newsletter")
+          swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
+          setNews(formNews)
+          setContent(formDescription);
+        }) 
+        .catch(err => {
+          const state = JSON.parse(JSON.stringify(news));
+          const contentState = JSON.parse(JSON.stringify(content));
+          if (err.response && err.response.data) {
+            const { image, title, description } = err.response.data;
+            state.image.value = [];
+            if(title) {
+              state.title.isValid = false;
+              state.title.message = title;
+            }
+            if(image) {
+              state.image.isValid = false;
+              state.image.value = [];
+              message.error(image);
+            }
+            if(description) {
+              contentState.description.isValid = false;
+              contentState.description.message = description;
+            }
+          }
+          setNews(state);
+          setContent(contentState)
+        });
     }
   }
+  
+  //========= SET DATA FROM SERVER ==========//
+  useEffect(() => {
+    if(dataNewsletter){
+      const { id, slug, title, description, image } = dataNewsletter;
+        const data = {
+          id: id,
+          image: { 
+            value: [{
+              uid: -Math.abs(id),
+              url: `${process.env.API_URL}/static/newsletters/${slug}/${image}`
+            }], 
+            isValid: true, 
+            message: null 
+          },
+          title: { value: title, isValid: true, message: null }
+        }
+        const dataDesc = {
+          description: { value: description, isValid: true, message: null }
+        }
+        setNews(data);
+        setContent(dataDesc);
+    }
+  },[])
+  //========= SET DATA FROM SERVER ==========//
 
-  const { image, title, short_description } = news;
+  const { image, title } = news;
   const { description } = content;
   const invalidTitle = cx({ "is-invalid": !title.isValid });
-  const invalidShortDesc  = cx({ "is-invalid": !short_description.isValid });
 
   return(
     <>
@@ -107,6 +194,7 @@ const EditNewsLetter = () => {
                       fileList={image.value}
                       onPreview={showPreviewHandler} 
                       onChange={imageChangeHandler}
+                      beforeUpload={validateImage}
                     >
                       {image.value.length >= 1 ? null : uploadButton(loading)}
                     </Upload>
@@ -122,20 +210,6 @@ const EditNewsLetter = () => {
                     />
                     {!title.isValid && (
                       <Form.Text className="text-muted fs-12 mb-n2 mt-0">{title.message}</Form.Text>
-                    )}
-                  </Form.Group>
-
-                  <Form.Group>
-                    <Form.Label>Short Description</Form.Label>
-                    <Form.Control as="textarea"
-                      rows="2" name="short_description"
-                      placeholder="Short description"
-                      className={invalidShortDesc}
-                      value={short_description.value}
-                      onChange={inputChangeHandler}
-                    />
-                    {!short_description.isValid && (
-                      <Form.Text className="text-muted fs-12 mb-n2 mt-0">{short_description.message}</Form.Text>
                     )}
                   </Form.Group>
 
@@ -173,6 +247,20 @@ const EditNewsLetter = () => {
       )}
     </>
   )
+}
+
+EditNewsLetter.getInitialProps = async ctx => {
+  const { id } = ctx.query;
+  try{
+    const { access_token } = cookie.get(ctx);
+    console.log(id)
+    const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
+    let res = await axios.get(`/newsletter/crud/${id}`, headerCfgServer)
+    return{
+      dataNewsletter: res.data,
+    }
+  }
+  catch {}
 }
 
 export default withAuth(EditNewsLetter)

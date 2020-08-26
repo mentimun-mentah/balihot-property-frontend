@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { withAuth } from "../../../hoc/withAuth"
 import { Upload, message } from "antd";
-import { useDispatch } from "react-redux";
 import { uploadButton, getBase64 } from "../../../lib/imageUploader";
 import { formNews, formDescription } from "../../../components/Newsletter/newsData";
 import { formIsValid, formDescIsValid } from "../../../lib/validateFormNews.js";
 
+import _ from "lodash"
 import cx from "classnames";
+import swal from "sweetalert";
 import dynamic from 'next/dynamic'
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,6 +16,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import PreviewImage from "../../../components/PreviewImage";
+import axios, { headerCfgFormData } from "../../../lib/axios";
 
 const PreviewImageMemo = React.memo(PreviewImage)
 const Editor = dynamic(import('../../../components/Editor'), { ssr: false })
@@ -25,6 +27,33 @@ const NewsLetter = () => {
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewImage, setPreviewImage] = useState({ image: "", title: "" });
+
+  // Function for validating image to the backend
+  const validateImage = file => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    let promise = new Promise((resolve, reject) => {
+      setLoading(true);
+
+      axios.post("/newsletter/create", formData, headerCfgFormData)
+        .then(() => { resolve(file); setLoading(false); })
+        .catch(err => {
+          if (err.response && err.response.data) {
+            const { image } = err.response.data;
+            if(image) {
+              message.error(image);
+              reject(file);
+              setLoading(false);
+            } else {
+              resolve(file);
+              setLoading(false);
+            }
+          }
+        });
+    });
+    return promise;
+  };
 
   // Function for show image preview
   const showPreviewHandler = async file => {
@@ -66,28 +95,54 @@ const NewsLetter = () => {
   const submitHandler = e => {
     e.preventDefault();
     if(formIsValid(news, setNews) && formDescIsValid(content, setContent)){
-      const { image, title, short_description } = news;
+      const { image, title } = news;
       const { description } = content;
-      const data = {
-        image: image.value,
-        title: title.value,
-        short_description: short_description.value,
-        description: description.value
-      }
-      console.log(data)
+      const formData = new FormData();
+      _.forEach(image.value, (file) => {
+        formData.append('image', file.originFileObj)
+      })
+      formData.append('title', title.value)
+      formData.append('description', description.value)
+
+      axios.post("/newsletter/create", formData, headerCfgFormData)
+        .then(res => {
+          swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
+          setNews(formNews)
+          setContent(formDescription);
+        }) 
+        .catch(err => {
+          const state = JSON.parse(JSON.stringify(news));
+          const contentState = JSON.parse(JSON.stringify(content));
+          if (err.response && err.response.data) {
+            const { image, title, description } = err.response.data;
+            state.image.value = [];
+            if(title) {
+              state.title.isValid = false;
+              state.title.message = title;
+            }
+            if(image) {
+              state.image.isValid = false;
+              state.image.value = [];
+              message.error(image);
+            }
+            if(description) {
+              contentState.description.isValid = false;
+              contentState.description.message = description;
+            }
+          }
+          setNews(state);
+          setContent(contentState)
+        });
     }
   }
 
-  const { image, title, short_description } = news;
+  const { image, title } = news;
   const { description } = content;
   const invalidTitle = cx({ "is-invalid": !title.isValid });
-  const invalidShortDesc  = cx({ "is-invalid": !short_description.isValid });
 
   return(
     <>
       <Container fluid>
-        <pre>{JSON.stringify(news, null, 4)}</pre>
-        <pre>{JSON.stringify(content.description, null, 4)}</pre>
         <Row>
           <Col xl={12} lg={12} mb={12}>
             <Card className="hov_none">
@@ -109,6 +164,7 @@ const NewsLetter = () => {
                       fileList={image.value}
                       onPreview={showPreviewHandler} 
                       onChange={imageChangeHandler}
+                      beforeUpload={validateImage}
                     >
                       {image.value.length >= 1 ? null : uploadButton(loading)}
                     </Upload>
@@ -124,20 +180,6 @@ const NewsLetter = () => {
                     />
                     {!title.isValid && (
                       <Form.Text className="text-muted fs-12 mb-n2 mt-0">{title.message}</Form.Text>
-                    )}
-                  </Form.Group>
-
-                  <Form.Group>
-                    <Form.Label>Short Description</Form.Label>
-                    <Form.Control as="textarea"
-                      rows="2" name="short_description"
-                      placeholder="Short description"
-                      className={invalidShortDesc}
-                      value={short_description.value}
-                      onChange={inputChangeHandler}
-                    />
-                    {!short_description.isValid && (
-                      <Form.Text className="text-muted fs-12 mb-n2 mt-0">{short_description.message}</Form.Text>
                     )}
                   </Form.Group>
 

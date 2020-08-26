@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { renderArrow } from "./CarouselButton";
+import { Tooltip } from 'antd';
 
 import Link from "next/link"
 import validator from "validator";
@@ -15,7 +16,7 @@ const formatter = new Intl.NumberFormat(['ban', 'id'])
 
 const CardContainer = ({
   id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
-  villaPriceList, selectedPrice, landPriceList, onDelete, hotdeal, location, VILLA_CHECK_ID, LAND_CHECK_ID
+  villaPriceList, selectedPrice, landPriceList, onDelete, hotdeal, location, LAND_CHECK_ID
 }) => {
   const [selected, setSelected] = useState(selectedPrice)
 
@@ -181,9 +182,34 @@ const CardContainer = ({
             </Card.Body>
           </a>
         </Link>
-        <Card.Footer className="text-muted bg-white bor-rad-10 text-center">
-          <Row className="fs-12">
-            <Col>
+        <Card.Footer className="text-muted bg-white bor-rad-10 text-center p-20">
+          <Row className="fs-11">
+            <Col className="col-auto col-md-auto col-lg mr-auto text-truncate col-sm-8">
+              <span className="text-decoration-none text-muted mr-2 pr-2 bd-right font-weight-bold">
+                CODE: BHP-AT10240
+              </span>
+              <span className="text-decoration-none text-muted mr-2 pr-2 font-weight-bold">
+                Apartement
+              </span>
+            </Col>
+
+            <Col className="col-auto">
+              <Link href="manage-property/[id]" as={`manage-property/${id}`}>
+                <span className="mr-2 pr-2 hov_pointer bd-right">
+                  <Tooltip placement="bottomRight" title="Edit" arrowPointAtCenter>
+                    <i className="far fa-lg fa-edit" />
+                  </Tooltip>
+                </span>
+              </Link>
+              <span className="hov_pointer" onClick={onDelete}>
+                <Tooltip placement="bottomRight" title="Delete" color="#ff4463" arrowPointAtCenter>
+                  <i className="far fa-lg fa-trash-alt" />
+                </Tooltip>
+              </span>
+            </Col>
+
+
+            <Col className="d-none">
               <Link href="manage-property/[id]" as={`manage-property/${id}`}>
                 <Button variant="default" size="sm">
                   Edit

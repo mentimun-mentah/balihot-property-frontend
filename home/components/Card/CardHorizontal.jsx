@@ -9,8 +9,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
-import NoSSR from "react-no-ssr";
-import moment from "moment";
 import ItemsCarousel from 'react-items-carousel';
 import * as actions from "../../store/actions";
 import ShareModal from "./ShareModal";
@@ -22,9 +20,8 @@ const formatter = new Intl.NumberFormat(['ban', 'id'])
 const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
 
 const CardContainer = ({
-  id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
-  villaPriceList, selectedPrice, landPriceList, hotdeal, location, created_at, love, mouseEnter, mouseLeave, 
-  VILLA_CHECK_ID, LAND_CHECK_ID
+  id, type, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
+  villaPriceList, selectedPrice, landPriceList, hotdeal, location, love, mouseEnter, mouseLeave, LAND_CHECK_ID
 }) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState(selectedPrice)
@@ -39,6 +36,9 @@ const CardContainer = ({
     currencySymbol = Object.keys(currency.rates)
     currencyValue = (+Object.values(currency.rates)).toFixed(0)
   }
+
+  let PROPERTY_CODE = 'BHP-'
+  PROPERTY_CODE += `${type.name.charAt(0)}${type.name.slice(-1)}${property_for.split(',').map(x => x[0]).join('')}${id}`.toUpperCase()
 
   const imageCard = images.split(",");
   const statusProperty = property_for.split(",");
@@ -233,10 +233,12 @@ const CardContainer = ({
             <Card.Footer className="text-muted bg-white bor-rad-10 footer-edit">
               <Row className="fs-12">
                 <Col className="col-auto">
-                  <NoSSR>
-                    <i className="fal fa-lg fa-calendar-check mr-2"></i> 
-                    {moment(created_at).startOf().fromNow()}
-                  </NoSSR>
+                  <span className="text-decoration-none text-muted mr-2 pr-2 bd-right font-weight-bold">
+                    CODE: {PROPERTY_CODE}
+                  </span>
+                  <span className="text-decoration-none text-muted mr-2 pr-2 font-weight-bold">
+                    {type.name}
+                  </span>
                 </Col>
                 <Col className="text-right">
                   <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right"> 

@@ -58,7 +58,7 @@ const ContainerCardProperty = ({ dataProperty }) => {
         arrows={false}
       >
         {dataProperty.map(data => {
-          const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = data;
+          const {id, type, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = data;
           const {status, period, price, hotdeal, location, created_at, love} = data;
           let villaPrice = []
           let landPrice = []
@@ -139,7 +139,8 @@ const ContainerCardProperty = ({ dataProperty }) => {
               {loading ? (
                 <LoadingCard />
               ) : (
-                <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                <PropertyCardMemo id={id} type={type} slug={slug} name={name} 
+                  images={images} property_for={property_for}
                   type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
                   building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
                   villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
@@ -163,7 +164,8 @@ const ContainerCardProperty = ({ dataProperty }) => {
         arrows={false}
       >
         {dataProperty.map(data => {
-          const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = data;
+          const {id, type, slug, name, images, property_for, type_id} = data;
+          const {bedroom, bathroom, land_size, building_size} = data;
           const {status, period, price, hotdeal, location, created_at, love} = data;
           let villaPrice = []
           let landPrice = []
@@ -244,7 +246,8 @@ const ContainerCardProperty = ({ dataProperty }) => {
               {loading ? (
                 <LoadingCard />
               ) : (
-                <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                <PropertyCardMemo id={id} type={type} slug={slug} name={name} 
+                  images={images} property_for={property_for}
                   type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
                   building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
                   villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 

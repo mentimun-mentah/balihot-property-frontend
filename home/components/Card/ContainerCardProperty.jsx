@@ -26,12 +26,15 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
       LAND_CHECK_ID = dataType[key].id
     }
   }
+
   return (
     <>
       <Row>
         {dataProperty && dataProperty.data && dataProperty.data.map(data => {
-          const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = data;
+          const {id, type, slug, name, images, property_for} = data;
+          const {type_id, bedroom, bathroom, land_size, building_size} = data;
           const {status, period, price, hotdeal, location, created_at, love} = data;
+
           let villaPrice = []
           let landPrice = []
           if(type_id !== LAND_CHECK_ID){
@@ -114,7 +117,8 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
                 {loading ? (
                   <LoadingCardHorizontal />
                 ) : (
-                  <PropertyCardHorizontalMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                  <PropertyCardHorizontalMemo id={id} type={type} slug={slug} name={name} 
+                    images={images} property_for={property_for}
                     type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
                     building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
                     villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 
@@ -133,7 +137,8 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
                 {loading ? (
                   <LoadingCard />
                 ) : (
-                  <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                  <PropertyCardMemo id={id} type={type} slug={slug} name={name} 
+                    images={images} property_for={property_for}
                     type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
                     building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
                     villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 

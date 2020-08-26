@@ -57,7 +57,7 @@ const Property = () => {
 
   let VILLA_CHECK_ID = null;
   let LAND_CHECK_ID = null;
-  let PROPERTY_TYPE = null;
+  let PROPERTY_CODE = 'BHP-';
 
   for(let key in dataType){
     if(dataType[key].name.toLowerCase() === "villa"){
@@ -66,18 +66,17 @@ const Property = () => {
     if(dataType[key].name.toLowerCase() === "land"){
       LAND_CHECK_ID = dataType[key].id
     }
-    if(dataType[key].id === propertyData.type_id){
-      PROPERTY_TYPE = dataType[key].name
-    }
   }
 
-  const { id, slug, name, type_id, property_for, land_size } = propertyData;
+  const { id, type, slug, name, type_id, property_for, land_size } = propertyData;
   const { youtube, description, hotdeal, price, love } = propertyData;
   const { status } = propertyData; // For Sale
   const { period } = propertyData; // For Rent
   const { facilities, bathroom, bedroom, building_size } = propertyData; // For villa
   const { location, latitude, longitude } = propertyData; // For Map
   const { seen, similar_listing, created_at } = propertyData; // For Map
+
+  PROPERTY_CODE += `${type.name.charAt(0)}${type.name.slice(-1)}${property_for.split(',').map(x => x[0]).join('')}${id}`.toUpperCase()
 
   let villaPrice = [];
   let landPrice = [];
@@ -596,7 +595,7 @@ const Property = () => {
                       <h4 className="fs-14">
                         Code:
                         <span className="font-weight-normal ml-1 status-detail ">
-                          BHP-VR1
+                          {PROPERTY_CODE}
                         </span>
                       </h4>
                     </Col>
@@ -797,7 +796,7 @@ const Property = () => {
                   )}
 
                   <Card.Title className="fs-18 mb-1 pb-1 text-uppercase">
-                    {PROPERTY_TYPE} Property
+                    {type.name} Property
                   </Card.Title>
                   <Card.Subtitle className="fs-14 mt-1 text-muted">
                     For {pf.length > 0 && pf[0] !== "" && <>{pf.join(" & ")}</>}{" "}

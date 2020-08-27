@@ -161,7 +161,7 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
 
   useEffect(() => {
     let qLoct = '?'
-    if(location.value) qLoct = qLoct + `q=${location.value}&`
+    if(location.value) qLoct = qLoct + `q=${location.value.charAt(0).toUpperCase() + location.value.slice(1)}&`
     if(searchType) qLoct = qLoct + `type_id=${searchType}`
     dispatch(actions.getLocation(qLoct))
   },[location.value, searchType])
@@ -170,7 +170,7 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
     let q = '?'
     if(searchType == 0) if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
     if(searchType) q = q + `type_id=${searchType}&`
-    if(location.value) q = q + `location=${location.value}&`
+    if(location.value) q = q + `location=${location.value.charAt(0).toUpperCase() + location.value.slice(1)}&`
     if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
     if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
     if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`
@@ -197,7 +197,9 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
         <div className="toast-body p-4">
           <div className="row">
             <div className="col-lg-12">
-              <h4 className="text-thm3 mb-3 text-dark">Facilities</h4>
+              {dataFacilities && dataFacilities.length !== 0 && (
+                <h4 className="text-thm3 mb-3 text-dark">Facilities</h4>
+              )}
               <Checkbox.Group style={{ width: '100%' }} onChange={e => searchChangeHandler(e, "facility")}>
               <Row>
                 {dataFacilities && dataFacilities.map(item => (
@@ -208,7 +210,7 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
                 {dataFacilities && dataFacilities.length == 0 && (
                   <Container>
                     <Card className="text-muted shadow-none border-0">
-                      <Card.Img variant="top" src="/static/images/no-facility.png" className="img-size mx-auto" />
+                      <Card.Img variant="top" src="/static/images/no-facility.png" className="mt-3 img-size mx-auto" />
                       <Card.Body>
                         <Card.Title className="text-center">
                           There is no facility
@@ -272,12 +274,12 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
               <tr>
                 <td className="pl-0 py-0">
                   <p className="font-weight-bold text-dark card-text">
-                    {currencySymbol} {formatter.format(price.value[0])}
+                    USD {formatter.format(price.value[0])}
                   </p>
                 </td>
                 <td className="pr-0 py-0">
                   <p className="font-weight-bold text-dark card-text float-right">
-                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    USD <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </td>
               </tr>

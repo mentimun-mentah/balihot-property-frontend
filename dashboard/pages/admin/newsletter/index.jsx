@@ -196,7 +196,7 @@ const NewsLetter = () => {
                   </Form.Group>
 
                   <Button variant="danger" onClick={submitHandler}>
-                    Save Region
+                    Save Newsletter
                   </Button>
 
                 </Form>

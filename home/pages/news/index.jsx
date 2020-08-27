@@ -8,12 +8,12 @@ import Container from "react-bootstrap/Container"
 import Jumbotron from "react-bootstrap/Jumbotron"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
-
 import axios from "../../lib/axios";
 import * as actions from "../../store/actions";
 import CardNews from "../../components/Card/CardNews"
 import CardNewsHorizontal from "../../components/Card/CardNewsHorizontal"
 import CardNewsHorizontalSmall from "../../components/Card/CardNewsHorizontalSmall"
+import CardEmptyNews from "../../components/Card/CardEmptyNews"
 
 const Newsletter = () => {
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ const Newsletter = () => {
 
   useEffect(() => {
     let q = '?'
-    if(search) q += `q=${search}&`
+    if(search) q += `q=${search.charAt(0).toUpperCase() + search.slice(1)}&`
     if(active) q += `page=${active}`
     if(isSearching){
       dispatch(actions.getTitle(q))
@@ -84,32 +84,35 @@ const Newsletter = () => {
         </Container>
       </Jumbotron>
 
-      <Container>
-        <h3 className="mt-2">Old News</h3>
-        <hr/>
-        <Row>
-          {oldnews && oldnews.data && oldnews.data.slice(0,3).map(data => {
-            const { id, slug, title, thumbnail, description, created_at } = data;
-            return(
-              <Col md={6} lg={4} xl={4} key={id}>
-                <CardNews 
-                  slug={slug}
-                  title={title}
-                  description={description}
-                  thumbnail={thumbnail}
-                  created_at={created_at}
-                />
-              </Col>
-            )
-          })}
-        </Row>
-      </Container>
+      {oldnews && oldnews.data && oldnews.data.length > 0 && (
+        <Container>
+          <h3 className="mt-2">Old News</h3>
+          <hr/>
+          <Row>
+            {oldnews && oldnews.data && oldnews.data.slice(0,3).map(data => {
+              const { id, slug, title, thumbnail, description, created_at } = data;
+              return(
+                <Col md={6} lg={4} xl={4} key={id}>
+                  <CardNews 
+                    slug={slug}
+                    title={title}
+                    description={description}
+                    thumbnail={thumbnail}
+                    created_at={created_at}
+                  />
+                </Col>
+              )
+            })}
+          </Row>
+        </Container>
+      )}
 
-      <Container className="mt-5">
+      <Container className="mt-xl-5 mt-lg-2 mt-md-2 mt-sm-2">
         <Row>
           <Col xl={8} className="order-12 order-md-12 order-lg-12 order-xl-1">
             <Row className="mt-2">
-              {newsletters && newsletters.data && newsletters.data.map(data => {
+              {newsletters && newsletters.data && newsletters.data.length > 0 ? 
+                newsletters.data.map(data => {
                 const { id, slug, title, thumbnail, description, created_at } = data;
                 return(
                   <Col md={6} lg={12} xl={12} key={id} className="pl-2">
@@ -122,9 +125,30 @@ const Newsletter = () => {
                     />
                   </Col>
                 )
-              })}
+                }) : (
+                <Col>
+                  {newsletters && newsletters.data && newsletters.data.length == 0 && !isSearching && (
+                    <CardEmptyNews 
+                      cardClass="text-muted mt-0 pt-5 pb-4 shadow-sm rounded-0" 
+                      img="/static/images/no-newsletter.png"
+                      imgClass="img-size mx-auto m-t-11"
+                      title="There is no newsletter"
+                      titleClass="text-center"
+                    />
+                  )}
+                  {newsletters && newsletters.data && newsletters.data.length == 0 && isSearching && (
+                    <CardEmptyNews 
+                      cardClass="text-muted mt-2 mt-9-rem pb-5 shadow-none border-0" 
+                      img="/static/images/no-search-news.png"
+                      imgClass="img-size mx-auto"
+                      title="Sorry, there is no result"
+                      titleClass="text-center"
+                    />
+                  )}
+                </Col>
+              )}
             </Row>
-
+            
             <Row className="mt-5">
               {newsletters.iter_pages && newsletters.iter_pages.length > 0 && newsletters.iter_pages.length > 1 && (
                 <Col className="col-12">
@@ -139,18 +163,19 @@ const Newsletter = () => {
           </Col>
           <Col xl={4} className="order-md-1 order-lg-1 order-xl-1 mb-4 mt-2">
             <AutoComplete
-              className="w-100 search-news m-b-18-s"
+              className="w-100 search-news m-b-18-s d-none d-sm-none d-md-none d-lg-none d-xl-block"
               options={listTitle}
               filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
               onChange={searchChangeHandler}
               value={search}
             >
-            <Input.Search placeholder="Search news" enterButton />
+              <Input.Search placeholder="Search news" enterButton />
             </AutoComplete>
+
             <div className="hr-news mb-2 mt-4"></div>
             <h5 className="text-uppercase">Most Popular</h5>
-            <ul className="list-unstyled mt-4">
-              {popular && popular.map(data => {
+            <ul className="list-unstyled mt-4 mb-5">
+              {popular && popular.length > 0 ? popular.map(data => {
                 const { id, slug, title, thumbnail, created_at } = data;
                 return(
                   <CardNewsHorizontalSmall 
@@ -161,17 +186,42 @@ const Newsletter = () => {
                     created_at={created_at}
                   />
                 )
-              })}
+              }) : (
+                <CardEmptyNews 
+                  cardClass="text-muted mt-0 py-4 shadow-sm rounded-0" 
+                  cardBodyClass="pb-0"
+                  img="/static/images/no-newsletter.png"
+                  imgClass="img-size-small mx-auto"
+                  title="No popular newsletter"
+                  titleClass="text-center fs-14 mb-0"
+                />
+              )}
             </ul>
+
+            <AutoComplete
+              className="w-100 search-news m-b-18-s d-sm-block d-md-block d-lg-block d-xl-none"
+              options={listTitle}
+              filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+              onChange={searchChangeHandler}
+              value={search}
+            >
+              <Input.Search placeholder="Search news" enterButton />
+            </AutoComplete>
+
           </Col>
         </Row>
       </Container>
       <style jsx>{`
+        :global(.img-size-small) {
+          width: auto;
+          height: 60px;
+          opacity: 0.5;
+       }
         :global(.img-news) {
-          background-image: url("https://images.unsplash.com/photo-1473755504818-b72b6dfdc226?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=667&q=80")
+          background-image: url("https://images.unsplash.com/photo-1560177112-fbfd5fde9566?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80")
         }
         :global(.img-news-horizontal){
-          height: 100%;
+          height: 190px;
           object-fit: cover;
         }
         :global(.hr-news){
@@ -211,6 +261,11 @@ const Newsletter = () => {
         :global(.page-link:focus){
           box-shadow: 0 0 0 0.2rem rgba(84, 84, 84, 0.25);
         }
+        @media screen and (min-width: 1199px){
+          :global(.mt-9-rem){
+            margin-top: 9rem !important;
+          }
+        }
       `}</style>
     </>
   )
@@ -223,6 +278,7 @@ Newsletter.getInitialProps = async ctx => {
   ctx.store.dispatch(actions.oldNewsletterSuccess(old.data)); 
   const pop = await axios.get(`/newsletter/most-popular`);
   ctx.store.dispatch(actions.popularNewsletterSuccess(pop.data)); 
+  await ctx.store.dispatch(actions.authCheckState(ctx))
 }
 
 export default Newsletter

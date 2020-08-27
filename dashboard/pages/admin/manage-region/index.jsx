@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import * as actions from "../../../store/actions";
 import Container from "react-bootstrap/Container";
+import CardEmpty from '../../../components/Card/CardEmpty'
 
 import RegionCard from "../../../components/Region/CardRegion";
 const RegionCardMemo = React.memo(RegionCard);
@@ -49,7 +50,8 @@ const ManageRegion = () => {
     <>
       <Container fluid>
         <Row>
-          {dataRegion && dataRegion.map(data => {
+          {dataRegion && dataRegion.length > 0 ?
+            dataRegion.map(data => {
             const {id, slug, name, image} = data;
             return(
               <Col xl={3} lg={4} md={4} sm={6} xs={12} key={id} >
@@ -59,7 +61,17 @@ const ManageRegion = () => {
                 />
               </Col>
             )
-          })}
+            }) : (
+              <Container>
+                <CardEmpty 
+                  cardClass="text-muted mt-4 pt-5 pb-5 shadow-none border-0"
+                  img="/static/images/no-popular-place.png"
+                  imgClass="img-size mx-auto"
+                  titleClass="text-center text-black-50"
+                  title="There is no region"
+                />
+              </Container>
+            )}
         </Row>
       </Container>
     </>

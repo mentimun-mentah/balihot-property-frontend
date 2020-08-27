@@ -537,10 +537,11 @@ const Account = () => {
                       <p className="fs-14 text-secondary mb-0">
                         Image format: .JPEG, .JPG, .PNG
                       </p>
+                      <p className="fs-12 text-secondary font-italic mb-0">
+                        click remove icon on the image 
+                      </p>
                       <p className="fs-12 text-secondary font-italic">
-                        <mark>
-                          click remove icon on the image to change your avatar.
-                        </mark>
+                        to change your avatar.
                       </p>
                     </Card.Body>
                   </Card>
@@ -611,6 +612,11 @@ const Account = () => {
           :global(.m-btn-block) {
             display: block;
             width: 100%;
+          }
+        }
+        @media (max-width: 767px) {
+          :global(.m-border-0) {
+            border: 0 !important;
           }
         }
         // Large devices (ipad pro)

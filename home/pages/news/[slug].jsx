@@ -108,7 +108,14 @@ DetailNewsletter.getInitialProps = async ctx => {
   try {
     const res = await axios.get(`/newsletter/${slug}`);
     ctx.store.dispatch(actions.slugNewsletterSuccess(res.data));
-  } catch {}
+    await ctx.store.dispatch(actions.authCheckState(ctx))
+  } catch (err) {
+    if(err.response.status == 404){
+      process.browser
+        ? Router.replace("/news", "/news") //Redirec from Client Side
+        : ctx.res.writeHead(302, { Location: "/news" }).end(); //Redirec from Server Side
+    }
+  }
 };
 
 export default DetailNewsletter

@@ -88,7 +88,7 @@ const SendEnquiry = ({closed}) => {
             <Col>
               <Form>
                 <Form.Row>
-                  <Form.Group as={Col} className="mb-2">
+                  <Form.Group as={Col} sm={12} md={6} lg={6} xl={6} className="mb-2">
                     <InputGroup>
                       <InputGroup.Prepend>
                         <InputGroup.Text className="input-group-login pr-0">
@@ -108,7 +108,7 @@ const SendEnquiry = ({closed}) => {
                     )}
                   </Form.Group>
 
-                  <Form.Group as={Col} className="mb-2">
+                  <Form.Group as={Col} sm={12} md={6} lg={6} xl={6} className="mb-2">
                     <InputGroup>
                       <InputGroup.Prepend className="input-group-login pr-0">
                         <InputGroup.Text className="input-group-login pr-0">

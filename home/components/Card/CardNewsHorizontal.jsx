@@ -4,12 +4,15 @@ import NoSSR from "react-no-ssr";
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
+import { motion } from "framer-motion";
+import { Fade } from "../Transition";
 
 const CardNewsHorizontal = ({ slug, title, description, thumbnail, created_at }) => {
   let plainText = description.replace(/<[^>]+>/g, ' ');
   let finalText = plainText.replace(/&nbsp;/g, " ");
   return(
     <>
+      <motion.div initial="initial" animate="in" exit="out" variants={Fade}>
       <Card className="border-left-0 border-right-0 rounded-0 border-bottom-0 shadow-none mb-3">
         <Row>
           <Col lg={6} xl={8} className="order-12 order-md-12 order-lg-1 order-xl-1">
@@ -39,6 +42,7 @@ const CardNewsHorizontal = ({ slug, title, description, thumbnail, created_at })
           </Col>
         </Row>
       </Card>
+      </motion.div>
     </>
   )
 }

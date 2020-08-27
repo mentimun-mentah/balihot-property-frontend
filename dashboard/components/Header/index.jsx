@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col'
 
 const Header = () => {
   const { pathname } = useRouter();
+  let dashboard = '/admin'
   let page = pathname.replace("/", "").split("/")[1]
   let newPage, finalPage
   if(pathname.startsWith("/admin/")){
@@ -27,11 +28,22 @@ const Header = () => {
                   <Breadcrumb.Item>
                     <i className="fas fa-house-flood"></i>
                   </Breadcrumb.Item>
-                  <Breadcrumb.Item>Administration</Breadcrumb.Item>
-                  <Breadcrumb.Item active className="text-capitalize">
-                    {pathname.startsWith("/admin/manage-") ? "" : pathname.startsWith("/admin/manage-") ? "" : "Add"} 
-                    {" "}{finalPage}
-                  </Breadcrumb.Item>
+                  {pathname === dashboard ? (
+                    <>
+                      <Breadcrumb.Item>General</Breadcrumb.Item>
+                      <Breadcrumb.Item active className="text-capitalize">
+                        Dashboard
+                      </Breadcrumb.Item>
+                    </>
+                  ) : (
+                    <>
+                      <Breadcrumb.Item>Administration</Breadcrumb.Item>
+                      <Breadcrumb.Item active className="text-capitalize">
+                      {pathname.startsWith("/admin/manage-") ? "" : pathname.startsWith("/admin/manage-") ? "" : "Add"} 
+                      {" "}{finalPage}
+                      </Breadcrumb.Item>
+                    </>
+                  )}
                 </Breadcrumb>
               </Col>
             </Row>

@@ -153,31 +153,6 @@ const PropertyStyle = css`
       > span.for-rent) {
     background: #551a8b;
   }
-  /*AWS SLIDER*/
-  :global(.awssld__controls__arrow-left, .awssld__controls__arrow-right) {
-    height: 13px;
-  }
-  :global(.awssld__controls button) {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: #ffffff4d;
-  }
-  :global(.awssld__controls button:hover) {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: #ffffffdb;
-  }
-  :global(.awssld__controls__arrow-right:before, .awssld__controls__arrow-right:after) {
-    right: 2px !important;
-    border-radius: 10px;
-  }
-  :global(.awssld__controls__arrow-left:before, .awssld__controls__arrow-left:after) {
-    left: 2px !important;
-    border-radius: 10px;
-  }
-  /*AWS SLIDER*/
 
   :global(.badge) {
     font-size: 85%;

@@ -7,12 +7,14 @@ import HomeContainer from "../components/Home";
 
 const Home = ({ username, fresh }) => {
   useEffect(() => {
-    if (fresh) {
-      swal({
-        icon: "success", title: `Welcome ${username}`, timer: 3000,
-      }).then(() => {
-        destroyCookie(null, "fresh");
-      });
+    if ((fresh && username !== undefined) || (username !== undefined)) {
+      if(username !== "undefined" && fresh){
+        swal({
+          icon: "success", title: `Welcome ${username}`, timer: 3000,
+        }).then(() => {
+          destroyCookie(null, "fresh");
+        });
+      }
     }
   }, [swal, destroyCookie]);
 

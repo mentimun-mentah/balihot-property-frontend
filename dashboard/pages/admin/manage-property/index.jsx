@@ -8,14 +8,12 @@ import swal from "sweetalert";
 import axios, { jsonHeaderHandler } from '../../../lib/axios';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Card from "react-bootstrap/Card";
 import Pagination from 'react-bootstrap/Pagination'
 import * as actions from "../../../store/actions";
 import Container from "react-bootstrap/Container";
 import CardEmpty from "../../../components/Card/CardEmpty";
 
 import PropertyCard from "../../../components/Card/CardProperty"
-import StyleProperty from "../../../components/Property/style"
 
 const PropertyCardMemo = React.memo(PropertyCard);
 
@@ -245,7 +243,6 @@ const ManageProperty = () => {
         </Row>
       </Container>
 
-      {/*<style jsx>{StyleProperty}</style>*/}
       <style jsx>{`
         @media (min-width: 768px) {
           :global(.search-code) {

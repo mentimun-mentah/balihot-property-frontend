@@ -21,14 +21,7 @@ Account.getInitialProps = async ctx => {
       const resWishlist = await axios.get('/wishlist/user', headerCfg);
       ctx.store.dispatch(actions.getWishlistSuccess(resWishlist.data));
     }
-    catch (err){
-      // if(err.response.data.msg === "Token has expired"){
-      //   ctx.store.dispatch(actions.refreshToken(ctx))
-      // }
-      // if(err.response.data.msg === "Token has been revoked"){
-      //   ctx.store.dispatch(actions.logout(ctx))
-      // }
-    }
+    catch {}
   }
 }
 

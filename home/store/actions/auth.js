@@ -49,6 +49,12 @@ export const authCheckState = (ctx) => {
     const { access_token, refresh_token } = cookies.get(ctx);
     if (access_token && refresh_token) {
       const { refresh_token, username } = cookies.get(ctx);
+      if(access_token === "undefined" || refresh_token === "undefined" || username === "undefined"){
+        dispatch(authLogout())
+        cookies.destroy(ctx, "access_token");
+        cookies.destroy(ctx, "refresh_token");
+        cookies.destroy(ctx, "username");
+      }
       if((access_token && !refresh_token) || (refresh_token && !access_token)){
         dispatch(authLogout())
         cookies.destroy(ctx, "access_token");

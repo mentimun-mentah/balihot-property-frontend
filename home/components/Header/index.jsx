@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Drawer, Select } from 'antd';
 import { BackdropModal } from "../Transition";
-import { parseCookies, setCookie } from "nookies";
+import { parseCookies, setCookie, destroyCookie } from "nookies";
 
 import Link from "next/link";
 import Router from "next/router";
@@ -13,6 +13,7 @@ import * as actions from "../../store/actions";
 import Login from "./login";
 import Register from "./register";
 import Reset from "./reset";
+import ResendEmail from "./resendEmail";
 
 const IMAGE = "/static/images/";
 const { Option } = Select;
@@ -23,6 +24,7 @@ const Header = () => {
   const [isTop, setIsTop] = useState(true);
   const [changeView, setChangeView] = useState(false);
   const [resetView, setResetView] = useState(false);
+  const [resendView, setResendView] = useState(false);
   const [modalShow, setModalShow] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currency, setCurrency] = useState();
@@ -61,15 +63,21 @@ const Header = () => {
     document.body.classList.remove("modal-open");
     setModalShow(false);
     setResetView(false);
+    setResendView(false);
   };
 
   const resetViewHandler = () => {
     setResetView(true);
   };
 
+  const resendViewHandler = () => {
+    setResendView(true);
+  };
+
   const changeViewHandler = () => {
     setChangeView(!changeView);
     setResetView(false);
+    setResendView(false);
   };
 
   const onLogout = () => dispatch(actions.logout());
@@ -77,6 +85,9 @@ const Header = () => {
     setVisible(false);
     onLogout();
     Router.replace("/")
+    destroyCookie(null, "access_token", { domain: process.env.DOMAIN })
+    destroyCookie(null, "refresh_token", { domain: process.env.DOMAIN })
+    destroyCookie(null, "username", { domain: process.env.DOMAIN })
   };
 
   const showDrawer = () => { setVisible(true); };
@@ -310,13 +321,14 @@ const Header = () => {
                 ></Modal.Header>
                 <div className="col-md-10 mx-auto">
                   <Modal.Body>
-                    {!resetView && (
+                    {!resetView && !resendView && (
                       <AnimatePresence exitBeforeEnter key={changeView}>
                         {changeView ? (
                           <Login
                             viewed={changeViewHandler}
                             closed={closeModalHandler}
                             reset={resetViewHandler}
+                            resend={resendViewHandler}
                           />
                         ) : (
                           <Register viewed={changeViewHandler} closed={closeModalHandler} />
@@ -327,6 +339,13 @@ const Header = () => {
                       <AnimatePresence exitBeforeEnter key={resetView}>
                         {resetView && (
                           <Reset viewed={changeViewHandler} closed={closeModalHandler} />
+                        )}
+                      </AnimatePresence>
+                    )}
+                    {resendView && (
+                      <AnimatePresence exitBeforeEnter key={resendView}>
+                        {resendView && (
+                          <ResendEmail viewed={changeViewHandler} closed={closeModalHandler} />
                         )}
                       </AnimatePresence>
                     )}

@@ -160,9 +160,6 @@ const EditProperty = ({dataProperty}) => {
   }
 
   const dateSelectHandler = (_, dateString) => {
-    //const property_year = dateString.split("/").slice(-1) //Get year of property
-    //const date = new Date()
-    //const yearNow = date.getFullYear() // Get year now
     const data = {
       ...property,
       leasehold_period: { value: dateString, isValid: true, message: null },

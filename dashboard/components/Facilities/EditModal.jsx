@@ -39,7 +39,7 @@ const EditModal = props => {
         icon: icon.value
       };
       axios.put(`/facility/crud/${facility.id}`, data, headerCfg)
-        .then(res => {
+        .then(() => {
           dispatch(actions.getFacility())
           props.close()
         })

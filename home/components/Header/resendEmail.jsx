@@ -8,33 +8,31 @@ import cx from "classnames";
 import swal from "sweetalert";
 import axios from "../../lib/axios";
 
-const formReset = {
+const formResend = {
   email: { value: "", isValid: true, message: "" },
 };
 
-const Reset = ({ viewed, closed }) => {
-  const [reset, setReset] = useState(formReset);
+const ResendVerification = ({ viewed, closed }) => {
+  const [resend, setResend] = useState(formResend);
   const [loading, setLoading] = useState(false);
   const switchToRegister = () => viewed();
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if (formIsValid(reset, setReset)) {
+    if (formIsValid(resend, setResend)) {
       setLoading(true);
-      const data = { email: reset.email.value };
+      const data = { email: resend.email.value };
       axios
-        .post("/send-password/reset", data)
+        .post("/resend-email", data)
         .then((res) => {
           setLoading(false);
           closed();
           const { message } = res.data;
-          swal({
-            icon: "success", title: "Awesome!", text: `${message}`, timer: 3000,
-          });
+          swal({ icon: "success", title: "Awesome!", text: `${message}`, timer: 3000 });
         })
         .catch((err) => {
           setLoading(false);
-          const state = JSON.parse(JSON.stringify(reset));
+          const state = JSON.parse(JSON.stringify(resend));
           if (err.response && err.response.data) {
             state.email.isValid = false;
             state.email.value = state.email.value;
@@ -45,7 +43,7 @@ const Reset = ({ viewed, closed }) => {
             state.email.value = state.email.value;
             state.email.message = err.response.data.message;
           }
-          setReset(state);
+          setResend(state);
         });
     }
   };
@@ -53,18 +51,18 @@ const Reset = ({ viewed, closed }) => {
   const inputHandler = (event) => {
     const { name, value } = event.target;
     const data = {
-      ...reset,
+      ...resend,
       [name]: {
-        ...reset[name],
+        ...resend[name],
         value: value,
         isValid: true,
         message: null,
       },
     };
-    setReset(data);
+    setResend(data);
   };
 
-  const { email } = reset;
+  const { email } = resend;
   const emailInvalid = cx({ "is-invalid border-grey": !email.isValid });
 
   return (
@@ -77,9 +75,9 @@ const Reset = ({ viewed, closed }) => {
             height="80"
             className="mx-auto d-block"
           />
-          <h5 className="text-center mt-3">Have you forgotten your password ?</h5>
+          <h5 className="text-center mt-3">Resend Email Verification</h5>
           <p className="text-center">
-            Please enter your registered email address and we will send you a reset link.
+            Please enter your registered email address and we will send you a new verification link.
           </p>
 
           <Row>
@@ -106,7 +104,7 @@ const Reset = ({ viewed, closed }) => {
 
               <Button className="btn-danger" block onClick={submitHandler}>
                 <i className="fal fa-paper-plane mr-2" />
-                Send reset link{" "}
+                Send email{" "}
                 {loading && (
                   <Spinner
                     as="span"
@@ -193,4 +191,4 @@ const Reset = ({ viewed, closed }) => {
   );
 };
 
-export default Reset;
+export default ResendVerification;

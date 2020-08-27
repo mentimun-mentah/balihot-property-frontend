@@ -18,12 +18,13 @@ const formSignin = {
   password: { value: "", isValid: true, message: "" },
 };
 
-const Login = ({ viewed, reset, closed }) => {
+const Login = ({ viewed, reset, closed, resend }) => {
   const dispatch = useDispatch();
   const [signin, setSigin] = useState(formSignin);
   const [loading, setLoading] = useState(false);
   const switchToRegister = () => viewed();
   const switchToReset = () => reset();
+  const switchToResend = () => resend();
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -154,9 +155,18 @@ const Login = ({ viewed, reset, closed }) => {
                 )}
               </Form.Group>
 
-              <span className="text-dark hov_pointer" onClick={switchToReset}>
-                <a className="fs-12 text-reset text-muted">Forgot password ?</a>
-              </span>
+              <Row className="justify-content-between">
+                <Col>
+                  <span className="text-dark hov_pointer" onClick={switchToReset}>
+                    <a className="fs-12 text-reset text-muted">Forgot password ?</a>
+                  </span>
+                </Col>
+                <Col className="text-right">
+                  <span className="text-dark hov_pointer" onClick={switchToResend}>
+                    <a className="fs-12 text-reset text-muted">Resend verification</a>
+                  </span>
+                </Col>
+              </Row>
               <Button variant="primary" className="mt-2" block onClick={submitHandler}>
                 Sign in{" "}
                 {loading && (

@@ -23,7 +23,7 @@ const Account = () => {
                 <Row className="no-gutters border-bottom">
                   <Col md={4}>
                     <img
-                      src={userData !== null && `${process.env.API_URL}/static/avatars/${userData.avatar}`}
+                      src={userData && `${process.env.API_URL}/static/avatars/${userData.avatar}`}
                       width="50"
                       height="50"
                       className="rounded-circle avatar"
@@ -32,7 +32,7 @@ const Account = () => {
                   <Col md={8}>
                     <Card.Body className="px-0 text-truncate">
                       <Card.Title className="h6 fs-13-pro p-l-2-pro text-truncate text-capitalize">
-                        {userData !== null && <>{userData.username}</>}
+                        {userData && <>{userData.username}</>}
                       </Card.Title>
                     </Card.Body>
                   </Col>

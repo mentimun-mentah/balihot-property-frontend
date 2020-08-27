@@ -69,7 +69,6 @@ export const authCheckState = (ctx) => {
       }
       else if(access_token && refresh_token && username) {
         dispatch(authSuccess(access_token, refresh_token, username));
-        // dispatch(getUser(ctx))
       }
     } else {
       dispatch(authLogout())

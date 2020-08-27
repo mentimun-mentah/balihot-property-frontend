@@ -27,6 +27,12 @@ const Account = () => {
 
   const [fileList, setFileList] = useState([]);
 
+  useEffect(() => {
+    if(userData == null){
+      Router.replace("/")
+    }
+  },[userData])
+
   // Function for validating image to the backend
   const validateImage = file => {
     const formData = new FormData();
@@ -87,12 +93,6 @@ const Account = () => {
   };
 
   useEffect(() => {
-    if(userData == null){
-      Router.replace("/")
-    }
-  },[userData])
-
-  useEffect(() => {
     if(userData !== null){
       const data = {
         ...formUsername,
@@ -101,7 +101,7 @@ const Account = () => {
       setChangeUsername(data)
       const fetchedImage = {
         uid: -Math.random(),
-        url: userData.avatar ? `${process.env.API_URL}/static/avatars/${userData.avatar}` : `${process.env.API_URL}/static/avatars/default.png`
+        url: `${process.env.API_URL}/static/avatars/${userData.avatar}`
       }
       setFileList([fetchedImage])
     }

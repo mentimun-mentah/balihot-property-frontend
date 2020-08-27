@@ -111,7 +111,7 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
           
           if(horizontal){
             return(
-              <Col xl={12} lg={12} mb={12} sm={12} xs={12} key={id} 
+              <Col xl={12} lg={12} md={12} sm={12} xs={12} key={id} 
                 className="mt-2 mb-n2" 
               >
                 {loading ? (
@@ -133,7 +133,7 @@ const ContainerCardProperty = ({ dataProperty, horizontal, mouseEnter, mouseLeav
 
           if(!horizontal){
             return(
-              <Col xl={4} lg={4} mb={4} sm={6} xs={12} key={id}>
+              <Col xl={4} lg={4} md={6} sm={12} xs={12} key={id}>
                 {loading ? (
                   <LoadingCard />
                 ) : (

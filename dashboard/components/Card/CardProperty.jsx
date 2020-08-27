@@ -15,7 +15,7 @@ import { Carousel } from "react-responsive-carousel";
 const formatter = new Intl.NumberFormat(['ban', 'id'])
 
 const CardContainer = ({
-  id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
+  id, type, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
   villaPriceList, selectedPrice, landPriceList, onDelete, hotdeal, location, LAND_CHECK_ID
 }) => {
   const [selected, setSelected] = useState(selectedPrice)
@@ -31,6 +31,9 @@ const CardContainer = ({
       period: data.period ? data.period : null
     })
   }
+
+  let PROPERTY_CODE = 'BHP-'
+  PROPERTY_CODE += `${type.name.charAt(0)}${type.name.slice(-1)}${property_for.split(',').map(x => x[0]).join('')}${id}`.toUpperCase()
 
   let buttonPrice = {};
   if(villaPriceList.length > 0){
@@ -182,18 +185,18 @@ const CardContainer = ({
             </Card.Body>
           </a>
         </Link>
-        <Card.Footer className="text-muted bg-white bor-rad-10 text-center p-20">
+        <Card.Footer className="text-muted bg-white bor-rad-10 p-20">
           <Row className="fs-11">
-            <Col className="col-auto col-md-auto col-lg mr-auto text-truncate col-sm-8">
+
+            <Col className="col-auto mr-auto text-truncate width-code">
               <span className="text-decoration-none text-muted mr-2 pr-2 bd-right font-weight-bold">
-                CODE: BHP-AT10240
+                CODE: {PROPERTY_CODE}
               </span>
               <span className="text-decoration-none text-muted mr-2 pr-2 font-weight-bold">
-                Apartement
+                {type.name}
               </span>
             </Col>
-
-            <Col className="col-auto">
+            <Col className="col-auto col-md-auto col-lg-auto col-xl-auto width-additional-btn">
               <Link href="manage-property/[id]" as={`manage-property/${id}`}>
                 <span className="mr-2 pr-2 hov_pointer bd-right">
                   <Tooltip placement="bottomRight" title="Edit" arrowPointAtCenter>
@@ -207,7 +210,6 @@ const CardContainer = ({
                 </Tooltip>
               </span>
             </Col>
-
 
             <Col className="d-none">
               <Link href="manage-property/[id]" as={`manage-property/${id}`}>
@@ -348,6 +350,22 @@ const CardContainer = ({
         
         :global(.match-height) {
           height: 182px;
+        }
+
+        :global(.width-code){
+          max-width: 74%;
+        }
+        :global(.width-additional-btn){
+          max-width: calc(100% - 74%);
+        }
+
+        @media screen and (device-aspect-ratio: 40/71) {
+          :global(.width-code){
+            max-width: 70%;
+          }
+          :global(.width-additional-btn){
+            max-width: calc(100% - 30%);
+          }
         }
       `}</style>
     </>

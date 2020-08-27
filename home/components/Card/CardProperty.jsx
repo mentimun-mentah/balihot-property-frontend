@@ -225,7 +225,7 @@ const CardContainer = ({
         </Link>
         <Card.Footer className="text-muted bg-white bor-rad-10">
           <Row className="fs-11">
-            <Col className="col-auto col-md-auto col-lg-auto col-xl-auto mr-auto xiancode text-truncate code-truncate">
+            <Col className="col-auto mr-auto text-truncate width-code">
               <span className="text-decoration-none text-muted mr-2 pr-2 bd-right font-weight-bold">
                 CODE: {PROPERTY_CODE}
               </span>
@@ -233,7 +233,7 @@ const CardContainer = ({
                 {type.name}
               </span>
             </Col>
-            <Col className="col-auto col-md-auto col-lg-auto col-xl-auto">
+            <Col className="col-auto col-md-auto col-lg-auto col-xl-auto width-additional-btn">
               <span className="text-decoration-none text-muted mr-2 pr-2 hov_pointer bd-right">
                 {fav ? (
                   <i className="fas fa-lg fa-heart text-bhp" onClick={() => loveHandler(id, slug)} />
@@ -377,43 +377,21 @@ const CardContainer = ({
           height: 182px;
         }
 
-        :global(.xiancode) {
-          max-width: 61vw;
+        :global(.width-code){
+          max-width: 74%;
+        }
+        :global(.width-additional-btn){
+          max-width: calc(100% - 74%);
         }
 
-        /* ----------- iPad Pro ----------- */
-        /* Portrait and Landscape */
-        @media only screen 
-          and (min-width: 1024px) 
-          and (max-height: 1366px) 
-          and (-webkit-min-device-pixel-ratio: 1.5) {
-            :global(.code-truncate){
-              max-width: 21vw;
-            }
+        @media screen and (device-aspect-ratio: 40/71) {
+          :global(.width-code){
+            max-width: 70%;
+          }
+          :global(.width-additional-btn){
+            max-width: calc(100% - 30%);
+          }
         }
-
-        /* Portrait */
-        @media only screen 
-          and (min-width: 1024px) 
-          and (max-height: 1366px) 
-          and (orientation: portrait) 
-          and (-webkit-min-device-pixel-ratio: 1.5) {
-            :global(.code-truncate){
-              max-width: 21vw;
-            }
-        }
-
-        /* Landscape */
-        @media only screen 
-          and (min-width: 1024px) 
-          and (max-height: 1366px) 
-          and (orientation: landscape) 
-          and (-webkit-min-device-pixel-ratio: 1.5) {
-            :global(.code-truncate){
-              max-width: 21vw;
-            }
-        }
-        /* ----------- iPad Pro ----------- */
       `}</style>
     </>
   );

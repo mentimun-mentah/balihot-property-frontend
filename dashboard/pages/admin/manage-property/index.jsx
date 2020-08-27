@@ -116,9 +116,7 @@ const ManageProperty = () => {
   return (
     <>
       <Container fluid>
-        <Row className="mt--4 mb-4">
-          <Col className="col-md-auto col-lg-auto col-xl-auto col-sm-12 col-12 mr-auto">
-          </Col>
+        <Row className="mt--2 mt-lg--4 mb-4 justify-content-end">
           <Col className="col-md-auto col-lg-auto col-xl-auto col-sm-12 col-12 align-self-center">
             <AutoComplete
               className="w-100 search-code"
@@ -132,7 +130,8 @@ const ManageProperty = () => {
 
         <Row>
           {dataProperty && dataProperty.data && dataProperty.data.map(data => {
-            const {id, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size} = data;
+            const {id, type, slug, name, images, property_for, type_id} = data;
+            const {bedroom, bathroom, land_size, building_size} = data;
             const {status, period, price, hotdeal, location} = data;
             let villaPrice = []
             let landPrice = []
@@ -210,7 +209,8 @@ const ManageProperty = () => {
 
             return(
               <Col xl={4} lg={6} md={12} sm={12} xs={12} key={id}>
-                <PropertyCardMemo id={id} slug={slug} name={name} images={images} property_for={property_for}
+                <PropertyCardMemo id={id} type={type} slug={slug} name={name} 
+                  images={images} property_for={property_for}
                   type_id={type_id} bedroom={bedroom} bathroom={bathroom} land_size={land_size} 
                   building_size={building_size} status={status} period={period} price={price} hotdeal={hotdeal}
                   villaPriceList={villaPrice} selectedPrice={villaPrice[0]} landPriceList={landPrice} 

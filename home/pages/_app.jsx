@@ -13,10 +13,6 @@ import "react-multi-carousel/lib/styles.css";
 import "render-smooth-image-react/build/style.css";
 import "react-responsive-carousel/lib/styles/carousel.css";
 
-export function reportWebVitals(metric) {
-  console.table(metric)
-}
-
 const App = ({ Component, pageProps, store }) => {
 
   useEffect(() => {
@@ -35,16 +31,9 @@ const App = ({ Component, pageProps, store }) => {
     <React.Fragment>
       <Head>
         <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title>BaliHotProperty</title>
-        <base href="https://balihotproperty.com/" target="_top" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="robots" content="index, follow" />
-        <meta http-equiv="refresh" content="5" url="https://balihotproperty.com/" />
-        <link rel="canonical" href="https://balihotproperty.com/" />
-
-        <meta name="description" content="Bali Hot Property network provides access to finest quality luxury real estate and businesses for sale to buyers around the globe. We help you with the process of finding, renting, or buying property and businesses in Bali, whether a buyer, a seller, or an investor, we think of our clients as family. Bali Hot Property has all types of luxury villas, land and businesses available, from modern beachfront villas with infinite pools seamlessly stretching straight to the ocean to hillside villas with sprawling terraces of green paddies right before the doorstep. Lean on us—we are here to keep the process fluid, successful, and as low-stress as possible. Not quite ready to buy or sell, but curious about neighbourhood options, local schools, our techniques, or current real estate “buzz”? Don’t be shy—reach out to us contact us. Think of Bali Hot Property as your Bali Concierge. If we don’t know the answer, we will find it. We are a One Stop Shop for individuals, families and companies that have an interest in the Island of the Gods.
-" />
 
         <link rel="icon" href="/static/images/balihot-property.png" />
         <link rel="stylesheet" href="/static/fontawesome/css/all.css" />

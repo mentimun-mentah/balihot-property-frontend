@@ -49,13 +49,13 @@ const App = ({ Component, pageProps, store }) => {
       </Provider>
       <style global jsx>{`
         #nprogress .bar {
-          background: #ff385c;
-          height: 3px;
+          background: #1890ff;
+          height: 4px;
         }
 
         #nprogress .spinner-icon {
-          border-top-color: #ff385c;
-          border-left-color: #ff385c;
+          border-top-color: #1890ff;
+          border-left-color: #1890ff;
         }
         .bd-right {
           border-right: 1px solid #ddd;

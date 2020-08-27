@@ -308,6 +308,7 @@
   display: block;
   border-width: 0;
   position: relative;
+  object-fit: cover;
   z-index: 1;
   opacity: 0.3;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
@@ -321,6 +322,7 @@
 .gallery-figcaption--thumbnails .caption-thumbnails ul.thumbnails-list li button.thumbnail-button.active img,
 .gallery-figcaption--thumbnails .caption-thumbnails ul.thumbnails-list li button.thumbnail-button:hover img {
   opacity: 1;
+  object-fit: cover;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
   filter: alpha(opacity=100); }
 

@@ -95,7 +95,6 @@ const EditNewsLetter = ({ dataNewsletter }) => {
 
   const submitHandler = e => {
     e.preventDefault();
-    console.log('click')
     if(formIsValid(news, setNews) && formDescIsValid(content, setContent)){
       const { image, title } = news;
       const { description } = content;
@@ -226,7 +225,7 @@ const EditNewsLetter = ({ dataNewsletter }) => {
                   </Form.Group>
 
                   <Button variant="danger" onClick={submitHandler}>
-                    Save Region
+                    Save Newsletter
                   </Button>
 
                 </Form>
@@ -253,7 +252,6 @@ EditNewsLetter.getInitialProps = async ctx => {
   const { id } = ctx.query;
   try{
     const { access_token } = cookie.get(ctx);
-    console.log(id)
     const headerCfgServer = { headers: { Authorization: `Bearer ${access_token}` } };
     let res = await axios.get(`/newsletter/crud/${id}`, headerCfgServer)
     return{

@@ -140,7 +140,7 @@ const SearchBox = () => {
 
   let q = '?'
   if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
-  if(location.value) q = q + `location=${location.value}&`
+  if(location.value) q = q + `location=${location.value.charAt(0).toUpperCase() + location.value.slice(1)}&`
   if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
   if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
   if(period.value) if(period.value.length !== 0) q = q + `period=${period.value}&`

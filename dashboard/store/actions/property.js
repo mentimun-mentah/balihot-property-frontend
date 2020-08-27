@@ -19,23 +19,10 @@ export const getPropertyFail = (error) => {
   }
 }
 
-export const getPropertyBy = (query) => {
+export const getProperty = query => {
   return dispatch => {
     dispatch(getPropertyStart())
     axios.get(`/properties${query}`)
-      .then(res => {
-        dispatch(getPropertySuccess(res.data))
-      })
-      .catch(err => {
-        dispatch(getPropertyFail(err.response))
-      })
-  }
-}
-
-export const getProperty = () => {
-  return dispatch => {
-    dispatch(getPropertyStart())
-    axios.get('/properties')
       .then(res => {
         dispatch(getPropertySuccess(res.data))
       })

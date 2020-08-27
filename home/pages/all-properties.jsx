@@ -173,7 +173,7 @@ const AllProperties = ({ searchQuery }) => {
   if(current_position.lat) q = q + `lat=${current_position.lat}&`
   if(current_position.lng) q = q + `lng=${current_position.lng}&`
   if(radius) q = q + `radius=${radius}&`
-  if(location.value) q = q + `location=${location.value}&`
+  if(location.value) q = q + `location=${location.value.charAt(0).toUpperCase() + location.value.slice(1)}&`
   if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
   if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
   if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
@@ -241,7 +241,6 @@ const AllProperties = ({ searchQuery }) => {
     let check = q.slice(-1)
     if(check === "&") check = q.slice(0, -1)
     else check = q
-
     Router.replace(`/all-properties${check}`)
     setMapChange(false)
   }
@@ -434,14 +433,14 @@ const AllProperties = ({ searchQuery }) => {
 
   useEffect(() => {
     let qLoct = '?'
-    if(location.value) qLoct = qLoct + `q=${location.value}&`
+    if(location.value) qLoct = qLoct + `q=${location.value.charAt(0).toUpperCase() + location.value.slice(1)}&`
     if(type_id.value) if(type_id.value.length !== 0) qLoct = qLoct + `type_id=${type_id.value}`
     dispatch(actions.getLocation(qLoct))
   },[location.value, type_id.value])
 
   const searchHandler = () => {
     let q = '?'
-    if(location.value) q = q + `location=${location.value}&`
+    if(location.value) q = q + `location=${location.value.charAt(0).toUpperCase() + location.value.slice(1)}&`
     if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
     if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
     if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
@@ -460,7 +459,7 @@ const AllProperties = ({ searchQuery }) => {
 
   const searchHandlerMobile = () => {
     let q = '?'
-    if(location.value) q = q + `location=${location.value}&`
+    if(location.value) q = q + `location=${location.value.charAt(0).toUpperCase() + location.value.slice(1)}&`
     if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
     if(property_for.value) if(property_for.value.length !== 0) q = q + `property_for=${property_for.value}&`
     if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}&`
@@ -496,12 +495,12 @@ const AllProperties = ({ searchQuery }) => {
               <tr>
                 <td className="pl-0 py-0">
                   <p className="font-weight-bold text-dark card-text">
-                    {currencySymbol} {formatter.format(price.value[0])}
+                    USD {formatter.format(price.value[0])}
                   </p>
                 </td>
                 <td className="pr-0 py-0">
                   <p className="font-weight-bold text-dark card-text float-right">
-                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    USD <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </td>
               </tr>
@@ -633,7 +632,7 @@ const AllProperties = ({ searchQuery }) => {
                 </Dropdown>
               </Form.Group>
             </Form.Row>
-            <ButtonBoot className="btn-red-hot border-0 h-47" block onClick={searchHandler}>
+            <ButtonBoot className="btn-red-hot border-0 h-40" block onClick={searchHandler}>
               Search Now
             </ButtonBoot>
           </Form>

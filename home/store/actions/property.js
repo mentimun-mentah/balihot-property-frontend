@@ -112,7 +112,6 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
           dispatch(getPropertySuccess(res.data))
         })
         .catch(err => {
-          console.log("ACTION PROPERTY ######## === > ", err.response)
           dispatch(getPropertyFail(err.response))
           axios.get(`/properties?${searchQuery}`)
             .then(res => {
@@ -120,7 +119,6 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
             })
             .catch(err => {
               dispatch(getPropertyFail(err.response))
-              console.log("BAWAH ACTION PROPERTY ######## === > ", err.response)
             })
         })
     } else {

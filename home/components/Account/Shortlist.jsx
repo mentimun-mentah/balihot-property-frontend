@@ -135,7 +135,7 @@ const Shortlist = () => {
                     <Card.Img variant="top" src="/static/images/no-property.png" className="img-size mx-auto" />
                     <Card.Body>
                       <Card.Title className="text-center">
-                        There is no wishlist 
+                        There is no shortlist
                       </Card.Title>
                     </Card.Body>
                   </Card>

@@ -29,7 +29,7 @@ const Home = () => {
   const region = useSelector(state => state.region.region)
   const team = useSelector(state => state.team.team)
   const property = useSelector(state => state.property.property)
-  const newsletters = useSelector(state => state.newsletter.newsletter.data.slice(0,2));
+  const newsletters = useSelector(state => state.newsletter.newsletter);
 
   const searchHandler = () => {
     let q = '?'
@@ -42,6 +42,19 @@ const Home = () => {
 
     Router.push(`/all-properties${check}`)
   }
+
+  const newsContent = (
+    <>
+      <h3 className="text-white fs-24-s">Property Market News</h3>
+      <p className="text-white mt-5 text-justify p-l-10-s p-r-10-s">
+      Bali Hot Property network provides access to finest quality luxury real estate and businesses for sale to buyers around the globe. 
+We help you with the process of finding, renting, or buying property and businesses in Bali, whether a buyer, a seller, or an investor, we think of our clients as family. Bali Hot Property has all types of luxury villas, land and businesses available, from modern beachfront villas with infinite pools seamlessly stretching straight to the ocean to hillside villas with sprawling terraces of green paddies right before the doorstep. 
+      </p>
+      <Link href="/news" as="/news">
+        <Button variant="outline-light" className="text-center rounded-0">Read More</Button>
+      </Link>
+    </>
+  )
 
   return (
     <>
@@ -266,38 +279,36 @@ const Home = () => {
       <section className="discover-news mt-5">
         <div className="overlay-bg-news"></div>
         <Container>
-         <Row>
-           <Col md={12} lg={4} xl={4}>
-            <h3 className="text-white fs-24-s">Property Market News</h3>
-            <p className="text-white mt-5 text-justify p-l-10-s p-r-10-s">
-            Bali Hot Property network provides access to finest quality luxury real estate and businesses for sale to buyers around the globe. 
-    We help you with the process of finding, renting, or buying property and businesses in Bali, whether a buyer, a seller, or an investor, we think of our clients as family. Bali Hot Property has all types of luxury villas, land and businesses available, from modern beachfront villas with infinite pools seamlessly stretching straight to the ocean to hillside villas with sprawling terraces of green paddies right before the doorstep. 
-            </p>
-            <Link href="/news" as="/news">
-              <Button variant="outline-light" className="text-center rounded-0">Read More</Button>
-            </Link>
-           </Col>
-           <Col md={12} lg={7} xl={7} md={{ offset: 1 }} className="d-none d-sm-none d-md-none d-lg-block d-xl-block mt-5-s mt-5-tablets ml-0-tablets">
+          {newsletters && newsletters.data && newsletters.data.length > 0 ? (
             <Row>
-              {newsletters && newsletters.map((data, x) => {
-                const { id, slug, title, thumbnail, description, created_at } = data;
-                return(
-                  <Col md={12} lg={12} xl={12} key={id}>
-                    <CardsNewHorizontal 
-                      order={x}
-                      slug={slug}
-                      title={title}
-                      description={description}
-                      thumbnail={thumbnail}
-                      created_at={created_at}
-                    />
-                  </Col>
-                )
-              })}
-
+              <Col md={12} lg={4} xl={4}>{newsContent}</Col>
+              <Col md={12} lg={7} xl={7} md={{ offset: 1 }} 
+                className="d-none d-sm-none d-md-none d-lg-block d-xl-block mt-5-s mt-5-tablets ml-0-tablets"
+              >
+               <Row>
+                 {newsletters && newsletters.data && newsletters.data.length > 0 &&
+                  newsletters.data.slice(0,2).map((data, x) => {
+                 const { id, slug, title, thumbnail, description, created_at } = data;
+                 return(
+                   <Col md={12} lg={12} xl={12} key={id}>
+                     <CardsNewHorizontal 
+                       order={x}
+                       slug={slug}
+                       title={title}
+                       description={description}
+                       thumbnail={thumbnail}
+                       created_at={created_at}
+                     />
+                   </Col>
+                 )})}
+               </Row>
+              </Col>
             </Row>
-           </Col>
-         </Row>
+          ) : (
+            <Row className="justify-content-center">
+              <Col xl={8} className="text-center">{newsContent}</Col>
+            </Row>
+          )} 
         </Container>
       </section>
 

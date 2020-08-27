@@ -131,7 +131,13 @@ DetailRegion.getInitialProps = async ctx => {
   try {
     const res = await axios.get(`/region/${slug}`);
     ctx.store.dispatch(actions.slugRegionSuccess(res.data));
-  } catch {}
+  } catch (err) {
+    if(err.response.status == 404){
+      process.browser
+        ? Router.replace("/", "/") //Redirec from Client Side
+        : ctx.res.writeHead(302, { Location: "/" }).end(); //Redirec from Server Side
+    }
+  }
 };
 
 export default DetailRegion;

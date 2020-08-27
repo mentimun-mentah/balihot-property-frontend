@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Input, AutoComplete } from 'antd';
+import { Input } from 'antd';
 import { withAuth } from "../../../hoc/withAuth"
 import { pagination_iter } from "../../../lib/paginationIter.js"
 
@@ -8,20 +8,14 @@ import swal from "sweetalert";
 import axios, { jsonHeaderHandler } from '../../../lib/axios';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
 import Pagination from 'react-bootstrap/Pagination'
 import * as actions from "../../../store/actions";
 import Container from "react-bootstrap/Container";
+import CardEmpty from "../../../components/Card/CardEmpty";
 
 import PropertyCard from "../../../components/Card/CardProperty"
 import StyleProperty from "../../../components/Property/style"
-
-const listLocation = [
-  { value: "BHP-VA100" },
-  { value: "BHP-AT2012" },
-  { value: "BHP-LD3542" },
-  { value: "BHP-VA432" },
-  { value: "BHP-VA324" }
-]
 
 const PropertyCardMemo = React.memo(PropertyCard);
 
@@ -30,6 +24,7 @@ const ManageProperty = () => {
   const dataProperty = useSelector((state) => state.property.property);
   const dataType = useSelector((state) => state.types.types);
   const [active, setActive] = useState(dataProperty.page)
+  const [search, setSearch] = useState('')
 
   let VILLA_CHECK_ID = null;
   let LAND_CHECK_ID = null;
@@ -41,6 +36,11 @@ const ManageProperty = () => {
     if(dataType[key].name.toLowerCase() === "land"){
       LAND_CHECK_ID = dataType[key].id
     }
+  }
+
+  const searchChangeHandler = e => {
+    setSearch(e.target.value)
+    setActive(1)
   }
 
   const deletePropertyHandler = id => {
@@ -73,10 +73,6 @@ const ManageProperty = () => {
     })
   }
 
-  //====== SEARCH QUERY ======//
-  let q = '?'
-  if(active) q +=`page=${active}&per_page=6`
-  //====== SEARCH QUERY ======//
 
   //====== PAGINATION ======//
   const pageHandler = (event) => {
@@ -107,29 +103,34 @@ const ManageProperty = () => {
   }
 
   //====== PAGINATION ======//
-
-
+  
   useEffect(() => {
-    dispatch(actions.getPropertyBy(q))
-  },[active])
+    let q = '?'
+    if(active) q +=`page=${active}&per_page=6&`
+    if(search) q += `prop_id=${search}`
+
+    dispatch(actions.getProperty(q))
+  },[active, search])
 
   return (
     <>
       <Container fluid>
         <Row className="mt--2 mt-lg--4 mb-4 justify-content-end">
           <Col className="col-md-auto col-lg-auto col-xl-auto col-sm-12 col-12 align-self-center">
-            <AutoComplete
-              className="w-100 search-code"
-              options={listLocation}
-              filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
-            >
-              <Input.Search placeholder="Search property code" />
-            </AutoComplete>
+            <Input.Search 
+              type="number" 
+              className="search-code" 
+              placeholder="Search property ID" 
+              onChange={searchChangeHandler}
+              value={search}
+              enterButton 
+            />
           </Col>
         </Row>
 
         <Row>
-          {dataProperty && dataProperty.data && dataProperty.data.map(data => {
+          {dataProperty && dataProperty.data && dataProperty.data.length > 0 ?
+            dataProperty.data.map(data => {
             const {id, type, slug, name, images, property_for, type_id} = data;
             const {bedroom, bathroom, land_size, building_size} = data;
             const {status, period, price, hotdeal, location} = data;
@@ -219,10 +220,20 @@ const ManageProperty = () => {
                 />
               </Col>
             )
-          })}
+          }) : (
+            <Container>
+              <CardEmpty 
+                cardClass="text-muted mt-4 pt-5 pb-5 shadow-none border-0"
+                img="/static/images/no-property.png"
+                imgClass="img-size mx-auto"
+                titleClass="text-center text-black-50"
+                title="There is no property"
+              />
+            </Container>
+          )}
 
           {dataProperty.iter_pages && dataProperty.iter_pages.length > 0 && dataProperty.iter_pages.length > 1 && (
-            <Col className="col-12">
+            <Col className="col-12 mt-3 mb-5">
               <Pagination className="justify-content-center">
                 <Pagination.Prev onClick={prevHandler} disabled={dataProperty.prev_num === null} />
                   {pagination}
@@ -237,9 +248,20 @@ const ManageProperty = () => {
       {/*<style jsx>{StyleProperty}</style>*/}
       <style jsx>{`
         @media (min-width: 768px) {
-          :global(.search-code .ant-input-search) {
+          :global(.search-code) {
             width: 300px !important;
           }
+        }
+        :global(.search-code .ant-btn-primary){
+          background: #ff385c;
+          border-color: #ff385c;
+        }
+        :global(.search-code .ant-input-search-enter-button input:hover, 
+                .search-code .ant-input-search-enter-button input:focus){
+          border-color: #d9d9d9;
+        }
+        :global(.search-code .ant-input:focus, .search-code .ant-input-focused){
+          box-shadow: unset;
         }
       `}
       </style>

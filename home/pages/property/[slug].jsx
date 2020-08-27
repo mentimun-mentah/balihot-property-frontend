@@ -413,7 +413,7 @@ const Property = () => {
   /** GET DISTANCE **/
   useEffect(() => {
     setTimeout(() => {
-      // getDistanceTo()
+      getDistanceTo()
     }, 5000)
   },[mapRef])
 
@@ -490,25 +490,26 @@ const Property = () => {
         <Container className="d-none d-sm-none d-md-none d-lg-block">
           <Row className="row-ml-9px">
             <Col md={6} className="pr-2 pl-1">
-              <div className="img-fluid image-left-radius">
-                <SmoothImage src={img_list[0].photo} />
+              <div className="img-fluid image-left-radius big-img-desktop">
+                <SmoothImage src={img_list[0].photo} objectFit="cover" alt={name} />
               </div>
             </Col>
             <div className="row col-6 align-content-between pr-3">
               <Row className="pb-2">
-                <Col className="pr-2">
-                  <SmoothImage src={img_list[1].photo} className="img-fluid" />
+                <Col className="pr-2 small-img-desktop">
+                  <SmoothImage src={img_list[1].photo} className="img-fluid" objectFit="cover" alt={name} />
                 </Col>
-                <Col className="px-0 image-tp-rt">
-                  <SmoothImage src={img_list[2].photo} className="img-fluid" />
+                <Col className="px-0 image-tp-rt small-img-desktop">
+                  <SmoothImage src={img_list[2].photo} className="img-fluid" objectFit="cover" alt={name} />
                 </Col>
               </Row>
               <Row>
-                <Col className="pr-2 img-detail">
-                  <SmoothImage src={img_list[3].photo} className="img-fluid" />
+                <Col className="pr-2 img-detail small-img-desktop">
+                  <SmoothImage src={img_list[3].photo} className="img-fluid" objectFit="cover" alt={name} />
                 </Col>
-                <Col className="px-0 image-tp-btm img-detail">
-                  <SmoothImage src={img_list[4].photo} className="img-fluid" />
+                <Col className="px-0 image-tp-btm img-detail small-img-desktop">
+                  <SmoothImage src={img_list[4].photo} className="img-fluid" objectFit="cover" alt={name} />
+
                   <div className="show-btn d-sm-none d-md-block d-lg-block ">
                     <Button
                       className="mr-2 video-btn d-inline"
@@ -758,7 +759,7 @@ const Property = () => {
                     options={GMapsOptions}
                     onClick={onMapClick}
                     onLoad={onMapLoad}
-                    // onIdle={getDistanceTo}
+                    onIdle={getDistanceTo}
                     center={center}
                     zoom={16}
                   >
@@ -1118,6 +1119,14 @@ const Property = () => {
           line-height: 2;
         }
 
+        :global(.small-img-desktop .smooth-image){
+          height: 181px !important; 
+        }
+
+        :global(.big-img-desktop .smooth-image){
+          height: 370px !important; 
+        }
+
         @media (max-width: 1024px) {
           :global(.fs-13-lg) {
             font-size: 13px !important;
@@ -1145,12 +1154,13 @@ Property.getInitialProps = async ctx => {
       ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     }
   } catch (err) {
-    let res = await axios.get(`/property/${slug}`);
-    ctx.store.dispatch(actions.slugPropertySuccess(res.data));
-    if (err.response && err.response.status == 404) {
+    if (err.response.status == 404) {
       process.browser
         ? Router.replace("/", "/") //Redirec from Client Side
         : ctx.res.writeHead(302, { Location: "/" }).end(); //Redirec from Server Side
+    } else {
+      let res = await axios.get(`/property/${slug}`);
+      ctx.store.dispatch(actions.slugPropertySuccess(res.data));
     }
   }
 };

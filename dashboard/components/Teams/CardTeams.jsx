@@ -29,7 +29,7 @@ const Team = ({name, image, title, phone, edit, onDelete}) => {
             </Button>
           </Card.Body>
           <Card.Footer className="text-primary">
-            <i className="far fa-phone-plus mr-1" /> <strong>+62{phone}</strong>
+            <i className="far fa-phone-plus mr-1" /> <strong>+62 {phone}</strong>
           </Card.Footer>
         </Card>
       </motion.div>

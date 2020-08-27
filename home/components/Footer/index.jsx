@@ -37,26 +37,23 @@ const Footer = () => {
             </Col>
             <Col sm={12} md={4} className="pl-ft-50 pl-md-2 pl-xl-5 pr-md-2">
               <h6>Contact Us</h6>
-                <ul className="footer-links mt-3 fs-14-s">
-                  <li className="mb-2">
-                    <i className="fal fa-map-marker-alt mr-2"></i> 432 Park Ave,
-                    New York, NY 10022
-                  </li>
-                  <li className="mb-2">
-                    <i className="fal fa-phone mr-2"></i> (844) 380-8603
-                  </li>
-                  <li id="send-enquiry-btn" className="hov_pointer w-fit-content d-none" onClick={showModalHandler}>
-                    <i className="fal fa-envelope-open-text mr-2 pl-2 pt-2 pb-2"></i>{" "}
-                    <span className="pt-2 pr-2 pb-2">Send us an enquiry</span>
-                  </li>
-                  <div className="hr-enquiry mb-2 d-none"></div>
-                  <li className="mt-2 mb-2">
-                    <Button className="rounded-0 btn-outline-enquiry">
-                    <i className="fal fa-envelope-open-text mr-2"></i>
-                      Send us an enquiry
-                    </Button>
-                  </li>
-                </ul>
+              <ul className="footer-links mt-3 fs-14-s">
+                <li className="mb-2">
+                  <i className="fal fa-map-marker-alt mr-2"></i> Jl. Bumbak Dauh No.89b, Kerobokan, Kuta Utara, Kabupaten Badung, Bali 80361
+                </li>
+                <li className="mb-2">
+                  <i className="fal fa-envelope mr-2"></i> balihotproperty@gmail.com
+                </li>
+                <li className="mb-2">
+                  <i className="fal fa-phone mr-2"></i> +62 361 847 6727 
+                </li>
+                <li id="send-enquiry-btn" className="mt-2 mb-2 w-fit-content" onClick={showModalHandler}>
+                  <Button className="rounded-0 btn-outline-enquiry">
+                  <i className="fal fa-envelope-open-text mr-2"></i>
+                    Send us an enquiry
+                  </Button>
+                </li>
+              </ul>
             </Col>
             <Col sm={12} md={2}>
               <h6>Quick Links</h6>
@@ -64,7 +61,6 @@ const Footer = () => {
                 <Link href="/#about-us" as="/#about-us">
                   <li className="mb-2 hov_pointer">About Us</li>
                 </Link>
-                <li className="mb-2 hov_pointer" onClick={showModalHandler}>Contact Us</li>
                 <Link href="/news" as="/news">
                   <li className="mb-2 hov_pointer">News</li>
                 </Link>
@@ -154,6 +150,9 @@ const Footer = () => {
       </AnimatePresence>
 
       <style jsx>{`
+        .w-fit-content{
+          width: fit-content;
+        }
         .site-footer {
           padding: 45px 15px 15px 15px;
           font-size: 15px;

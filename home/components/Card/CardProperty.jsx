@@ -164,6 +164,7 @@ const CardContainer = ({
   ))
   return (
     <>
+      <motion.div initial="initial" animate="in" exit="out" variants={Fade}>
       <Card className="pos-unset border-0 shadow-card hov_none mt-2 mb-2 bor-rad-top-10">
         <div className="position-relative overflow-hidden bor-rad-top-10">
           {hotdeal && <div className="ribbon font-weight-normal fs-11-s">HOT DEAL</div> }
@@ -248,6 +249,7 @@ const CardContainer = ({
           </Row>
         </Card.Footer>
       </Card>
+      </motion.div>
 
       <Modal
         centered
@@ -384,12 +386,22 @@ const CardContainer = ({
           max-width: calc(100% - 74%);
         }
 
+        /*iPhone 5*/
         @media screen and (device-aspect-ratio: 40/71) {
           :global(.width-code){
-            max-width: 70%;
+            max-width: 60%;
           }
           :global(.width-additional-btn){
-            max-width: calc(100% - 30%);
+            max-width: calc(100% - 40%);
+          }
+        }
+        /*iPhone 6*/
+        @media screen and (device-aspect-ratio: 375/667) {
+          :global(.width-code){
+            max-width: 65%;
+          }
+          :global(.width-additional-btn){
+            max-width: calc(100% - 35%);
           }
         }
       `}</style>

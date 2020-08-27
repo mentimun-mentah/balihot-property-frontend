@@ -56,7 +56,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
 
   useEffect(() => {
     let qLoct = '?'
-    if(location.value) qLoct = qLoct + `q=${location.value}&`
+    if(location.value) qLoct = qLoct + `q=${location.value.charAt(0).toUpperCase() + location.value.slice(1)}&`
     if(type_id.value) if(type_id.value.length !== 0) qLoct = qLoct + `type_id=${type_id.value}`
     dispatch(actions.getLocation(qLoct))
   },[type_id.value, location.value])
@@ -151,7 +151,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
                 <Card.Body className="pb-2 pl-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MIN</h5>
                   <p className="text-dark card-text">
-                    {currencySymbol} {formatter.format(price.value[0])}
+                    USD {formatter.format(price.value[0])}
                   </p>
                 </Card.Body>
               </Col>
@@ -159,7 +159,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
                 <Card.Body className="pb-2 px-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MAX</h5>
                   <p className="text-dark card-text">
-                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    USD <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </Card.Body>
               </Col>

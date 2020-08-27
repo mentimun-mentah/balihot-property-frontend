@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { renderArrow } from "./CarouselButton";
 import { Tooltip } from 'antd';
+import { motion } from "framer-motion";
+import { Fade } from "../Transition";
 
 import Link from "next/link"
 import validator from "validator";
@@ -134,96 +136,98 @@ const CardContainer = ({
 
   return (
     <>
-      <Card className="pos-unset border-0 shadow-card bor-rad-top-10 hov_none">
-        <div className="position-relative overflow-hidden">
-          {hotdeal && <div className="ribbon font-weight-normal">HOT DEAL</div> }
-          <Carousel
-            infiniteLoop
-            swipeable
-            showIndicators={false}
-            showThumbs={false}
-            showStatus={false}
-            renderArrowPrev={renderArrow("prev")}
-            renderArrowNext={renderArrow("next")}
-          >
-            {renderImages}
-          </Carousel>
-          <div className="status">
-            <span className="for-sale">
-              For {statusProperty.length > 0 && statusProperty[0] !== "" && `${statusProperty.join(" & ")}`}
-            </span>
+      <motion.div initial="initial" animate="in" exit="out" variants={Fade}>
+        <Card className="pos-unset border-0 shadow-card bor-rad-top-10 hov_none">
+          <div className="position-relative overflow-hidden">
+            {hotdeal && <div className="ribbon font-weight-normal">HOT DEAL</div> }
+            <Carousel
+              infiniteLoop
+              swipeable
+              showIndicators={false}
+              showThumbs={false}
+              showStatus={false}
+              renderArrowPrev={renderArrow("prev")}
+              renderArrowNext={renderArrow("next")}
+            >
+              {renderImages}
+            </Carousel>
+            <div className="status">
+              <span className="for-sale">
+                For {statusProperty.length > 0 && statusProperty[0] !== "" && `${statusProperty.join(" & ")}`}
+              </span>
+            </div>
+            {type_id === LAND_CHECK_ID && (
+              <div className="bottom-left">
+                <h5>USD {formatter.format(land_total_price)}</h5>
+              </div>
+            )}
+            {type_id !== LAND_CHECK_ID && (
+              <div className="bottom-status">
+                {buttonPrice}
+              </div>
+            )}
           </div>
-          {type_id === LAND_CHECK_ID && (
-            <div className="bottom-left">
-              <h5>USD {formatter.format(land_total_price)}</h5>
-            </div>
-          )}
-          {type_id !== LAND_CHECK_ID && (
-            <div className="bottom-status">
-              {buttonPrice}
-            </div>
-          )}
-        </div>
-        <Link href="/property/[slug]" as={`/property/${slug}`}>
-          <a className="text-decoration-none">
-            <Card.Body className="text-dark p-20 match-height">
-              <Card.Title className="text-dark fw-500 mb-0 hov_pointer fs-18 text-truncate">
-                {name}
-              </Card.Title>
-              {price_list}
-              <Card.Text className="fs-12 text-grey text-truncate">
-                <i className="fal fa-map-marker-alt"></i> {location}
-              </Card.Text>
-              {amenities}
-              {land_leasehold}
-              {type_id !== LAND_CHECK_ID && status !== null && validator.isIn("Lease Hold", status.split(",")) && selected.period && (
-                <Badge className="font-weight-normal pl-0 mr-1 mb-2">
-                  <i className="far fa-lg fa-calendar-alt mr-2" />
-                  <span className="pr-1">Can lease until: {selected.period}</span>
-                </Badge>
-              )}
-            </Card.Body>
-          </a>
-        </Link>
-        <Card.Footer className="text-muted bg-white bor-rad-10 p-20">
-          <Row className="fs-11">
+          <Link href="/property/[slug]" as={`/property/${slug}`}>
+            <a className="text-decoration-none">
+              <Card.Body className="text-dark p-20 match-height">
+                <Card.Title className="text-dark fw-500 mb-0 hov_pointer fs-18 text-truncate">
+                  {name}
+                </Card.Title>
+                {price_list}
+                <Card.Text className="fs-12 text-grey text-truncate">
+                  <i className="fal fa-map-marker-alt"></i> {location}
+                </Card.Text>
+                {amenities}
+                {land_leasehold}
+                {type_id !== LAND_CHECK_ID && status !== null && validator.isIn("Lease Hold", status.split(",")) && selected.period && (
+                  <Badge className="font-weight-normal pl-0 mr-1 mb-2">
+                    <i className="far fa-lg fa-calendar-alt mr-2" />
+                    <span className="pr-1">Can lease until: {selected.period}</span>
+                  </Badge>
+                )}
+              </Card.Body>
+            </a>
+          </Link>
+          <Card.Footer className="text-muted bg-white bor-rad-10 p-20">
+            <Row className="fs-11">
 
-            <Col className="col-auto mr-auto text-truncate width-code">
-              <span className="text-decoration-none text-muted mr-2 pr-2 bd-right font-weight-bold">
-                CODE: {PROPERTY_CODE}
-              </span>
-              <span className="text-decoration-none text-muted mr-2 pr-2 font-weight-bold">
-                {type.name}
-              </span>
-            </Col>
-            <Col className="col-auto col-md-auto col-lg-auto col-xl-auto width-additional-btn">
-              <Link href="manage-property/[id]" as={`manage-property/${id}`}>
-                <span className="mr-2 pr-2 hov_pointer bd-right">
-                  <Tooltip placement="bottomRight" title="Edit" arrowPointAtCenter>
-                    <i className="far fa-lg fa-edit" />
+              <Col className="col-auto mr-auto text-truncate width-code">
+                <span className="text-decoration-none text-muted mr-2 pr-2 bd-right font-weight-bold">
+                  CODE: {PROPERTY_CODE}
+                </span>
+                <span className="text-decoration-none text-muted mr-2 pr-2 font-weight-bold">
+                  {type.name}
+                </span>
+              </Col>
+              <Col className="col-auto col-md-auto col-lg-auto col-xl-auto width-additional-btn">
+                <Link href="manage-property/[id]" as={`manage-property/${id}`}>
+                  <span className="mr-2 pr-2 hov_pointer bd-right">
+                    <Tooltip placement="bottomRight" title="Edit" arrowPointAtCenter>
+                      <i className="far fa-lg fa-edit" />
+                    </Tooltip>
+                  </span>
+                </Link>
+                <span className="hov_pointer" onClick={onDelete}>
+                  <Tooltip placement="bottomRight" title="Delete" color="#ff4463" arrowPointAtCenter>
+                    <i className="far fa-lg fa-trash-alt" />
                   </Tooltip>
                 </span>
-              </Link>
-              <span className="hov_pointer" onClick={onDelete}>
-                <Tooltip placement="bottomRight" title="Delete" color="#ff4463" arrowPointAtCenter>
-                  <i className="far fa-lg fa-trash-alt" />
-                </Tooltip>
-              </span>
-            </Col>
+              </Col>
 
-            <Col className="d-none">
-              <Link href="manage-property/[id]" as={`manage-property/${id}`}>
-                <Button variant="default" size="sm">
-                  Edit
+              <Col className="d-none">
+                <Link href="manage-property/[id]" as={`manage-property/${id}`}>
+                  <Button variant="default" size="sm">
+                    Edit
+                  </Button>
+                </Link>
+                <Button variant="danger" size="sm" onClick={onDelete} >
+                  Delete
                 </Button>
-              </Link>
-              <Button variant="danger" size="sm" onClick={onDelete} >
-                Delete
-              </Button>
-            </Col>
-          </Row>
-        </Card.Footer>
-      </Card>
+              </Col>
+            </Row>
+          </Card.Footer>
+        </Card>
+      </motion.div>
       <style jsx>{`
         :global(.carousel .slide) {
           min-width: 100%;

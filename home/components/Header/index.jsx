@@ -245,7 +245,7 @@ const Header = () => {
             <Nav className="ml-auto align-items-center">
               <Select 
                 value={currency}
-                className={currencyNavbar}
+                className={`currencyNavbar ${currencyNavbar}`}
                 bordered={false} 
                 onChange={changeCurrencyHandler}
                 suffixIcon={<i className={"far fa-angle-down " + currencyNavbar} />}
@@ -418,6 +418,12 @@ const Header = () => {
         :global(.text-black){
           color: black !important;
         }
+        :global(.text-white){
+          color: white !important;
+        }
+    :global(.currencyNavbar > .ant-select-selector, .currencyNavbar > .ant-select-selector > .ant-select-selection-item){
+      transition: unset !important;
+    }
 
         .signup-button {
           border: 1px solid transparent !important;

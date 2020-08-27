@@ -1,22 +1,28 @@
+import { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Router from "next/router";
 import Link from "next/link";
-import { Tooltip } from 'antd';
+import { Tooltip } from "antd";
 
 const CardPlace = ({ id, slug, name, image, listing }) => {
+  const [isHover, setIsHover] = useState(false);
   const searchHandler = () => {
     Router.push({
       pathname: "/all-properties",
-      query: { 
-        region_id: id, 
-      },
-    })
-  }
+      query: {
+        region_id: id
+      }
+    });
+  };
 
   return (
     <>
       <div className="mt-4 mb-2" className="popular-place">
-        <Card className="text-white shadow-none">
+        <Card
+          className="text-white shadow-none"
+          onMouseEnter={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
+        >
           <Card.Img
             src={`${process.env.API_URL}/static/regions/${image}`}
             alt="Card image"
@@ -28,12 +34,20 @@ const CardPlace = ({ id, slug, name, image, listing }) => {
             <Card.Body>
               <h4 className="text-capitalize text-white fs-18-s">{name}</h4>
               <h6 className="text-white fs-14-s">{listing} Listing</h6>
-                <Link href="/region/[slug]" as={`/region/${slug}`}>
-                  <Tooltip placement="bottomRight" title="Area information">
-                    <i className="fas fa-info infoarea-btn" />
-                  </Tooltip>
-                </Link>
-              <i className="far fa-angle-right angle-btn" onClick={searchHandler} />
+              <Link href="/region/[slug]" as={`/region/${slug}`}>
+                <Tooltip
+                  overlayClassName="region-area-information"
+                  placement="bottomRight"
+                  title="Area information"
+                  visible={isHover}
+                >
+                  <i className={`fas fa-info infoarea-btn`} />
+                </Tooltip>
+              </Link>
+              <i
+                className="far fa-angle-right angle-btn"
+                onClick={searchHandler}
+              />
             </Card.Body>
           </Card.ImgOverlay>
         </Card>
@@ -46,7 +60,10 @@ const CardPlace = ({ id, slug, name, image, listing }) => {
           left: 0;
           width: 100%;
           height: 100%;
-          background-image: linear-gradient(rgba(255, 255, 255, 0.02), rgba(44, 44, 47, 47));
+          background-image: linear-gradient(
+            rgba(255, 255, 255, 0.02),
+            rgba(44, 44, 47, 47)
+          );
           z-index: -1;
         }
         :global(.popular-place .card .card-body) {
@@ -71,7 +88,9 @@ const CardPlace = ({ id, slug, name, image, listing }) => {
           text-align: center;
           transition: all 0.1s linear !important;
         }
-        :global(.popular-place .card .infoarea-btn:hover, .popular-cities .card:focus .infoarea-btn) {
+        :global(.popular-place .card .infoarea-btn:hover, .popular-cities
+            .card:focus
+            .infoarea-btn) {
           background: #fff;
           color: black;
           border-color: transparent;
@@ -90,7 +109,9 @@ const CardPlace = ({ id, slug, name, image, listing }) => {
           text-align: center;
           transition: all 0.1s linear !important;
         }
-        :global(.popular-place .card .angle-btn:hover, .popular-cities .card:focus .angle-btn) {
+        :global(.popular-place .card .angle-btn:hover, .popular-cities
+            .card:focus
+            .angle-btn) {
           background: #fff;
           color: black;
           border-color: transparent;
@@ -98,6 +119,9 @@ const CardPlace = ({ id, slug, name, image, listing }) => {
         :global(.popular-place .card .card-body:hover) {
           cursor: pointer;
           transition: all 0.1s linear !important;
+        }
+        :global(.ant-tooltip-placement-bottomRight .ant-tooltip-arrow){
+          right: 2px;
         }
       `}</style>
     </>

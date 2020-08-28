@@ -12,8 +12,8 @@ const Home = ({ username, fresh }) => {
         swal({
           icon: "success", title: `Welcome ${username}`, timer: 3000,
         }).then(() => {
-          destroyCookie(null, "fresh");
-        });
+          destroyCookie(null, "fresh", { domain: process.env.DOMAIN });
+        }).catch(() => {});
       }
     }
   }, [swal, destroyCookie]);

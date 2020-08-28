@@ -112,18 +112,18 @@ export const logout = (ctx) => {
       axios.delete("/access_revoke", access_revoke)
       .then(() => {
         dispatch(authLogout())
-        Router.reload()
-        cookies.destroy(ctx, "access_token");
-        cookies.destroy(ctx, "username");
+        process.browser && Router.reload()
+        cookies.destroy(ctx, "access_token", { domain : process.env.DOMAIN });
+        cookies.destroy(ctx, "username", { domain : process.env.DOMAIN });
       })
       .catch(err => {
         if(err.response && err.response.data && err.response.data.msg === "Not enough segments" || 
            err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
           dispatch(authLogout())
-          Router.reload()
-          cookies.destroy(ctx, "access_token");
-          cookies.destroy(ctx, "refresh_token");
-          cookies.destroy(ctx, "username");
+          process.browser && Router.reload()
+          cookies.destroy(ctx, "access_token", { domain : process.env.DOMAIN });
+          cookies.destroy(ctx, "refresh_token", { domain : process.env.DOMAIN });
+          cookies.destroy(ctx, "username", { domain : process.env.DOMAIN });
         }
       });
     }
@@ -131,18 +131,18 @@ export const logout = (ctx) => {
       axios.delete("/refresh_revoke", refresh_revoke)
       .then(() => {
         dispatch(authLogout())
-        Router.reload()
-        cookies.destroy(ctx, "refresh_token");
-        cookies.destroy(ctx, "username");
+        process.browser && Router.reload()
+        cookies.destroy(ctx, "refresh_token", { domain : process.env.DOMAIN });
+        cookies.destroy(ctx, "username", { domain : process.env.DOMAIN });
       })
       .catch(err => {
         if(err.response && err.response.data && err.response.data.msg === "Not enough segments" || 
            err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
           dispatch(authLogout())
-          Router.reload()
-          cookies.destroy(ctx, "access_token");
-          cookies.destroy(ctx, "refresh_token");
-          cookies.destroy(ctx, "username");
+          process.browser && Router.reload()
+          cookies.destroy(ctx, "access_token", { domain : process.env.DOMAIN });
+          cookies.destroy(ctx, "refresh_token", { domain : process.env.DOMAIN });
+          cookies.destroy(ctx, "username", { domain : process.env.DOMAIN });
         }
       });
     }

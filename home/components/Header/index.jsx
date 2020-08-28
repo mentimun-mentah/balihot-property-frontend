@@ -82,12 +82,12 @@ const Header = () => {
 
   const onLogout = () => dispatch(actions.logout());
   const logouthandler = () => {
-    setVisible(false);
-    onLogout();
-    Router.replace("/")
     destroyCookie(null, "access_token", { domain: process.env.DOMAIN })
     destroyCookie(null, "refresh_token", { domain: process.env.DOMAIN })
     destroyCookie(null, "username", { domain: process.env.DOMAIN })
+    setVisible(false);
+    onLogout();
+    Router.replace("/")
   };
 
   const showDrawer = () => { setVisible(true); };

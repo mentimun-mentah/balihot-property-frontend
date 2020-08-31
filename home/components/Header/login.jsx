@@ -42,13 +42,13 @@ const Login = ({ viewed, reset, closed, resend }) => {
           closed();
           const { access_token, refresh_token, username } = res.data;
           cookie.set(null, "access_token", access_token, {
-            maxAge: 30 * 24 * 60 * 60, path: "/",
+            maxAge: 30 * 24 * 60 * 60, path: "/", domain: process.env.DOMAIN
           });
           cookie.set(null, "refresh_token", refresh_token, {
-            maxAge: 30 * 24 * 60 * 60, path: "/",
+            maxAge: 30 * 24 * 60 * 60, path: "/", domain: process.env.DOMAIN
           });
           cookie.set(null, "username", username, {
-            maxAge: 30 * 24 * 60 * 60, path: "/",
+            maxAge: 30 * 24 * 60 * 60, path: "/", domain: process.env.DOMAIN
           });
           dispatch(actions.getUser())
           dispatch(actions.authSuccess(access_token, refresh_token, username));

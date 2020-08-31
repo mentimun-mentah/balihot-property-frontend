@@ -16,10 +16,10 @@ app.prepare().then(() => {
   server.get("/user-confirm/:token", async (req, res) => {
     const { token } = req.params;
     await axios.put(`http://backend:5000/user-confirm/${token}`).then((response) => {
-      res.cookie("access_token", response.data.access_token);
-      res.cookie("refresh_token", response.data.refresh_token);
-      res.cookie("username", response.data.username);
-      res.cookie("fresh", true);
+      res.cookie("access_token", response.data.access_token, { domain: process.env.DOMAIN });
+      res.cookie("refresh_token", response.data.refresh_token, { domain: process.env.DOMAIN });
+      res.cookie("username", response.data.username, { domain: process.env.DOMAIN });
+      res.cookie("fresh", true, { domain: process.env.DOMAIN });
       res.redirect(302, process.env.BASE_URL);
     });
   });
@@ -27,7 +27,7 @@ app.prepare().then(() => {
   //Reset Password
   server.get("/password/reset/:token", async (req, res) => {
     const { token } = req.params;
-    res.cookie("reset", token);
+    res.cookie("reset", token, { domain: process.env.DOMAIN });
     res.redirect(302, `${process.env.BASE_URL}/reset-password`);
   });
 

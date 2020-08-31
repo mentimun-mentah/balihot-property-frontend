@@ -77,9 +77,9 @@ const Newsletter = () => {
     <>
       <Jumbotron fluid className="mt-4rem img-news">
         <Container>
-          <h1 className="text-white font-weight-bold">Property Market News</h1>
+          <h1 className="text-white font-weight-bold">Our Newsletter</h1>
           <p className="text-white">
-            The latest news property in Bali.
+            The latest news property and information around Bali.
           </p>
         </Container>
       </Jumbotron>
@@ -218,7 +218,8 @@ const Newsletter = () => {
           opacity: 0.5;
        }
         :global(.img-news) {
-          background-image: url("https://images.unsplash.com/photo-1560177112-fbfd5fde9566?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80")
+          background: url("/static/images/bg-news-top.jpg") no-repeat center center;
+          background-size: cover;
         }
         :global(.img-news-horizontal){
           height: 190px;

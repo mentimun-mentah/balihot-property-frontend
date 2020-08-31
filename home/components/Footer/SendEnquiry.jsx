@@ -75,6 +75,8 @@ const SendEnquiry = ({closed}) => {
   const emailInvalid = cx({ "is-invalid border-grey": !sender_email.isValid });
   const descriptionInvalid = cx({ "is-invalid border-grey": !description.isValid });
 
+  const requiredText = <small className="text-bhp"> *</small>
+
   return (
     <>
       <motion.div initial="initial" animate="in" exit="out" variants={Fade}>
@@ -89,6 +91,9 @@ const SendEnquiry = ({closed}) => {
               <Form>
                 <Form.Row>
                   <Form.Group as={Col} sm={12} md={6} lg={6} xl={6} className="mb-2">
+                    <Form.Label className="mb-0">Name 
+                      {requiredText}
+                    </Form.Label>
                     <InputGroup>
                       <InputGroup.Prepend>
                         <InputGroup.Text className="input-group-login pr-0">
@@ -109,6 +114,9 @@ const SendEnquiry = ({closed}) => {
                   </Form.Group>
 
                   <Form.Group as={Col} sm={12} md={6} lg={6} xl={6} className="mb-2">
+                    <Form.Label className="mb-0">Phone
+                      {requiredText}
+                    </Form.Label>
                     <InputGroup>
                       <InputGroup.Prepend className="input-group-login pr-0">
                         <InputGroup.Text className="input-group-login pr-0">
@@ -130,6 +138,9 @@ const SendEnquiry = ({closed}) => {
                 </Form.Row>
 
                 <Form.Group className="mb-2">
+                  <Form.Label className="mb-0">Email
+                    {requiredText}
+                  </Form.Label>
                   <InputGroup>
                     <InputGroup.Prepend>
                       <InputGroup.Text className="input-group-login pr-0">
@@ -149,8 +160,10 @@ const SendEnquiry = ({closed}) => {
                   )}
                 </Form.Group>
 
-
                 <Form.Group>
+                  <Form.Label className="mb-0">Description
+                    {requiredText}
+                  </Form.Label>
                   <Form.Control 
                     name="description"
                     as="textarea" 
@@ -164,7 +177,7 @@ const SendEnquiry = ({closed}) => {
                   )}
                 </Form.Group>
 
-                <Button className="mt-2 mb-4 btn-red-hot" type="submit" block onClick={submitHandler}>
+                <Button className="mt-2 mb-2 btn-red-hot" type="submit" block onClick={submitHandler}>
                   Send message
                   {loading && (
                     <Spinner
@@ -176,6 +189,7 @@ const SendEnquiry = ({closed}) => {
                     />
                   )}
                 </Button>
+                <Form.Text className="text-bhp fs-12 mb-0 mt-0"><span className="text-black">NB: </span>* Required</Form.Text>
               </Form>
             </Col>
           </Row>

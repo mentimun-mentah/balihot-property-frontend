@@ -1,21 +1,21 @@
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Input, AutoComplete, Select, Slider, Checkbox, Collapse } from 'antd';
+import { Input, AutoComplete, Select, Slider, Checkbox, Collapse, Switch, Radio } from 'antd';
 import { renderOptions } from "../../lib/renderOptions";
+import { parseCookies } from "nookies";
 
+import validator from 'validator';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import * as actions from "../../store/actions";
-import {useEffect} from "react";
 
 const Panel = Collapse.Panel;
 const formatter = new Intl.NumberFormat(["ban", "id"]);
 const for_data = { villa: ["Sale", "Rent"], land: ["Sale"] }; // If type is Land than only Sale
 const period_data = ["Annually", "Monthly", "Weekly", "Daily"]; // If type is Villa
 const status_data = ["Free Hold", "Lease Hold"];
-const MIN_PRICE = 0;
-const MAX_PRICE = 1000000000;
 
 const MobileFilter = ({search, hotdealHandler, onChange}) => {
   const dispatch = useDispatch();
@@ -25,13 +25,18 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
   const dataType = useSelector((state) => state.types.types);
   const listLocation = useSelector(state => state.property.location);
   const currency = useSelector(state => state.currency.currency)
+  const [isCurrency, setIsCurrency] = useState(Object.keys(currency.rates));
 
   let currencySymbol = null
   let currencyValue = 1
 
+  let MIN_PRICE = 0;
+  let MAX_PRICE = 1000000;
+
   if(currency){
     currencySymbol = Object.keys(currency.rates)
-    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+    currencyValue = (+Object.values(currency.rates)).toFixed()
+    if(!validator.isIn("USD", Object.keys(currency.rates))) MAX_PRICE = MAX_PRICE * currencyValue
   }
 
   let VILLA_CHECK_ID = null;
@@ -60,6 +65,29 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
     if(type_id.value) if(type_id.value.length !== 0) qLoct = qLoct + `type_id=${type_id.value}`
     dispatch(actions.getLocation(qLoct))
   },[type_id.value, location.value])
+
+  useEffect(() => {
+    if(isCurrency){
+      dispatch(actions.getCurrency(isCurrency))
+    }
+  },[isCurrency])
+
+  const cookie = parseCookies()
+  useEffect(() => {
+    if(!cookie.currency){
+      setCookie(null, 'currency', 'USD', {
+        maxAge: 30 * 24 * 60 * 60,
+        path: '/',
+      })
+      setIsCurrency("USD")
+    } else {
+      setIsCurrency(cookie.currency)
+    }
+  },[cookie.currency])
+
+  const changeCurrencyHandler = e => {
+    setIsCurrency(e.target.value)
+  }
 
   return (
     <>
@@ -149,9 +177,19 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
             <Row>
               <Col>
                 <Card.Body className="pb-2 pl-0 pt-0">
+                  <Radio.Group size="small" onChange={changeCurrencyHandler} value={isCurrency}>
+                    <Radio.Button className="fs-12" value="USD">USD</Radio.Button>
+                    <Radio.Button className="fs-12" value="IDR">IDR</Radio.Button>
+                  </Radio.Group>
+                </Card.Body>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Card.Body className="pb-2 pl-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MIN</h5>
                   <p className="text-dark card-text">
-                    USD {formatter.format(price.value[0])}
+                    {currencySymbol} {formatter.format(price.value[0])}
                   </p>
                 </Card.Body>
               </Col>
@@ -159,7 +197,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
                 <Card.Body className="pb-2 px-0 pt-0">
                   <h5 className="card-title fs-12 text-secondary mb-1">MAX</h5>
                   <p className="text-dark card-text">
-                    USD <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </Card.Body>
               </Col>

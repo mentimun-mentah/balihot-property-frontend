@@ -56,7 +56,7 @@ const ManageNews = () => {
         axios
           .delete(`/newsletter/crud/${id}`, jsonHeaderHandler())
           .then((res) => {
-            dispatch(actions.getNewsletter())
+            dispatch(actions.getNewsletter(''))
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
           })
           .catch((err) => {

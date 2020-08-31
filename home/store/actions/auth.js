@@ -1,7 +1,7 @@
 import * as actionType from "./actionTypes";
 import cookies from "nookies";
 import Router from "next/router";
-import axios from "../../lib/axios";
+import axios, { cookieOptions } from "../../lib/axios";
 
 /*** AUTH ***/
 export const authStart = () => {
@@ -51,36 +51,36 @@ export const authCheckState = (ctx) => {
       const { refresh_token, username } = cookies.get(ctx);
       if(access_token === "undefined" || refresh_token === "undefined" || username === "undefined"){
         dispatch(authLogout())
-        cookies.destroy(ctx, "access_token");
-        cookies.destroy(ctx, "refresh_token");
-        cookies.destroy(ctx, "username");
+        cookies.destroy(ctx, "access_token", cookieOptions);
+        cookies.destroy(ctx, "refresh_token", cookieOptions);
+        cookies.destroy(ctx, "username", cookieOptions);
       }
       if((access_token && !refresh_token) || (refresh_token && !access_token)){
         dispatch(authLogout())
-        cookies.destroy(ctx, "access_token");
-        cookies.destroy(ctx, "refresh_token");
-        cookies.destroy(ctx, "username");
+        cookies.destroy(ctx, "access_token", cookieOptions);
+        cookies.destroy(ctx, "refresh_token", cookieOptions);
+        cookies.destroy(ctx, "username", cookieOptions);
       }
       if(!refresh_token || refresh_token === undefined || refresh_token === null){
         dispatch(authLogout())
-        cookies.destroy(ctx, "access_token");
-        cookies.destroy(ctx, "refresh_token");
-        cookies.destroy(ctx, "username");
+        cookies.destroy(ctx, "access_token", cookieOptions);
+        cookies.destroy(ctx, "refresh_token", cookieOptions);
+        cookies.destroy(ctx, "username", cookieOptions);
       }
       if(!username){
         dispatch(authLogout())
-        cookies.destroy(ctx, "access_token");
-        cookies.destroy(ctx, "refresh_token");
-        cookies.destroy(ctx, "username");
+        cookies.destroy(ctx, "access_token", cookieOptions);
+        cookies.destroy(ctx, "refresh_token", cookieOptions);
+        cookies.destroy(ctx, "username", cookieOptions);
       }
       else if(access_token && refresh_token && username) {
         dispatch(authSuccess(access_token, refresh_token, username));
       }
     } else {
       dispatch(authLogout())
-      cookies.destroy(ctx, "access_token");
-      cookies.destroy(ctx, "refresh_token");
-      cookies.destroy(ctx, "username");
+      cookies.destroy(ctx, "access_token", cookieOptions);
+      cookies.destroy(ctx, "refresh_token", cookieOptions);
+      cookies.destroy(ctx, "username", cookieOptions);
     }
   };
 };
@@ -113,17 +113,17 @@ export const logout = (ctx) => {
       .then(() => {
         dispatch(authLogout())
         process.browser && Router.reload()
-        cookies.destroy(ctx, "access_token", { domain : process.env.DOMAIN });
-        cookies.destroy(ctx, "username", { domain : process.env.DOMAIN });
+        cookies.destroy(ctx, "access_token", cookieOptions);
+        cookies.destroy(ctx, "username", cookieOptions);
       })
       .catch(err => {
         if(err.response && err.response.data && err.response.data.msg === "Not enough segments" || 
            err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
           dispatch(authLogout())
           process.browser && Router.reload()
-          cookies.destroy(ctx, "access_token", { domain : process.env.DOMAIN });
-          cookies.destroy(ctx, "refresh_token", { domain : process.env.DOMAIN });
-          cookies.destroy(ctx, "username", { domain : process.env.DOMAIN });
+          cookies.destroy(ctx, "access_token", cookieOptions);
+          cookies.destroy(ctx, "refresh_token", cookieOptions);
+          cookies.destroy(ctx, "username", cookieOptions);
         }
       });
     }
@@ -132,17 +132,17 @@ export const logout = (ctx) => {
       .then(() => {
         dispatch(authLogout())
         process.browser && Router.reload()
-        cookies.destroy(ctx, "refresh_token", { domain : process.env.DOMAIN });
-        cookies.destroy(ctx, "username", { domain : process.env.DOMAIN });
+        cookies.destroy(ctx, "refresh_token", cookieOptions);
+        cookies.destroy(ctx, "username", cookieOptions);
       })
       .catch(err => {
         if(err.response && err.response.data && err.response.data.msg === "Not enough segments" || 
            err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
           dispatch(authLogout())
           process.browser && Router.reload()
-          cookies.destroy(ctx, "access_token", { domain : process.env.DOMAIN });
-          cookies.destroy(ctx, "refresh_token", { domain : process.env.DOMAIN });
-          cookies.destroy(ctx, "username", { domain : process.env.DOMAIN });
+          cookies.destroy(ctx, "access_token", cookieOptions);
+          cookies.destroy(ctx, "refresh_token", cookieOptions);
+          cookies.destroy(ctx, "username", cookieOptions);
         }
       });
     }
@@ -157,23 +157,24 @@ export const refreshToken = (ctx) => {
       axios.post("/refresh", null, headerCfg)
         .then((res) => {
           cookies.set(null, "access_token", res.data.access_token, {
+            domain: process.env.DOMAIN,
             maxAge: 30 * 24 * 60 * 60,
-            path: "/",
+            path: '/',
           });
           dispatch(refreshTokenSuccess(res.data.access_token));
         })
         .catch((err) => {
           if(err.response && err.response.status === 422){
             dispatch(authLogout())
-            cookies.destroy(ctx, "access_token");
-            cookies.destroy(ctx, "refresh_token");
-            cookies.destroy(ctx, "username");
+            cookies.destroy(ctx, "access_token", cookieOptions);
+            cookies.destroy(ctx, "refresh_token", cookieOptions);
+            cookies.destroy(ctx, "username", cookieOptions);
           }
           if(err.response && err.response.data && err.response.data.msg === "Token has been revoked"){
             dispatch(authLogout())
-            cookies.destroy(ctx, "access_token");
-            cookies.destroy(ctx, "refresh_token");
-            cookies.destroy(ctx, "username");
+            cookies.destroy(ctx, "access_token", cookieOptions);
+            cookies.destroy(ctx, "refresh_token", cookieOptions);
+            cookies.destroy(ctx, "username", cookieOptions);
           }
         });
     }

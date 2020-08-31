@@ -1,11 +1,20 @@
-import { Container, Row, Col, Modal, Button } from "react-bootstrap";
+import { useState } from "react"
+import { Container, Row, Col, Modal, Button, InputGroup, FormControl, Form, Card } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { BackdropModal } from "../Transition";
+import { formIsValid } from "../../lib/validateFormReset";
+
+import cx from 'classnames';
 import Link from "next/link";
 import SendEnquiry from "./SendEnquiry";
 
+const formSubscribe = {
+  email: { value: "", isValid: true, message: null }
+}
+
 const Footer = () => {
-  const [modalShow, setModalShow] = React.useState(false);
+  const [modalShow, setModalShow] = useState(false);
+  const [subscribe, setSubscribe] = useState(formSubscribe)
 
   const showModalHandler = () => {
     setModalShow(true);
@@ -17,35 +26,68 @@ const Footer = () => {
     setModalShow(false);
   };
 
+  const inputHandler = event => {
+    const data = {
+      ...subscribe,
+      email: { value: event.target.value, isValid: true, message: null },
+    };
+    setSubscribe(data);
+  };
+
+  const submitHandler = e => {
+    e.preventDefault();
+    if(formIsValid(subscribe, setSubscribe)){
+      console.log(subscribe.email)
+    }
+  }
+
+  const { email } = subscribe;
+  const invalidEmail = cx({ "is-invalid": !email.isValid });
+
   return (
     <>
       <footer className="site-footer border-top">
         <Container>
           <Row>
-            <Col sm={12} md={6}>
-              <img
-                src="/static/images/balihot-property-logo-red.png"
-                width="250"
-              />
-             <p className="text-justify mt-3 fs-14-s">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                iverra tellus in. Sollicitudin ac orci phasellus egestas. Purus
-                in mollis nunc sed. Sollicitudin ac orci phasellus egestas
-                tellus rutrum tellus pellentesque. Interdum consectetur libero
-                id faucibus nisl tincidunt eget.
-              </p>
+            <Col sm={12} md={5}>
+              <h6 className="text-capitalize">SUBSCRIBE TO OUR NEWSLETTER</h6>
+              <Form>
+                <Form.Label className="mt-2">Please submit your email address to subscribe to our newsletter!</Form.Label>
+                <Card className="mw-37 shadow-none border-0 mb-3">
+                  <Card.Body className="p-0">
+                    <InputGroup className="mt-2">
+                      <FormControl
+                        type="email"
+                        placeholder="Your Email Address"
+                        aria-label="Your Email Address"
+                        aria-describedby="basic-addon2"
+                        className={`${invalidEmail} bg-light rounded-0`}
+                        onChange={inputHandler}
+                      />
+                      <InputGroup.Append>
+                        <Button className="rounded-0 btn-subscribe" size="sm" onClick={submitHandler}>
+                          Subscribe
+                        </Button>
+                      </InputGroup.Append>
+                    </InputGroup>
+                    {!email.isValid && (
+                      <Form.Text className="text-muted fs-12 mb-n2 mt-0">{email.message}</Form.Text>
+                    )}
+                  </Card.Body>
+                </Card>
+              </Form>
             </Col>
-            <Col sm={12} md={4} className="pl-ft-50 pl-md-2 pl-xl-5 pr-md-2">
+            <Col sm={12} md={5} className="pl-ft-50 pl-md-2 pl-xl-5 pr-md-2">
               <h6>Contact Us</h6>
               <ul className="footer-links mt-3 fs-14-s">
                 <li className="mb-2">
-                  <i className="fal fa-map-marker-alt mr-2"></i> Jl. Bumbak Dauh No.89b, Kerobokan, Kuta Utara, Kabupaten Badung, Bali 80361
+                  <i className="fal fa-map-marker-alt mr-2"></i> Jalan Raya Kerobokan 70 Kuta Utara, Kabupaten Badung, Bali, Indonesia
                 </li>
                 <li className="mb-2">
-                  <i className="fal fa-envelope mr-2"></i> balihotproperty@gmail.com
+                  <i className="fal fa-envelope mr-2"></i> balihotproperties@gmail.com
                 </li>
                 <li className="mb-2">
-                  <i className="fal fa-phone mr-2"></i> +62 361 847 6727 
+                  <i className="fal fa-phone mr-2"></i> +62 822-3663-8529
                 </li>
                 <li id="send-enquiry-btn" className="mt-2 mb-2 w-fit-content" onClick={showModalHandler}>
                   <Button className="rounded-0 btn-outline-enquiry">
@@ -342,6 +384,33 @@ const Footer = () => {
       :global(.hr-enquiry){
         width: 201px;
         border-top: 3px solid rgba(252, 56, 74, 1);
+      }
+      :global(.btn-subscribe) {
+          color: #fff;
+          background-color: #021927;
+          border-color: #021927;
+      }
+      :global(.btn-subscribe:hover) {
+          color: #fff;
+          background-color: #021927;
+          border-color: #021927;
+      }
+      :global(.btn-subscribe:active) {
+          color: #fff !important;
+          background-color: #021927 !important;
+          border-color: #021927 !important;
+      }
+      :global(.btn-subscribe:focus) {
+          color: #fff;
+          background-color: #021927;
+          border-color: #021927;
+      }
+      :global(.hr-enquiry){
+        width: 201px;
+        border-top: 3px solid rgba(252, 56, 74, 1);
+      }
+      :global(.mw-37) {
+        max-width: 370px;
       }
 
       `}</style>

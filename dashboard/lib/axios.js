@@ -41,6 +41,11 @@ export const jsonHeaderHandler = () => {
   return headerCfg
 }
 
+export const cookieOptions = {
+  domain : process.env.DOMAIN,
+  path : '/'
+}
+
 instance.interceptors.request.use(function (config) {
     // Do something before request is sent
     process.browser && NProgress.start();
@@ -66,37 +71,38 @@ instance.interceptors.response.use(function (response) {
       await instance.post('/refresh', null, headerRefresh)
         .then(res => {
           setCookie(null, "access_token", res.data.access_token, {
+            domain: process.env.DOMAIN,
             maxAge: 30 * 24 * 60 * 60,
-            path: "/",
+            path: '/',
           })
           return Promise.resolve(error.config)
         })
         .catch(() => {
-          destroyCookie(null, "access_token", { path: "/" })
-          destroyCookie(null, "refresh_token", { path: "/" })
-          destroyCookie(null, "username", { path: "/" })
+          destroyCookie(null, "access_token", cookieOptions)
+          destroyCookie(null, "refresh_token", cookieOptions)
+          destroyCookie(null, "username", cookieOptions)
           process.browser && Router.reload()
         })
         .then(() => {
           return Promise.resolve(error.config)
         })
     } else {
-      destroyCookie(null, "access_token", { path: "/" })
-      destroyCookie(null, "refresh_token", { path: "/" })
-      destroyCookie(null, "username", { path: "/" })
+      destroyCookie(null, "access_token", cookieOptions)
+      destroyCookie(null, "refresh_token", cookieOptions)
+      destroyCookie(null, "username", cookieOptions)
       process.browser && Router.reload()
     }
   }
   if(error.response.status == 401 && error.response.data.msg === "Token has been revoked"){
-    destroyCookie(null, "access_token", { path: "/" })
-    destroyCookie(null, "refresh_token", { path: "/" })
-    destroyCookie(null, "username", { path: "/" })
+    destroyCookie(null, "access_token", cookieOptions)
+    destroyCookie(null, "refresh_token", cookieOptions)
+    destroyCookie(null, "username", cookieOptions)
     process.browser && Router.reload()
   }
   if(error.response.status == 422 && error.response.data.msg === "Not enough segments"){
-    destroyCookie(null, "access_token", { path: "/" })
-    destroyCookie(null, "refresh_token", { path: "/" })
-    destroyCookie(null, "username", { path: "/" })
+    destroyCookie(null, "access_token", cookieOptions)
+    destroyCookie(null, "refresh_token", cookieOptions)
+    destroyCookie(null, "username", cookieOptions)
     process.browser && Router.reload()
   }
 

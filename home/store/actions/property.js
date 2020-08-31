@@ -1,7 +1,6 @@
 import { notification } from 'antd';
 import cookies from "nookies";
 import * as actionType from "./actionTypes";
-import * as actions from "./index";
 import axios from "../../lib/axios";
 import Router from "next/router"
 
@@ -94,16 +93,38 @@ export const getLocationFail = (error) => {
 /* GET LOCATION */
 
 export const getPropertyBy = (home, query, per_page, ctx) => {
-  return dispatch => {
+  return async dispatch => {
+    const { access_token, refresh_token, currency } = cookies.get(ctx);
+    let currencyValue = 1;
+    let currencySymbol = "USD"
+    if(currency) currencySymbol = currency;
+
     let searchQuery = "";
     if(home){
       if(query === "Sale" || query === "Rent") searchQuery = `property_for=${query}&per_page=${per_page}`;
       if(query === "Land") searchQuery = `type_id=2&per_page=${per_page}`;
     } else {
+      await axios.get(`https://api.exchangeratesapi.io/latest?base=USD&symbols=${currencySymbol}`)
+        .then(res => {
+          currencyValue = (+Object.values(res.data.rates)).toFixed()
+        })
       searchQuery = query
+      let queryObject = Object.fromEntries(new URLSearchParams(searchQuery));
+
+      for (let [key, val] of Object.entries(queryObject)) {
+        if(key === "min_price"){
+          queryObject.min_price = (val / currencyValue).toFixed()
+        }
+        if(key === "max_price"){
+          queryObject.max_price = (val / currencyValue).toFixed()
+        }
+      }
+
+      searchQuery = Object.keys(queryObject).map(key => key + '=' + queryObject[key]).join('&');
     }
 
-    const { access_token, refresh_token } = cookies.get(ctx);
+    console.log(searchQuery)
+
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     if(access_token, refresh_token){
       dispatch(getPropertyStart())

@@ -27,8 +27,7 @@ const Workflow = () => {
                   <div className="workflow_item_content text-center">
                     <div className="workflow_title fs-18-s">Choose a Location</div>
                     <p className="workflow_text fs-14-s">
-                      Donec ullamcorper nulla non metus auctor fringi lla. Curabitur blandit tempus
-                      porttitor.
+                      Beach-front, mountain-top, city-view — these are all highly sought after property types.
                     </p>
                   </div>
                 </div>
@@ -52,8 +51,7 @@ const Workflow = () => {
                   <div className="workflow_item_content text-center">
                     <div className="workflow_title fs-18-s">Find the Perfect Places</div>
                     <p className="workflow_text fs-14-s">
-                      Donec ullamcorper nulla non metus auctor fringi lla. Curabitur blandit tempus
-                      porttitor.
+                      The land the house is on and the lifestyle that goes with it is location’s first interest.
                     </p>
                   </div>
                 </div>
@@ -77,8 +75,7 @@ const Workflow = () => {
                   <div className="workflow_item_content text-center">
                     <div className="workflow_title fs-18-s">Move into a new life</div>
                     <p className="workflow_text fs-14-s">
-                      Donec ullamcorper nulla non metus auctor fringi lla. Curabitur blandit tempus
-                      porttitor.
+                    whether it’s a quick elevator ride to a street full of restaurants or a sunset worthy of magazine photos. A lot may be forgiven if a property is close to or even within view of these things.
                     </p>
                   </div>
                 </div>

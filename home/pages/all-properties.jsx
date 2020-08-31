@@ -13,6 +13,7 @@ import { renderOptions } from "../lib/renderOptions";
 import { parseCookies, setCookie } from 'nookies';
 import Router from 'next/router'
 import axios from "../lib/axios";
+import validator from 'validator';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
@@ -33,8 +34,6 @@ const status_data = ["Free Hold", "Lease Hold"];
 const period_data = ["Annually", "Monthly", "Weekly", "Daily"]; // If type is Villa
 
 const { Option } = Select;
-const MIN_PRICE = 0;
-const MAX_PRICE = 1000000000;
 
 const pagination_iter = (c, m) => {
   var delta = 1, range = [], rangeWithDots = [], l;
@@ -105,10 +104,23 @@ const AllProperties = ({ searchQuery }) => {
   let currencySymbol = null
   let currencyValue = 1
 
+  let MIN_PRICE = 0;
+  let MAX_PRICE = 1000000;
+
   if(currency){
     currencySymbol = Object.keys(currency.rates)
-    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+    currencyValue = (+Object.values(currency.rates)).toFixed()
+    if(!validator.isIn("USD", Object.keys(currency.rates))) MAX_PRICE = MAX_PRICE * currencyValue
   }
+
+  const cookies = parseCookies()
+  useEffect(() => {
+    const data = { 
+      ...search, 
+      price: { value: [0, 0] },
+    };
+    setSearch(data);
+  }, [cookies.currency])
 
   let VILLA_CHECK_ID = null;
   let LAND_CHECK_ID = null;
@@ -495,12 +507,12 @@ const AllProperties = ({ searchQuery }) => {
               <tr>
                 <td className="pl-0 py-0">
                   <p className="font-weight-bold text-dark card-text">
-                    USD {formatter.format(price.value[0])}
+                    {currencySymbol} {formatter.format(price.value[0])}
                   </p>
                 </td>
                 <td className="pr-0 py-0">
                   <p className="font-weight-bold text-dark card-text float-right">
-                    USD <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </td>
               </tr>

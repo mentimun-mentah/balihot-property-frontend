@@ -623,8 +623,8 @@ const EditProperty = ({dataProperty}) => {
                         {validator.isIn("Free Hold", status.value) && (
                           <Form.Group as={Col}>
                             <Form.Label>Price / are</Form.Label>
-                            <InputNumber formatter={value => `IDR ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                              parser={value => value.replace(/\IDR\s?|(,*)/g, "")}
+                            <InputNumber formatter={value => `USD ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                              parser={value => value.replace(/\USD\s?|(,*)/g, "")}
                               className={`${invalidFreehold_price} w-100`}
                               value={freehold_price.value}
                               onChange={e => inputChangeHandler(e, "freehold_price")}
@@ -638,8 +638,8 @@ const EditProperty = ({dataProperty}) => {
                         {validator.isIn("Lease Hold", status.value) && (
                           <Form.Group as={Col}>
                             <Form.Label>Price / are / year</Form.Label>
-                            <InputNumber formatter={value => `IDR ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                              parser={value => value.replace(/\IDR\s?|(,*)/g, "")}
+                            <InputNumber formatter={value => `USD ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                              parser={value => value.replace(/\USD\s?|(,*)/g, "")}
                               className={`${invalidLeasehold_price} w-100`}
                               value={leasehold_price.value}
                               onChange={e => inputChangeHandler(e, "leasehold_price")}
@@ -667,8 +667,8 @@ const EditProperty = ({dataProperty}) => {
                       return(
                         <Form.Group as={Col} key={i}>
                           <Form.Label>{name} Price</Form.Label>
-                          <InputNumber formatter={value => `IDR ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                            parser={value => value.replace(/\IDR\s?|(,*)/g, "")}
+                          <InputNumber formatter={value => `USD ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            parser={value => value.replace(/\USD\s?|(,*)/g, "")}
                             className={`${invalid} w-100`}
                             value={value}
                             onChange={e => inputChangeHandler(e, `${name.split(" ").join("").toLowerCase()}_price`)}
@@ -698,8 +698,8 @@ const EditProperty = ({dataProperty}) => {
                       return ( 
                         <Form.Group as={Col} key={i}>
                           <Form.Label>{name} Price</Form.Label>
-                          <InputNumber formatter={value => `IDR ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                            parser={value => value.replace(/\IDR\s?|(,*)/g, "")}
+                          <InputNumber formatter={value => `USD ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            parser={value => value.replace(/\USD\s?|(,*)/g, "")}
                             className={`${invalid} w-100`}
                             value={value}
                             onChange={e => inputChangeHandler(e, `${name.toLowerCase()}_price`)}

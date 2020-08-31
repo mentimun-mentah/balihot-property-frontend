@@ -199,21 +199,23 @@ const Register = ({ viewed, closed }) => {
               <div className="hr-sect mb-3 mt-3">or</div>
             </Col>
             <Col md={12} lg={6}>
-              <button className="btn-login btn mb-2">
-                <div className="btn-login-icon">
-                  <LogoGoogle />
-                </div>
-                <span>Sign up with Google</span>
-              </button>
+              <a href={`${process.env.API_URL}/login/google`} className="text-decoration-none">
+                <button className="btn-login btn mb-2">
+                    <div className="btn-login-icon">
+                      <LogoGoogle />
+                    </div>
+                    <span>Sign in with Google</span>
+                </button>
+              </a>
             </Col>
 
             <Col md={12} lg={6}>
-              <button className="btn-login">
-                <div className="btn-login-icon">
-                  <LogoFacebook />
-                </div>
-                <span>Sign up with Facebook</span>
-              </button>
+                <button className="btn-login" disabled>
+                  <div className="btn-login-icon">
+                    <LogoFacebook />
+                  </div>
+                  <span>Sign in with Facebook</span>
+                </button>
             </Col>
           </Row>
 

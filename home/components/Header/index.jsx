@@ -31,6 +31,16 @@ const Header = () => {
   const user = useSelector((state) => state.auth.data);
   const { pathname } = router;
 
+  const currencyState = useSelector(state => state.currency.currency)
+
+  let currencySymbol = null
+  let currencyValue = 1
+
+  if(currencyState){
+    currencySymbol = Object.keys(currencyState.rates)
+    currencyValue = (+Object.values(currencyState.rates)).toFixed()
+  }
+
   useEffect(() => {
     let isSubscribed = true;
     document.addEventListener("scroll", () => {
@@ -96,13 +106,8 @@ const Header = () => {
   const changeCurrencyHandler = e => {
     setCurrency(e)
     setVisible(false);
+    dispatch(actions.getCurrency(e))
   }
-
-  useEffect(() => {
-    if(currency){
-      dispatch(actions.getCurrency(currency))
-    }
-  },[currency])
 
   useEffect(() => {
     const cookie = parseCookies()
@@ -111,9 +116,9 @@ const Header = () => {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
       })
-      setCurrency("USD")
+      dispatch(actions.getCurrency("USD"))
     } else {
-      setCurrency(cookie.currency)
+      dispatch(actions.getCurrency(cookie.currency))
     }
   },[])
 
@@ -255,7 +260,7 @@ const Header = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto align-items-center">
               <Select 
-                value={currency}
+                value={currencySymbol}
                 className={`currencyNavbar ${currencyNavbar}`}
                 bordered={false} 
                 onChange={changeCurrencyHandler}
@@ -398,7 +403,7 @@ const Header = () => {
           </Link>
           {authMobile}
           <Select 
-            value={currency}
+            value={currencySymbol}
             className="pl-1 text-dark"
             bordered={false} 
             onChange={changeCurrencyHandler}

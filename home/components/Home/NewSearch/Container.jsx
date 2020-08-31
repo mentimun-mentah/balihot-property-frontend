@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 
 import { Input, AutoComplete, Select, Slider, Dropdown, Menu, Button, Checkbox } from "antd";
 import { DownOutlined } from "@ant-design/icons";
+import { parseCookies } from 'nookies';
 
 import { renderOptions } from "../../../lib/renderOptions";
 import { Fade } from "../../Transition";
@@ -68,8 +69,17 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
 
   if(currency){
     currencySymbol = Object.keys(currency.rates)
-    currencyValue = (+Object.values(currency.rates)).toFixed(0)
+    currencyValue = (+Object.values(currency.rates)).toFixed()
   }
+
+  const cookies = parseCookies()
+  useEffect(() => {
+    const data = { 
+      ...search, 
+      price: { value: [0, 0] },
+    };
+    setSearch(data);
+  }, [cookies.currency])
 
   const searchChangeHandler = (e, category) => {
     if (category === "type_id") {
@@ -274,12 +284,12 @@ const SearchBox = ({ searchType, VILLA_CHECK_ID, LAND_CHECK_ID, MIN_PRICE, MAX_P
               <tr>
                 <td className="pl-0 py-0">
                   <p className="font-weight-bold text-dark card-text">
-                    USD {formatter.format(price.value[0])}
+                    {currencySymbol} {formatter.format(price.value[0])}
                   </p>
                 </td>
                 <td className="pr-0 py-0">
                   <p className="font-weight-bold text-dark card-text float-right">
-                    USD <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
+                    {currencySymbol} <>{price.value[1] === MAX_PRICE ? `${formatter.format(price.value[1])}++` : `${formatter.format(price.value[1])}`}</>
                   </p>
                 </td>
               </tr>

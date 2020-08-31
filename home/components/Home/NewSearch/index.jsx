@@ -1,8 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Container, Row, Col, Nav, Button } from "react-bootstrap";
 import { AnimatePresence } from "framer-motion";
 import { Drawer } from 'antd';
+import { parseCookies } from 'nookies'
+import validator from 'validator';
 import Router from "next/router";
 import SearchContainer from "./Container";
 import { renderOptions } from "../../../lib/renderOptions";
@@ -22,8 +24,6 @@ const formSearch = {
 const for_data = { villa: ["Sale", "Rent"], land: ["Sale"] }; // If type is Land than only Sale
 const period_data = ["Annually", "Monthly", "Weekly", "Daily"]; // If type is Villa
 const status_data = ["Free Hold", "Lease Hold"];
-const MIN_PRICE = 0;
-const MAX_PRICE = 1000000000;
 
 const SearchBox = () => {
   const [visible, setVisible] = useState(false);
@@ -34,6 +34,30 @@ const SearchBox = () => {
   
   const dataFacility = useSelector((state) => state.facilities.facilities);
   const dataType = useSelector((state) => state.types.types);
+
+  const currency = useSelector(state => state.currency.currency)
+  const cookies = parseCookies()
+
+  useEffect(() => {
+    const data = { 
+      ...search, 
+      price: { value: [0, 0] },
+    };
+    setSearch(data);
+  }, [cookies.currency])
+
+  let currencySymbol = null
+  let currencyValue = 1
+
+  let MIN_PRICE = 0;
+  let MAX_PRICE = 1000000;
+
+  if(currency){
+    currencySymbol = Object.keys(currency.rates)
+    currencyValue = (+Object.values(currency.rates)).toFixed()
+    if(!validator.isIn("USD", Object.keys(currency.rates))) MAX_PRICE = MAX_PRICE * currencyValue
+  }
+
   let VILLA_CHECK_ID = null;
   let LAND_CHECK_ID = null;
 

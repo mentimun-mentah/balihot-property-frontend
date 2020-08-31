@@ -45,10 +45,9 @@ const Home = () => {
 
   const newsContent = (
     <>
-      <h3 className="text-white fs-24-s">Property Market News</h3>
+      <h3 className="text-white fs-24-s">Our Newsletter</h3>
       <p className="text-white mt-5 text-justify p-l-10-s p-r-10-s">
-      Bali Hot Property network provides access to finest quality luxury real estate and businesses for sale to buyers around the globe. 
-We help you with the process of finding, renting, or buying property and businesses in Bali, whether a buyer, a seller, or an investor, we think of our clients as family. Bali Hot Property has all types of luxury villas, land and businesses available, from modern beachfront villas with infinite pools seamlessly stretching straight to the ocean to hillside villas with sprawling terraces of green paddies right before the doorstep. 
+      As a Realtor, our first priority is to make our clients happy. we listen to our clients wants and needs to achieve the best outcome in every transaction and we strive to ensure that the home buying or selling process is fun, easy and stress-free. our clients can count on us any time of day when they have a question or concern.
       </p>
       <Link href="/news" as="/news">
         <Button variant="outline-light" className="text-center rounded-0">Read More</Button>
@@ -176,7 +175,7 @@ We help you with the process of finding, renting, or buying property and busines
         <div className="overlay-bg"></div>
         <Container>
           <div className="discover-text">
-            <h3 className="fs-24-s">Discover a property you'll love to stay</h3>
+            <h3 className="fs-24-s">Discover a property where love to stay</h3>
             <p className="fs-14-s">
               Bali Hot Property network provides access to finest quality luxury
               real estate and businesses for sale to buyers around the globe. We
@@ -362,7 +361,7 @@ We help you with the process of finding, renting, or buying property and busines
 
       <Jumbotron fluid className="mb-0" style={{ backgroundColor: "#021927" }}>
         <Container className="text-center text-white">
-          <h3 className="text-white fs-16-s">Discover a property you'll love to stay</h3>
+          <h3 className="text-white fs-16-s">Discover a property where love to stay</h3>
           <Link href="/all-properties" as="/all-properties">
             <Button variant="outline-light rounded-pill" className="mt-2">
               Let's get started!

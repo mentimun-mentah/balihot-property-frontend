@@ -54,7 +54,7 @@ const ManageProperty = () => {
         axios
           .delete(`/property/crud/${id}`, jsonHeaderHandler() )
           .then((res) => {
-            dispatch(actions.getProperty())
+            dispatch(actions.getProperty(''))
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
           })
           .catch((err) => {

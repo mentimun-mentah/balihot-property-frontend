@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { withAuth } from "../../../hoc/withAuth"
 
 import swal from "sweetalert";
-import axios, { headerCfg } from '../../../lib/axios';
+import axios, { jsonHeaderHandler } from '../../../lib/axios';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import * as actions from "../../../store/actions";
@@ -27,7 +27,7 @@ const ManageRegion = () => {
     .then((willDelete) => {
       if (willDelete) {
         axios
-          .delete(`/region/crud/${id}`, headerCfg)
+          .delete(`/region/crud/${id}`, jsonHeaderHandler())
           .then((res) => {
             dispatch(actions.getRegion())
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });

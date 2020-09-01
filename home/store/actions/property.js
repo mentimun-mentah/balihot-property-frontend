@@ -123,8 +123,6 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
       searchQuery = Object.keys(queryObject).map(key => key + '=' + queryObject[key]).join('&');
     }
 
-    console.log(searchQuery)
-
     const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
     if(access_token, refresh_token){
       dispatch(getPropertyStart())

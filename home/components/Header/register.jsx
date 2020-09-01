@@ -210,12 +210,14 @@ const Register = ({ viewed, closed }) => {
             </Col>
 
             <Col md={12} lg={6}>
-                <button className="btn-login" disabled>
+              <a href={`${process.env.API_URL}/login/facebook`} className="text-decoration-none">
+                <button className="btn-login">
                   <div className="btn-login-icon">
                     <LogoFacebook />
                   </div>
                   <span>Sign in with Facebook</span>
                 </button>
+              </a>
             </Col>
           </Row>
 

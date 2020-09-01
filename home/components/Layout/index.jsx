@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
+import { parseCookies } from "nookies";
 
 import * as actions from "../../store/actions";
 import Header from "../Header";
@@ -10,6 +11,7 @@ const Layout = ({ children }) => {
 
   const onTryAutoSignin = useCallback(() => dispatch(actions.authCheckState()), [dispatch]);
   const onTryGetUser = useCallback(() => dispatch(actions.getUser()), [dispatch]);
+  const {access_token, refresh_token} = parseCookies()
 
   let mounted = false
 
@@ -25,6 +27,15 @@ const Layout = ({ children }) => {
       }, 2000)
     }
   }, []);
+
+  useEffect(() => {
+      if(access_token && refresh_token){
+	setTimeout(() => {
+    	  onTryAutoSignin();
+	  onTryGetUser();
+	}, 4000)
+      }
+  }, [parseCookies]);
 
   return (
     <>

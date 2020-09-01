@@ -45,10 +45,6 @@ Home.getInitialProps = async (ctx) => {
     }
     catch (err){
       const resProp = await axios.get(`/properties?property_for=Sale&per_page=3`)
-      ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
-      if(err.response.data.msg === "Token has expired"){
-        ctx.store.dispatch(actions.refreshToken(ctx))
-      }
       if(err.response.data.msg === "Token has been revoked"){
         ctx.store.dispatch(actions.logout(ctx))
       }

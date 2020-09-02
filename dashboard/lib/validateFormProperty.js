@@ -78,11 +78,6 @@ export const propertyFormIsValid = (property, setProperty, VILLA_CHECK_ID, LAND_
     land_size.message = "Land size can't be empty";
     isGood = false;
   }
-  if(validator.isEmpty(youtube.value)){
-    youtube.isValid = false;
-    youtube.message = "Youtube link can't be empty"
-    isGood = false;
-  }
   if(validator.isEmpty(description.value)){
     description.isValid = false;
     description.message = "Description can't be empty"

@@ -24,17 +24,20 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import InputGroup from "react-bootstrap/InputGroup";
 
+import InfoModal from "../../../components/Property/InfoModal";
 import ImageProperty from "../../../components/Property/ImagePropertyUpdate"
 import BuildingInformation from "../../../components/Property/BuildingInformation"
 import LocationInformation from "../../../components/Property/LocationInformation"
 import StyleProperty from "../../../components/Property/style"
 const ImagePropertyMemo = React.memo(ImageProperty)
+const InfoModalMemo = React.memo(InfoModal);
 
 const EditProperty = ({dataProperty}) => {
   //========= PROPERTY ==========//
   const [imageList, setImageList] = useState(formImage);
   const [property, setProperty] = useState(formProperty);
   const [removedImage, setRemovedImage] = useState([])
+  const [showInfo, setShowInfo] = useState(false);
     
   const {name, type_id, region_id, property_for, land_size, youtube, description} = property; // Property Information
   const {status, freehold_price, leasehold_price, leasehold_period} = property; // Property for sale
@@ -306,9 +309,11 @@ const EditProperty = ({dataProperty}) => {
       formData.append('region_id', +region_id.value);
       formData.append('property_for', property_for.value.join(","))
       formData.append('land_size', +land_size.value);
-      formData.append('youtube', youtube.value);
       formData.append('description', description.value);
       formData.append('hotdeal', hotdeal.value);
+
+      // CHECK FOR YOUTUBE
+      if(!validator.isEmpty(youtube.value)) formData.append('youtube', youtube.value);
 
       // #PORPERTY FOR SALE
       if(validator.isIn("Sale", property_for.value) && type_id.value !== LAND_CHECK_ID){ // for any type except land
@@ -430,8 +435,11 @@ const EditProperty = ({dataProperty}) => {
         })
     } // End of form validation
   }
-  //========= SUBMIT HANDLER ==========//
 
+  //========= SUBMIT HANDLER ==========//
+  
+  const showInfoHandler = () => setShowInfo(!showInfo);
+  
   const invalidName = cx({ "is-invalid": !name.isValid });
   const invalidType = cx({ "is-invalid": !type_id.isValid });
   const invalidRegion = cx({ "is-invalid": !region_id.isValid });
@@ -714,7 +722,11 @@ const EditProperty = ({dataProperty}) => {
                   {/*PRICE VILLA FOR RENT*/}
 
                   <Form.Group>
-                    <Form.Label>Youtube</Form.Label>
+                    <Form.Label>
+                      Youtube
+                      <i className="text-info ml-2">optional </i>
+                      <i className="far fa-map-marker-question hov_pointer text-primary ml-2" onClick={showInfoHandler}/>
+                    </Form.Label>
                     <Form.Control type="text"
                       placeholder="Youtube link"
                       name="youtube"
@@ -779,6 +791,10 @@ const EditProperty = ({dataProperty}) => {
           </Col>
         </Row>
       </Container>
+
+      {showInfo && (
+        <InfoModalMemo show={showInfo} close={showInfoHandler} />
+      )}
 
       <style jsx>{StyleProperty}</style>
     </>

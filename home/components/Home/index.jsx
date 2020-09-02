@@ -17,11 +17,6 @@ const Home = () => {
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("Sale");
 
-  const activeTabHandler = useCallback(e => {
-    setActiveTab(e)
-    dispatch(actions.getPropertyBy(true, e, 3))
-  }, []);
-
   useEffect(() => {
     dispatch(actions.getPropertyBy(true, "Sale", 3))
   },[])
@@ -30,11 +25,32 @@ const Home = () => {
   const team = useSelector(state => state.team.team)
   const property = useSelector(state => state.property.property)
   const newsletters = useSelector(state => state.newsletter.newsletter);
+  const dataType = useSelector(state => state.types.types);
+
+  let VILLA_CHECK_ID = null;
+  let LAND_CHECK_ID = null;
+
+  for(let key in dataType){
+    if(dataType[key].name.toLowerCase() === "villa"){
+      VILLA_CHECK_ID = dataType[key].id
+    }
+    if(dataType[key].name.toLowerCase() === "land"){
+      LAND_CHECK_ID = dataType[key].id
+    }
+  }
+
+  const activeTabHandler = useCallback(e => {
+    setActiveTab(e)
+    let searchQuery = '';
+    if(e === "Sale" || e === "Rent") searchQuery = `property_for=${e}`;
+    if(e === "Land") searchQuery = `type_id=${LAND_CHECK_ID}`;
+    dispatch(actions.getPropertyBy(true, searchQuery, 3))
+  }, []);
 
   const searchHandler = () => {
     let q = '?'
     if(activeTab !== "Land") q = q + `property_for=${activeTab}`
-    else q = q + `type_id=2`
+    else q = q + `type_id=${LAND_CHECK_ID}`
 
     let check = q.slice(-1)
     if(check === "&") check = q.slice(0, -1)

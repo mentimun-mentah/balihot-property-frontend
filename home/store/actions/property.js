@@ -101,8 +101,7 @@ export const getPropertyBy = (home, query, per_page, ctx) => {
 
     let searchQuery = "";
     if(home){
-      if(query === "Sale" || query === "Rent") searchQuery = `property_for=${query}&per_page=${per_page}`;
-      if(query === "Land") searchQuery = `type_id=2&per_page=${per_page}`;
+      searchQuery = `${query}&per_page=${per_page}`;
     } else {
       await axios.get(`https://api.exchangeratesapi.io/latest?base=USD&symbols=${currencySymbol}`)
         .then(res => {

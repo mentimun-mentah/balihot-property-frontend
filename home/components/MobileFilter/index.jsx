@@ -113,6 +113,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
           value={type_id.value}
           allowClear
         >
+          <Select.Option value="">All</Select.Option>
           {type_list}
         </Select>
       </Col>
@@ -125,6 +126,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
           value={property_for.value}
           allowClear
         >
+          <Select.Option value="">All</Select.Option>
           {for_list}
         </Select>
       </Col>
@@ -156,7 +158,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
           </Select>
         </Col>
       )}
-      {type_id.value.length !== 0 && type_id.value !== LAND_CHECK_ID && (
+      {type_id.value !== undefined && type_id.value.length !== 0 && type_id.value !== LAND_CHECK_ID && (
         <Col xs={12} sm={12} md={12} className="mb-3">
           <Form.Label className="fw-600">Facilities</Form.Label>
           <Select

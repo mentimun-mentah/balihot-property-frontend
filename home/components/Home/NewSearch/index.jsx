@@ -77,8 +77,8 @@ const SearchBox = () => {
   const status_list = []; renderOptions(status_list, status_data)
   const facility_list = []; renderOptions(facility_list, dataFacility, true)
   const for_list = [];
-  if(type_id.value.length !== 0 && type_id.value == VILLA_CHECK_ID) renderOptions(for_list, for_data.villa)
-  if(type_id.value.length !== 0 && type_id.value == LAND_CHECK_ID) renderOptions(for_list, for_data.land)
+  if(type_id.value !== LAND_CHECK_ID) renderOptions(for_list, for_data.villa)
+  if(type_id.value == LAND_CHECK_ID) renderOptions(for_list, for_data.land)
 
   //====== SEARCH ======//
   const searchChangeHandler = (e, category) => {

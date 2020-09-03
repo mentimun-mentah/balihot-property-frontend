@@ -5,7 +5,7 @@ import { uploadButton } from "../../lib/imageUploader";
 import { formIsValid } from "../../lib/validateFormTeams";
 
 import * as actions from "../../store/actions";
-import axios, {headerCfgFormData} from '../../lib/axios'
+import axios, { formHeaderHandler } from '../../lib/axios'
 import cx from 'classnames'
 import Form from 'react-bootstrap/Form'
 import Modal from "react-bootstrap/Modal";
@@ -29,30 +29,37 @@ const EditModal = props => {
     let promise = new Promise((resolve, reject) => {
       setLoading(true);
 
-      axios.put(`/team/crud/${team.id}`, formData, headerCfgFormData)
-        .then(() => { resolve(file); setLoading(false); })
-        .catch(err => {
-          const state = JSON.parse(JSON.stringify(team));
-          if (err.response && err.response.data) {
-            const { image } = err.response.data;
-            for (let key in err.response.data) {
-              if (state[key]) {
-                state[key].value = state[key].value;
-                state[key].isValid = false;
-                state[key].message = err.response.data[key];
-              }
-            }
-            if(image) {
-              const data = {
-                ...team, 
-                image: {value: [], isValid: false, message: image}
-              }
-              setTeam(data); reject(file); setLoading(false);
-            } else {
-              resolve(file); setLoading(false);
+      axios.put(`/team/crud/${team.id}`, formData, formHeaderHandler())
+      .then(() => { resolve(file); setLoading(false); })
+      .catch(err => {
+        setLoading(false)
+        const state = JSON.parse(JSON.stringify(team));
+        const status = err.response.status;
+        if((status == 401 || status == 422) && (file.size / 1024 / 1024 > 4)){
+          message.error("Image cannot grater than 4 Mb")
+          reject(file)
+          setLoading(false)
+        }
+        if (err.response && err.response.data) {
+          const { image } = err.response.data;
+          for (let key in err.response.data) {
+            if (state[key]) {
+              state[key].value = state[key].value;
+              state[key].isValid = false;
+              state[key].message = err.response.data[key];
             }
           }
-        });
+          if(image) {
+            const data = {
+              ...team, 
+              image: {value: [], isValid: false, message: image}
+            }
+            setTeam(data); reject(file); setLoading(false);
+          } else {
+            resolve(file); setLoading(false);
+          }
+        }
+      });
     });
     return promise;
   };
@@ -87,7 +94,7 @@ const EditModal = props => {
       formData.append("name", name.value);
       formData.append("phone", phone.value);
       formData.append("title", title.value);
-      axios.put(`/team/crud/${team.id}`, formData, headerCfgFormData)
+      axios.put(`/team/crud/${team.id}`, formData, formHeaderHandler())
         .then(() => {
           dispatch(actions.getTeam())
           props.close()

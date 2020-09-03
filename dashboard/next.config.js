@@ -1,5 +1,5 @@
 module.exports = {
-  assetPrefix: "https://admin.balihotproperty.com",
+  assetPrefix: "http://192.168.18.132:3002",
   serverRuntimeConfig: {
     // Will only be available on the server side
     API_URL: 'http://backend:5000'

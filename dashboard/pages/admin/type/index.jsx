@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { formType } from "../../../components/Type/formType";
 
 import * as actions from "../../../store/actions";
-import axios, {jsonHeaderHandler} from "../../../lib/axios";
+import axios, { jsonHeaderHandler } from "../../../lib/axios";
 import swal from "sweetalert";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";

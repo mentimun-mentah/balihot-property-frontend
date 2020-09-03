@@ -12,11 +12,11 @@ import Badge from "react-bootstrap/Badge";
 import ItemsCarousel from 'react-items-carousel';
 import * as actions from "../../store/actions";
 import ShareModal from "./ShareModal";
+import formatNumber from "../../lib/formatNumber";
 
 import { motion } from "framer-motion";
 import { Fade } from "../Transition";
 
-const formatter = new Intl.NumberFormat(['ban', 'id'])
 const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
 
 const CardContainer = ({
@@ -86,7 +86,7 @@ const CardContainer = ({
     land_total_price = data.price * land_size * currencyValue
     return (
       <p className="fw-500 fs-16 text-dark mb-1" key={i}>
-      {currencySymbol} {formatter.format(data.price * currencyValue)} 
+      {currencySymbol} {formatNumber(data.price * currencyValue)} 
         <small className="fs-14">
           {" "}/ are
         </small>
@@ -98,7 +98,7 @@ const CardContainer = ({
     land_total_price = data.price * land_size * currencyValue
     return (
       <p className="fw-500 fs-16 text-dark mb-1" key={i}>
-        {currencySymbol} {formatter.format(data.price * currencyValue)}
+        {currencySymbol} {formatNumber(data.price * currencyValue)}
         <small className="fs-14">
           {" "}/ are / year
         </small>
@@ -115,7 +115,7 @@ const CardContainer = ({
   if(type_id !== LAND_CHECK_ID){
     price_list = (
       <p className="fw-500 fs-16 text-dark mb-1">
-        {currencySymbol} {formatter.format(selected.price * currencyValue)} 
+        {currencySymbol} {formatNumber(selected.price * currencyValue)} 
       </p>
     )
     
@@ -193,7 +193,7 @@ const CardContainer = ({
               </div>
               {type_id === LAND_CHECK_ID && (
                 <div className="bottom-left bottom-left-hor">
-                  <h5 className="fs-18-m">{currencySymbol} {formatter.format(land_total_price)}</h5>
+                  <h5 className="fs-18-m">{currencySymbol} {formatNumber(land_total_price)}</h5>
                 </div>
               )}
               {type_id !== LAND_CHECK_ID && (

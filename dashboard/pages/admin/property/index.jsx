@@ -9,7 +9,7 @@ import { propertyFormIsValid, propertyImageIsValid } from '../../../lib/validate
 
 import * as actions from "../../../store/actions";
 import _ from 'lodash';
-import axios, {headerCfgFormData} from '../../../lib/axios';
+import axios, { formHeaderHandler } from '../../../lib/axios';
 import moment from 'moment';
 import cx from 'classnames';
 import swal from "sweetalert";
@@ -303,7 +303,7 @@ const Property = () => {
       formData.append('latitude', +latitude.value);
       formData.append('longitude', +longitude.value);
 
-      axios.post('/property/create', formData, headerCfgFormData)
+      axios.post('/property/create', formData, formHeaderHandler())
         .then(res => {
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setProperty(formProperty);

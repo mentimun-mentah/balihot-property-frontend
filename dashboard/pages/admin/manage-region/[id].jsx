@@ -18,7 +18,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import * as actions from "../../../store/actions";
 import Container from "react-bootstrap/Container";
-import axios, { headerCfgFormData } from "../../../lib/axios"
+import axios, { formHeaderHandler } from "../../../lib/axios"
 import PreviewImage from "../../../components/PreviewImage";
 const PreviewImageMemo = React.memo(PreviewImage)
 const Editor = dynamic(import('../../../components/Editor'), { ssr: false })
@@ -37,22 +37,25 @@ const EditRegion = ({ dataRegion }) => {
 
     let promise = new Promise((resolve, reject) => {
       setLoading(true);
-
-      axios.put(`/region/crud/${dataRegion.id}`, formData, headerCfgFormData)
-        .then(() => { resolve(file); setLoading(false); })
-        .catch(err => {
-          if (err.response && err.response.data) {
-            const { image } = err.response.data;
-            if(image) {
-              message.error(image);
-              reject(file);
-              setLoading(false);
-            } else {
-              resolve(file);
-              setLoading(false);
-            }
-          }
-        });
+      axios.put(`/region/crud/${dataRegion.id}`, formData, formHeaderHandler())
+      .then(() => { resolve(file); setLoading(false); })
+      .catch(err => {
+        const { image } = err.response.data;
+        const status = err.response.status;
+        if((status == 401 || status == 422) && (file.size / 1024 / 1024 > 4)){
+          message.error("Image cannot grater than 4 Mb")
+          reject(file)
+          setLoading(false)
+        }
+        if(image) {
+          message.error(image);
+          reject(file);
+          setLoading(false);
+        } else {
+          resolve(file);
+          setLoading(false);
+        }
+      });
     });
     return promise;
   };
@@ -108,7 +111,7 @@ const EditRegion = ({ dataRegion }) => {
       formData.append("name", name.value);
       formData.append("description", description.value);
 
-      axios.put(`/region/crud/${dataRegion.id}`, formData, headerCfgFormData)
+      axios.put(`/region/crud/${dataRegion.id}`, formData, formHeaderHandler())
         .then(res => {
           Router.replace("/admin/manage-region", "/admin/manage-region")
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });

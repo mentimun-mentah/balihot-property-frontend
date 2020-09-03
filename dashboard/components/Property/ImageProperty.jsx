@@ -3,7 +3,7 @@ import { Upload, message } from "antd";
 import { getBase64, uploadButton } from "../../lib/imageUploader";
 
 import _ from 'lodash'
-import axios, {headerCfgFormData} from "../../lib/axios"
+import axios, { formHeaderHandler } from "../../lib/axios"
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
@@ -22,17 +22,22 @@ const ImageProperty = ({imageList, setImageList, onRemove}) => {
   // Function for validating image to the backend
   const validateImage = (file) => {
     const formData = new FormData();
-   
-    image.value.forEach(file => {
-      formData.append('images', file.originFileObj)
-    })
+    formData.append('images', file)
 
     let promise = new Promise((resolve, reject) => {
       setLoading(true);
-      axios.post('/property/create', formData, headerCfgFormData)
+      axios.post('/property/create', formData, formHeaderHandler())
       .then(() => { resolve(file); setLoading(false); })
       .catch(err => {
         const { images } = err.response.data;
+        const status = err.response.status;
+        if((status == 401 || status == 422) && (file.size / 1024 / 1024 > 4)){
+          message.config({ duration: 5, maxCount: 1 });
+          message.error("Image cannot grater than 4 Mb")
+          reject(file)
+          setLoading(false)
+          return
+        }
         if(images){
           message.config({ duration: 5, maxCount: 1 });
           message.error(images)
@@ -65,13 +70,12 @@ const ImageProperty = ({imageList, setImageList, onRemove}) => {
   },[]);
 
   // Function for image changing
-  const imageChangeHandler = ({ fileList: newFileList, file: file }) => {
+  const imageChangeHandler = ({ fileList: newFileList }) => {
     const data = {
       ...imageList,
       image: {value: newFileList, isValid: true, message: null}
     }
     setImageList(data)
-    if(file.status === "done" && imageList.image.value.length > 0) validateImage()
   };
   //========= IMAGE HANDLER ==========//
 
@@ -97,7 +101,7 @@ const ImageProperty = ({imageList, setImageList, onRemove}) => {
                   onPreview={showPreviewHandler}
                   onChange={imageChangeHandler}
                   onRemove={onRemove}
-                  beforeUpload={image.value.length > 1 && validateImage}
+                  beforeUpload={validateImage}
                   disabled={loading}
                 >
                   {image.value.length >= 50 ? null : uploadButton(loading)}

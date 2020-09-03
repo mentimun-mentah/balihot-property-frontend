@@ -4,7 +4,7 @@ import { formFacility } from "./facilityData";
 import { formIsValid } from "../../lib/validateFormFacilities";
 
 import * as actions from "../../store/actions";
-import axios, { headerCfg } from "../../lib/axios";
+import axios, { jsonHeaderHandler } from "../../lib/axios";
 import cx from "classnames";
 import swal from "sweetalert";
 import Row from "react-bootstrap/Row";
@@ -44,7 +44,7 @@ const AddFacility = () => {
         name: name.value,
         icon: icon.value
       }
-      axios.post('/facility/create', data, headerCfg)
+      axios.post('/facility/create', data, jsonHeaderHandler())
         .then(res => {
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setFacility(formFacility);

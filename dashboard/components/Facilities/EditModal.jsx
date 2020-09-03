@@ -4,7 +4,7 @@ import { formFacility } from "./facilityData";
 import { formIsValid } from "../../lib/validateFormFacilities";
 
 import * as actions from "../../store/actions";
-import axios, {headerCfg} from '../../lib/axios'
+import axios, { jsonHeaderHandler } from '../../lib/axios'
 import cx from "classnames";
 import Form from 'react-bootstrap/Form'
 import Modal from "react-bootstrap/Modal";
@@ -38,7 +38,7 @@ const EditModal = props => {
         name: name.value,
         icon: icon.value
       };
-      axios.put(`/facility/crud/${facility.id}`, data, headerCfg)
+      axios.put(`/facility/crud/${facility.id}`, data, jsonHeaderHandler())
         .then(() => {
           dispatch(actions.getFacility())
           props.close()

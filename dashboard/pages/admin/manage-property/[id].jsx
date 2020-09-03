@@ -10,7 +10,7 @@ import { propertyFormIsValid, propertyImageIsValid } from '../../../lib/validate
 import cookie from "nookies";
 import * as actions from "../../../store/actions";
 import _ from "lodash";
-import axios, { headerCfg, headerCfgFormData } from "../../../lib/axios";
+import axios, { jsonHeaderHandler, formHeaderHandler } from "../../../lib/axios";
 import moment from "moment";
 import cx from "classnames";
 import swal from "sweetalert";
@@ -238,6 +238,10 @@ const EditProperty = ({dataProperty}) => {
           state[key].isValid = true; state[key].message = null;
         }
       }
+      if(dataProperty.youtube || dataProperty.youtube == null){
+        state.youtube.value = dataProperty.youtube ? dataProperty.youtube : "";
+        state.youtube.isValid = true; state.youtube.message = null;
+      }
       if(dataProperty.type_id){
         state.type_id.value = dataProperty.type_id
         state.type_id.isValid = true; state.type_id.message = null;
@@ -327,7 +331,6 @@ const EditProperty = ({dataProperty}) => {
          status.value !== null && status.value.length < 1){
         formData.append('status', "Free Hold");
       }
-      //if(property_for.value.length < 1 && status.value.length < 1) formData.append('status', "Free Hold");
 
       if(freehold_price.value) formData.append('freehold_price', +freehold_price.value);
       if(validator.isEmpty(freehold_price.value === null ? "" : freehold_price.value.toString()) && 
@@ -395,13 +398,13 @@ const EditProperty = ({dataProperty}) => {
       formData.append('latitude', +latitude.value);
       formData.append('longitude', +longitude.value);
 
-      axios.put(`/property/crud/${dataProperty.id}`, formData, headerCfgFormData)
+      axios.put(`/property/crud/${dataProperty.id}`, formData, formHeaderHandler())
         .then(res => {
           Router.push("/admin/manage-property", "/admin/manage-property")
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           if(removedImage.length > 0){
             const dataDeleted = { images: removedImage }
-            axios.post(`/property/delete-images/${dataProperty.id}`, dataDeleted, headerCfg)
+            axios.post(`/property/delete-images/${dataProperty.id}`, dataDeleted, jsonHeaderHandler())
           }
           setProperty(formProperty);
           setImageList(formImage);

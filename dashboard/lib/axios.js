@@ -29,7 +29,13 @@ export const formHeaderHandler = () => {
   let headerCfg;                                                                          
   const cookies = parseCookies()                                                          
   const { access_token } = cookies;
-  headerCfg = {headers: { Authorization: `Bearer ${access_token}`, "content-type": "multipart/form-data" }}
+  headerCfg = { 
+    headers: { 
+      Authorization: `Bearer ${access_token}`, 
+      "content-type": "multipart/form-data",
+    },
+    crossDomain: true,
+  }
   return headerCfg
 }
 
@@ -37,7 +43,12 @@ export const jsonHeaderHandler = () => {
   let headerCfg;                                                                          
   const cookies = parseCookies()                                                          
   const { access_token } = cookies;
-  headerCfg = {headers: { Authorization: `Bearer ${access_token}` }}
+  headerCfg = {
+    headers: { 
+      Authorization: `Bearer ${access_token}` 
+    },
+    crossDomain: true,
+  }
   return headerCfg
 }
 

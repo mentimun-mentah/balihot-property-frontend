@@ -32,6 +32,7 @@ const DetailPropertyStyle = css`
     bottom: 10px;
     right: 8px;
   }
+
   :global(.image-btn, .video-btn){
     background: rgb(255, 255, 255) !important;
     color: rgb(34, 34, 34) !important;
@@ -42,6 +43,13 @@ const DetailPropertyStyle = css`
     cursor: pointer;
     border-radius: 5px;
   }
+  :global(.image-btn:disabled, .video-btn:disabled){
+    opacity: 1;
+    cursor: default;
+    color: #d0d3d9 !important;
+    border-color: #d0d3d9 !important;
+  }
+
   .show-image {
     position: absolute;
     top: 85%;

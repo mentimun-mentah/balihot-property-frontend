@@ -10,7 +10,7 @@ import { propertyFormIsValid, propertyImageIsValid } from '../../../lib/validate
 import cookie from "nookies";
 import * as actions from "../../../store/actions";
 import _ from "lodash";
-import axios, { headerCfg, headerCfgFormData } from "../../../lib/axios";
+import axios, { jsonHeaderHandler, formHeaderHandler } from "../../../lib/axios";
 import moment from "moment";
 import cx from "classnames";
 import swal from "sweetalert";
@@ -24,17 +24,20 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import InputGroup from "react-bootstrap/InputGroup";
 
+import InfoModal from "../../../components/Property/InfoModal";
 import ImageProperty from "../../../components/Property/ImagePropertyUpdate"
 import BuildingInformation from "../../../components/Property/BuildingInformation"
 import LocationInformation from "../../../components/Property/LocationInformation"
 import StyleProperty from "../../../components/Property/style"
 const ImagePropertyMemo = React.memo(ImageProperty)
+const InfoModalMemo = React.memo(InfoModal);
 
 const EditProperty = ({dataProperty}) => {
   //========= PROPERTY ==========//
   const [imageList, setImageList] = useState(formImage);
   const [property, setProperty] = useState(formProperty);
   const [removedImage, setRemovedImage] = useState([])
+  const [showInfo, setShowInfo] = useState(false);
     
   const {name, type_id, region_id, property_for, land_size, youtube, description} = property; // Property Information
   const {status, freehold_price, leasehold_price, leasehold_period} = property; // Property for sale
@@ -235,6 +238,10 @@ const EditProperty = ({dataProperty}) => {
           state[key].isValid = true; state[key].message = null;
         }
       }
+      if(dataProperty.youtube || dataProperty.youtube == null){
+        state.youtube.value = dataProperty.youtube ? dataProperty.youtube : "";
+        state.youtube.isValid = true; state.youtube.message = null;
+      }
       if(dataProperty.type_id){
         state.type_id.value = dataProperty.type_id
         state.type_id.isValid = true; state.type_id.message = null;
@@ -306,9 +313,11 @@ const EditProperty = ({dataProperty}) => {
       formData.append('region_id', +region_id.value);
       formData.append('property_for', property_for.value.join(","))
       formData.append('land_size', +land_size.value);
-      formData.append('youtube', youtube.value);
       formData.append('description', description.value);
       formData.append('hotdeal', hotdeal.value);
+
+      // CHECK FOR YOUTUBE
+      if(!validator.isEmpty(youtube.value)) formData.append('youtube', youtube.value);
 
       // #PORPERTY FOR SALE
       if(validator.isIn("Sale", property_for.value) && type_id.value !== LAND_CHECK_ID){ // for any type except land
@@ -322,7 +331,6 @@ const EditProperty = ({dataProperty}) => {
          status.value !== null && status.value.length < 1){
         formData.append('status', "Free Hold");
       }
-      //if(property_for.value.length < 1 && status.value.length < 1) formData.append('status', "Free Hold");
 
       if(freehold_price.value) formData.append('freehold_price', +freehold_price.value);
       if(validator.isEmpty(freehold_price.value === null ? "" : freehold_price.value.toString()) && 
@@ -390,13 +398,13 @@ const EditProperty = ({dataProperty}) => {
       formData.append('latitude', +latitude.value);
       formData.append('longitude', +longitude.value);
 
-      axios.put(`/property/crud/${dataProperty.id}`, formData, headerCfgFormData)
+      axios.put(`/property/crud/${dataProperty.id}`, formData, formHeaderHandler())
         .then(res => {
           Router.push("/admin/manage-property", "/admin/manage-property")
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           if(removedImage.length > 0){
             const dataDeleted = { images: removedImage }
-            axios.post(`/property/delete-images/${dataProperty.id}`, dataDeleted, headerCfg)
+            axios.post(`/property/delete-images/${dataProperty.id}`, dataDeleted, jsonHeaderHandler())
           }
           setProperty(formProperty);
           setImageList(formImage);
@@ -430,8 +438,11 @@ const EditProperty = ({dataProperty}) => {
         })
     } // End of form validation
   }
-  //========= SUBMIT HANDLER ==========//
 
+  //========= SUBMIT HANDLER ==========//
+  
+  const showInfoHandler = () => setShowInfo(!showInfo);
+  
   const invalidName = cx({ "is-invalid": !name.isValid });
   const invalidType = cx({ "is-invalid": !type_id.isValid });
   const invalidRegion = cx({ "is-invalid": !region_id.isValid });
@@ -714,7 +725,11 @@ const EditProperty = ({dataProperty}) => {
                   {/*PRICE VILLA FOR RENT*/}
 
                   <Form.Group>
-                    <Form.Label>Youtube</Form.Label>
+                    <Form.Label>
+                      Youtube
+                      <i className="text-info ml-2">optional </i>
+                      <i className="far fa-map-marker-question hov_pointer text-primary ml-2" onClick={showInfoHandler}/>
+                    </Form.Label>
                     <Form.Control type="text"
                       placeholder="Youtube link"
                       name="youtube"
@@ -779,6 +794,10 @@ const EditProperty = ({dataProperty}) => {
           </Col>
         </Row>
       </Container>
+
+      {showInfo && (
+        <InfoModalMemo show={showInfo} close={showInfoHandler} />
+      )}
 
       <style jsx>{StyleProperty}</style>
     </>

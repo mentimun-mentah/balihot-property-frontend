@@ -130,6 +130,8 @@ const Property = () => {
     setIsMoreText(val);
   };
 
+  const stopPropagationHandler = useCallback(e => e.stopPropagation(),[]);
+
   const loveHandler = (id, slug) => {
     if (!isAuth()) {
       favLoginBtn();
@@ -479,7 +481,10 @@ const Property = () => {
               </span>
             </div>
             <div className="wrapper-btn-video">
-              <Button className="btn-video" onClick={showVideoHandler}>
+              <Button className="btn-video" 
+                onClick={youtube === null ? stopPropagationHandler : showVideoHandler} 
+                disabled={youtube === null}
+              >
                 <i className="far fa-video mr-1" />
                 Video
               </Button>
@@ -513,7 +518,8 @@ const Property = () => {
                   <div className="show-btn d-sm-none d-md-block d-lg-block ">
                     <Button
                       className="mr-2 video-btn d-inline"
-                      onClick={showVideoHandler}
+                      onClick={youtube === null ? stopPropagationHandler : showVideoHandler} 
+                      disabled={youtube === null}
                     >
                       <i className="far fa-video mr-1" />
                       Video
@@ -1039,6 +1045,12 @@ const Property = () => {
           border-color: rgb(34, 34, 34) !important;
           cursor: pointer;
           border-radius: 5px;
+        }
+        :global(.btn-video:disabled) {
+          opacity: 1;
+          cursor: default;
+          color: #d0d3d9 !important;
+          border-color: #d0d3d9 !important;
         }
         :global(.wrapper-btn-video) {
           margin: 0 auto;

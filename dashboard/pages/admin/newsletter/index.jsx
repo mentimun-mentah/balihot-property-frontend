@@ -16,7 +16,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import PreviewImage from "../../../components/PreviewImage";
-import axios, { headerCfgFormData } from "../../../lib/axios";
+import axios, { formHeaderHandler } from "../../../lib/axios";
 
 const PreviewImageMemo = React.memo(PreviewImage)
 const Editor = dynamic(import('../../../components/Editor'), { ssr: false })
@@ -36,21 +36,25 @@ const NewsLetter = () => {
     let promise = new Promise((resolve, reject) => {
       setLoading(true);
 
-      axios.post("/newsletter/create", formData, headerCfgFormData)
-        .then(() => { resolve(file); setLoading(false); })
-        .catch(err => {
-          if (err.response && err.response.data) {
-            const { image } = err.response.data;
-            if(image) {
-              message.error(image);
-              reject(file);
-              setLoading(false);
-            } else {
-              resolve(file);
-              setLoading(false);
-            }
-          }
-        });
+      axios.post("/newsletter/create", formData, formHeaderHandler())
+      .then(() => { resolve(file); setLoading(false); })
+      .catch(err => {
+        const { image } = err.response.data;
+        const status = err.response.status;
+        if((status == 401 || status == 422) && (file.size / 1024 / 1024 > 6)){
+          message.error("Image cannot grater than 6 Mb")
+          reject(file)
+          setLoading(false)
+        }
+        if(image) {
+          message.error(image);
+          reject(file);
+          setLoading(false);
+        } else {
+          resolve(file);
+          setLoading(false);
+        }
+      });
     });
     return promise;
   };
@@ -104,7 +108,7 @@ const NewsLetter = () => {
       formData.append('title', title.value)
       formData.append('description', description.value)
 
-      axios.post("/newsletter/create", formData, headerCfgFormData)
+      axios.post("/newsletter/create", formData, formHeaderHandler())
         .then(res => {
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setNews(formNews)
@@ -115,7 +119,6 @@ const NewsLetter = () => {
           const contentState = JSON.parse(JSON.stringify(content));
           if (err.response && err.response.data) {
             const { image, title, description } = err.response.data;
-            state.image.value = [];
             if(title) {
               state.title.isValid = false;
               state.title.message = title;

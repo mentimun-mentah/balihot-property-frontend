@@ -9,7 +9,7 @@ import { propertyFormIsValid, propertyImageIsValid } from '../../../lib/validate
 
 import * as actions from "../../../store/actions";
 import _ from 'lodash';
-import axios, {headerCfgFormData} from '../../../lib/axios';
+import axios, { formHeaderHandler } from '../../../lib/axios';
 import moment from 'moment';
 import cx from 'classnames';
 import swal from "sweetalert";
@@ -217,9 +217,11 @@ const Property = () => {
       formData.append('region_id', +region_id.value);
       formData.append('property_for', property_for.value.join(","))
       formData.append('land_size', +land_size.value);
-      formData.append('youtube', youtube.value);
       formData.append('description', description.value);
       formData.append('hotdeal', hotdeal.value);
+
+      // CHECK FOR YOUTUBE
+      if(!validator.isEmpty(youtube.value)) formData.append('youtube', youtube.value);
 
       // #PORPERTY FOR SALE
       if(validator.isIn("Sale", property_for.value) && type_id.value !== LAND_CHECK_ID){ // for any type except land
@@ -301,7 +303,7 @@ const Property = () => {
       formData.append('latitude', +latitude.value);
       formData.append('longitude', +longitude.value);
 
-      axios.post('/property/create', formData, headerCfgFormData)
+      axios.post('/property/create', formData, formHeaderHandler())
         .then(res => {
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setProperty(formProperty);
@@ -622,6 +624,7 @@ const Property = () => {
                   <Form.Group>
                     <Form.Label>
                       Youtube
+                      <i className="text-info ml-2">optional </i>
                       <i className="far fa-map-marker-question hov_pointer text-primary ml-2" onClick={showInfoHandler}/>
                     </Form.Label>
                     <Form.Control type="text"

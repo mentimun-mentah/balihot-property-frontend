@@ -4,8 +4,8 @@ import { Carousel } from "react-responsive-carousel";
 import { renderArrow } from "./CarouselButton";
 import Link from 'next/link'
 import Badge from "react-bootstrap/Badge";
+import formatNumber from "../../lib/formatNumber";
 
-const formatter = new Intl.NumberFormat(['ban', 'id'])
 const formPrice = { name: "", price: "", period: null }
 
 const CardMarker = ({ 
@@ -60,7 +60,7 @@ const CardMarker = ({
     land_total_price = data.price * land_size * currencyValue 
     return (
       <p className="fw-500 fs-14 text-dark mb-1" key={i}>
-      {currencySymbol} {formatter.format(data.price * currencyValue)} 
+      {currencySymbol} {formatNumber(data.price * currencyValue)} 
         <small className="fs-14">
           {" "}/ are
         </small>
@@ -72,7 +72,7 @@ const CardMarker = ({
     land_total_price = data.price * land_size * currencyValue
     return (
       <p className="fw-500 fs-14 text-dark mb-1" key={i}>
-        {currencySymbol} {formatter.format(data.price * currencyValue)}
+        {currencySymbol} {formatNumber(data.price * currencyValue)}
         <small className="fs-14">
           {" "}/ are / year
         </small>
@@ -81,7 +81,7 @@ const CardMarker = ({
   }
 
   if(type_id !== LAND_CHECK_ID){
-    price_list = <>{currencySymbol} {formatter.format(selected.price * currencyValue)}</>
+    price_list = <>{currencySymbol} {formatNumber(selected.price * currencyValue)}</>
 
     amenities = (
       <div className="text-dark">
@@ -146,7 +146,7 @@ const CardMarker = ({
           </div>
           {type_id === LAND_CHECK_ID && (
             <div className="bottom-left bottom-left-marker">
-              <h5>{currencySymbol} {formatter.format(land_total_price)}</h5>
+              <h5>{currencySymbol} {formatNumber(land_total_price)}</h5>
             </div>
           )}
           {type_id !== LAND_CHECK_ID && (

@@ -11,10 +11,9 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
+import formatNumber from "../../lib/formatNumber";
 
 import { Carousel } from "react-responsive-carousel";
-
-const formatter = new Intl.NumberFormat(['ban', 'id'])
 
 const CardContainer = ({
   id, type, slug, name, images, property_for, type_id, bedroom, bathroom, land_size, building_size, status,
@@ -56,7 +55,7 @@ const CardContainer = ({
     land_total_price = data.price * land_size
     return (
       <p className="fs-15 text-dark mb-0" key={i}>
-        USD {formatter.format(data.price)} 
+        USD {formatNumber(data.price)} 
         <small className="fs-14">
           {" "}/ are
         </small>
@@ -68,7 +67,7 @@ const CardContainer = ({
     land_total_price = data.price * land_size
     return (
       <p className="fs-15 text-dark mb-0" key={i}>
-        USD {formatter.format(data.price)}
+        USD {formatNumber(data.price)}
         <small className="fs-14">
           {" "}/ are / year
         </small>
@@ -85,7 +84,7 @@ const CardContainer = ({
   if(type_id !== LAND_CHECK_ID){
     price_list = (
       <p className="fs-15 text-dark mb-0">
-        USD {formatter.format(selected.price)} 
+        USD {formatNumber(selected.price)} 
       </p>
     )
     
@@ -158,7 +157,7 @@ const CardContainer = ({
             </div>
             {type_id === LAND_CHECK_ID && (
               <div className="bottom-left">
-                <h5>USD {formatter.format(land_total_price)}</h5>
+                <h5>USD {formatNumber(land_total_price)}</h5>
               </div>
             )}
             {type_id !== LAND_CHECK_ID && (
@@ -357,10 +356,10 @@ const CardContainer = ({
         }
 
         :global(.width-code){
-          max-width: 74%;
+          max-width: 70%;
         }
         :global(.width-additional-btn){
-          max-width: calc(100% - 74%);
+          max-width: calc(100% - 70%);
         }
 
         @media screen and (device-aspect-ratio: 40/71) {

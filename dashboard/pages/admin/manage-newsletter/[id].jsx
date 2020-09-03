@@ -17,7 +17,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import PreviewImage from "../../../components/PreviewImage";
-import axios, { headerCfgFormData } from "../../../lib/axios"
+import axios, { formHeaderHandler } from "../../../lib/axios"
 
 const PreviewImageMemo = React.memo(PreviewImage)
 const Editor = dynamic(import('../../../components/Editor'), { ssr: false })
@@ -36,22 +36,25 @@ const EditNewsLetter = ({ dataNewsletter }) => {
 
     let promise = new Promise((resolve, reject) => {
       setLoading(true);
-
-      axios.put(`/newsletter/crud/${dataNewsletter.id}`, formData, headerCfgFormData)
-        .then(() => { resolve(file); setLoading(false); })
-        .catch(err => {
-          if (err.response && err.response.data) {
-            const { image } = err.response.data;
-            if(image) {
-              message.error(image);
-              reject(file);
-              setLoading(false);
-            } else {
-              resolve(file);
-              setLoading(false);
-            }
-          }
-        });
+      axios.put(`/newsletter/crud/${dataNewsletter.id}`, formData, formHeaderHandler())
+      .then(() => { resolve(file); setLoading(false); })
+      .catch(err => {
+        const { image } = err.response.data;
+        const status = err.response.status;
+        if((status == 401 || status == 422) && (file.size / 1024 / 1024 > 6)){
+          message.error("Image cannot grater than 6 Mb")
+          reject(file)
+          setLoading(false)
+        }
+        if(image) {
+          message.error(image);
+          reject(file);
+          setLoading(false);
+        } else {
+          resolve(file);
+          setLoading(false);
+        }
+      });
     });
     return promise;
   };
@@ -107,7 +110,7 @@ const EditNewsLetter = ({ dataNewsletter }) => {
       formData.append('title', title.value)
       formData.append('description', description.value)
 
-      axios.put(`/newsletter/crud/${dataNewsletter.id}`, formData, headerCfgFormData)
+      axios.put(`/newsletter/crud/${dataNewsletter.id}`, formData, formHeaderHandler())
         .then(res => {
           Router.replace("/admin/manage-newsletter", "/admin/manage-newsletter")
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
@@ -119,7 +122,6 @@ const EditNewsLetter = ({ dataNewsletter }) => {
           const contentState = JSON.parse(JSON.stringify(content));
           if (err.response && err.response.data) {
             const { image, title, description } = err.response.data;
-            state.image.value = [];
             if(title) {
               state.title.isValid = false;
               state.title.message = title;

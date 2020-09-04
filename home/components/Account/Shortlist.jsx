@@ -89,7 +89,7 @@ const Shortlist = () => {
   
   return (
     <>
-      <Col md={9} lg={10} className="ml-sm-auto pl-0">
+      <Col md={12} lg={10} className="ml-sm-auto pl-0 p-r-0-s">
         <motion.div initial="initial" animate="in" exit="out" variants={Fade}>
           <Card className="border-0 mt-5 hov_none shadow-none mb-5">
             <Card.Header className="bg-transparent">

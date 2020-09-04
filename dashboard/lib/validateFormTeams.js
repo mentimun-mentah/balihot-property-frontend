@@ -1,11 +1,8 @@
 import validator from 'validator'
 import { message } from "antd";
 
-export const formIsValid = (team, setTeam) => {
-  const image = { ...team.image };
-  const name = { ...team.name };
-  const title = { ...team.title };
-  const phone = { ...team.phone };
+export const formImageIsValid = (imageList, setImageList) => {
+  const image = { ...imageList.image };
   let isGood = true;
 
   if (image.value.length < 1) {
@@ -15,6 +12,16 @@ export const formIsValid = (team, setTeam) => {
     message.error("Image cannot be empty!");
     isGood = false;
   }
+  if (!isGood) setImageList({ ...imageList, image});
+  return isGood;
+};
+
+export const formIsValid = (team, setTeam) => {
+  const name = { ...team.name };
+  const title = { ...team.title };
+  const phone = { ...team.phone };
+  let isGood = true;
+
   if (validator.isEmpty(name.value)) {
     name.isValid = false;
     name.message = "Name can't be empty";
@@ -50,6 +57,6 @@ export const formIsValid = (team, setTeam) => {
     phone.message = "Not valid number";
     isGood = false;
   }
-  if (!isGood) setTeam({ ...team, image, name, phone, title});
+  if (!isGood) setTeam({ ...team, name, phone, title});
   return isGood;
 };

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Upload, message } from "antd";
 import { useDispatch } from "react-redux";
-import { formRegion, formDescription } from "./regionData";
-import { formIsValid, formDescIsValid } from "../../lib/validateFormRegion";
+import { formImage, formRegion, formDescription } from "./regionData";
+import { formIsValid, formDescIsValid, formImageIsValid } from "../../lib/validateFormRegion";
 import { uploadButton, getBase64 } from "../../lib/imageUploader";
 
 import dynamic from 'next/dynamic'
@@ -26,6 +26,7 @@ const PreviewImageMemo = React.memo(PreviewImage)
 const AddRegion = () => {
   const dispatch = useDispatch();
   const [region, setRegion] = useState(formRegion);
+  const [imageList, setImageList] = useState(formImage);
   const [previewImage, setPreviewImage] = useState({ image: "", title: "" });
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -77,10 +78,11 @@ const AddRegion = () => {
 
   // Function for image changing
   const imageChangeHandler = ({ fileList: newFileList }) => {
-    setRegion({
-      ...region,
-      image: { value: newFileList, message: null, isValid: true }
-    });
+    const data = {
+      ...imageList,
+      image: {value: newFileList, isValid: true, message: null}
+    }
+    setImageList(data)
   };
 
   const inputChangeHandler = e => {
@@ -100,8 +102,11 @@ const AddRegion = () => {
 
   const submitHandler = e => {
     e.preventDefault();
-    if (formIsValid(region, setRegion) && formDescIsValid(content, setContent)) {
-      const {name, image} = region;
+    if (formIsValid(region, setRegion) && 
+        formDescIsValid(content, setContent) && 
+        formImageIsValid(imageList, setImageList)) {
+      const {image} = imageList;
+      const {name} = region;
       const {description} = content;
       const formData = new FormData();
       _.forEach(image.value, (file) => {
@@ -113,6 +118,7 @@ const AddRegion = () => {
       axios.post("/region/create", formData, formHeaderHandler())
         .then(res => {
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
+          setImageList(formImage);
           setRegion(formRegion);
           setContent(formDescription);
           dispatch(actions.getRegion())
@@ -122,15 +128,17 @@ const AddRegion = () => {
           const contentState = JSON.parse(JSON.stringify(content));
           if (err.response && err.response.data) {
             const { image, name, description } = err.response.data;
-            state.image.value = [];
+            if(image){
+              const data = {
+                ...imageList, 
+                image: {...imageList.image, isValid: false, message: null}
+              }
+              message.error(image);
+              setImageList(data)
+            }
             if(name) {
               state.name.isValid = false;
               state.name.message = name;
-            }
-            if(image) {
-              state.image.isValid = false;
-              state.image.value = [];
-              message.error(image);
             }
             if(description) {
               contentState.description.isValid = false;
@@ -143,7 +151,8 @@ const AddRegion = () => {
     }
   };
 
-  const { name, image } = region;
+  const { image } = imageList;
+  const { name } = region;
   const { description } = content;
   const invalidName = cx({ "is-invalid": !name.isValid });
 

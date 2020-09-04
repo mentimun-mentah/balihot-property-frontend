@@ -4,7 +4,7 @@ const Teams = ({ name, image, title, phone }) => {
   return (
     <>
       <Card className="hov_pointer shadow-none">
-        <Card.Img className="img-fit ag-image" variant="top" src={`${process.env.API_URL}/static/teams/${image}`} />
+        <Card.Img className="img-fit ag-image size-teams" variant="top" src={`${process.env.API_URL}/static/teams/${image}`} />
         <Card.Body>
           <Card.Title className="h5 fs-14-s text-dark text-decoration-none text-truncate">{name}</Card.Title>
           <Card.Subtitle className="mb-2 mt-1 text-secondary fs-12 text-truncate">
@@ -24,6 +24,10 @@ const Teams = ({ name, image, title, phone }) => {
         }
         .text-purple {
           color: #551a8b;
+        }
+        :global(.size-teams){
+          width: auto !important;
+          height: 250px !important;
         }
       `}</style>
     </>

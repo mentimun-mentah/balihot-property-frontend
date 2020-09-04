@@ -5,6 +5,7 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import * as actions from "../store/actions";
 import withReduxStore from "../lib/with-redux-store";
+import axios from "axios";
 
 import "antd/dist/antd.css";
 import "rc-slider/assets/index.css";
@@ -272,8 +273,22 @@ const App = ({ Component, pageProps, store }) => {
 };
 
 App.getInitialProps = async ({ Component, ctx }) => {
+  const text = {
+    discover: '',
+    newsletter: '',
+    need_to_do: { choose: '', find: '', move: '' },
+    contact_us: { location: '', email: '', phone: '' },
+    social_media: { facebook: '', twitter: '', instagram: '' }
+  }
+
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-  await ctx.store.dispatch(actions.authCheckState(ctx))
+  try{
+    await ctx.store.dispatch(actions.authCheckState(ctx))
+    const resText = await axios.get(process.env.TEXT_URL);
+    await ctx.store.dispatch(actions.getTextSuccess(resText.data)); 
+  } catch {
+    await ctx.store.dispatch(actions.getTextSuccess(text)); 
+  }
   return { pageProps };
 };
 

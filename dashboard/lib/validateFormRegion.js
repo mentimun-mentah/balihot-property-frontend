@@ -1,9 +1,23 @@
 import validator from 'validator'
 import { message } from "antd";
 
+export const formImageIsValid = (imageList, setImageList) => {
+  const image = { ...imageList.image };
+  let isGood = true;
+
+  if (image.value.length < 1) {
+    image.isValid = false;
+    image.message = "Image cannot be empty!";
+    message.config({ duration: 1.5, maxCount: 3 });
+    message.error("Image cannot be empty!");
+    isGood = false;
+  }
+  if (!isGood) setImageList({ ...imageList, image});
+  return isGood;
+};
+
 export const formIsValid = (region, setRegion) => {
   const name = { ...region.name };
-  const image = { ...region.image };
   let isGood = true;
 
   if (validator.isEmpty(name.value)) {
@@ -16,14 +30,7 @@ export const formIsValid = (region, setRegion) => {
     name.message = "Name must be between 3 and 100 characters";
     isGood = false;
   }
-  if (image.value.length < 1) {
-    image.isValid = false;
-    image.message = "Image cannot be empty!";
-    isGood = false;
-    message.config({ duration: 1.5, maxCount: 3 });
-    message.error("Image cannot be empty!");
-  }
-  if (!isGood) setRegion({ ...region, name, image });
+  if (!isGood) setRegion({ ...region, name });
   return isGood;
 };
 

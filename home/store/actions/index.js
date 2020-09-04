@@ -5,7 +5,11 @@ export {
   getUser,
   getUserSuccess,
   refreshToken,
-  refreshTokenSuccess
+  refreshTokenSuccess,
+  getText,
+  getTextSuccess,
+  getSubscribe,
+  getSubscribeSuccess,
 } from "./auth";
 
 export {

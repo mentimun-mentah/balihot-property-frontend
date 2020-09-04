@@ -1,3 +1,7 @@
+export const formImage = {
+  image: { value: [], isValid: true, message: null }
+};
+
 export const formTeam = {
   id: null,
   image: { value: [], isValid: true, message: null },

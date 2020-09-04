@@ -7,6 +7,11 @@ export const REFRESH_TOKEN = "REFRESH_TOKEN";
 export const GET_USER_START = "GET_USER_START";
 export const GET_USER = "GET_USER";
 export const GET_USER_FAIL = "GET_USER_FAIL";
+export const GET_SUBSCRIBE_START = "GET_SUBSCRIBE_START";
+export const GET_SUBSCRIBE = "GET_SUBSCRIBE";
+export const GET_SUBSCRIBE_FAIL = "GET_SUBSCRIBE_FAIL";
+
+export const GET_TEXT = "GET_TEXT";
 
 //REGION
 export const GET_REGION_START = 'GET_REGION_START'

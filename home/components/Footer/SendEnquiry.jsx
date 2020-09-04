@@ -104,6 +104,7 @@ const SendEnquiry = ({closed}) => {
                         name="name"
                         type="text"
                         placeholder="Name"
+                        value={name.value}
                         onChange={inputHandler}
                         className={`${nameInvalid} border-left-0 form-input-login pl-1`}
                       />
@@ -127,6 +128,7 @@ const SendEnquiry = ({closed}) => {
                         name="phone"
                         type="number"
                         placeholder="Phone Number"
+                        value={phone.value}
                         onChange={inputHandler}
                         className={`${phoneInvalid} border-left-0 form-input-login pl-1`}
                       />
@@ -151,6 +153,7 @@ const SendEnquiry = ({closed}) => {
                       name="sender_email"
                       type="email"
                       placeholder="Email"
+                      value={sender_email.value}
                       onChange={inputHandler}
                       className={`${emailInvalid} border-left-0 form-input-login pl-1`}
                     />
@@ -169,6 +172,7 @@ const SendEnquiry = ({closed}) => {
                     as="textarea" 
                     rows="3" 
                     placeholder="Write your message here" 
+                    value={description.value}
                     onChange={inputHandler}
                     className={descriptionInvalid}
                   />

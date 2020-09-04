@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Upload, message } from "antd";
 import { withAuth } from "../../../hoc/withAuth"
-import { formRegion, formDescription } from "../../../components/Region/regionData";
-import { formIsValid, formDescIsValid } from "../../../lib/validateFormRegion.js";
+import { formImage, formRegion, formDescription } from "../../../components/Region/regionData";
+import { formIsValid, formImageIsValid, formDescIsValid } from "../../../lib/validateFormRegion.js";
 import { uploadButton, getBase64 } from "../../../lib/imageUploader";
 
 import dynamic from 'next/dynamic'
@@ -25,6 +25,7 @@ const Editor = dynamic(import('../../../components/Editor'), { ssr: false })
 
 const EditRegion = ({ dataRegion }) => {
   const [region, setRegion] = useState(formRegion);
+  const [imageList, setImageList] = useState(formImage);
   const [content, setContent] = useState(formDescription)
   const [previewImage, setPreviewImage] = useState({ image: "", title: "" });
   const [loading, setLoading] = useState(false);
@@ -76,10 +77,11 @@ const EditRegion = ({ dataRegion }) => {
 
   // Function for image changing
   const imageChangeHandler = ({ fileList: newFileList }) => {
-    setRegion({
-      ...region,
-      image: { value: newFileList, message: null, isValid: true }
-    });
+    const data = {
+      ...imageList,
+      image: {value: newFileList, isValid: true, message: null}
+    }
+    setImageList(data)
   };
 
   const inputChangeHandler = e => {
@@ -99,8 +101,11 @@ const EditRegion = ({ dataRegion }) => {
 
   const submitHandler = e => {
     e.preventDefault();
-    if (formIsValid(region, setRegion) && formDescIsValid(content, setContent)) {
-      const {name, image} = region;
+    if (formIsValid(region, setRegion) && 
+        formDescIsValid(content, setContent) && 
+        formImageIsValid(imageList, setImageList)) {
+      const {image} = imageList;
+      const {name} = region;
       const {description} = content;
       const formData = new FormData();
       _.forEach(image.value, (file) => {
@@ -116,6 +121,7 @@ const EditRegion = ({ dataRegion }) => {
           Router.replace("/admin/manage-region", "/admin/manage-region")
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setRegion(formRegion);
+          setImageList(formImage);
           setContent(formDescription);
           dispatch(actions.getRegion())
         })
@@ -124,14 +130,17 @@ const EditRegion = ({ dataRegion }) => {
           const contentState = JSON.parse(JSON.stringify(content));
           if (err.response && err.response.data) {
             const { image, name, description } = err.response.data;
+            if(image){
+              const data = {
+                ...imageList, 
+                image: {...imageList.image, isValid: false, message: null}
+              }
+              message.error(image);
+              setImageList(data)
+            }
             if(name) {
               state.name.isValid = false;
               state.name.message = name;
-            }
-            if(image) {
-              state.image.isValid = false;
-              state.image.value = [];
-              message.error(image);
             }
             if(description) {
               contentState.description.isValid = false;
@@ -148,28 +157,32 @@ const EditRegion = ({ dataRegion }) => {
   useEffect(() => {
     if(dataRegion){
       const {id, image, name, description} = dataRegion;
-        const data = {
-          id: id,
-          image: { 
-            value: [{
-              uid: -Math.abs(id),
-              url: `${process.env.API_URL}/static/regions/${image}`
-            }], 
-            isValid: true, 
-            message: null 
-          },
-          name: { value: name, isValid: true, message: null }
-        }
-        const dataDesc = {
-          description: { value: description, isValid: true, message: null }
-        }
-        setRegion(data);
-        setContent(dataDesc);
+      const imageData = {
+        image: { 
+          value: [{
+            uid: -Math.abs(id),
+            url: `${process.env.API_URL}/static/regions/${image}`
+          }], 
+          isValid: true, 
+          message: null 
+        },
+      }
+      const data = {
+        id: id,
+        name: { value: name, isValid: true, message: null }
+      }
+      const dataDesc = {
+        description: { value: description, isValid: true, message: null }
+      }
+      setRegion(data);
+      setImageList(imageData);
+      setContent(dataDesc);
     }
   },[])
   //========= SET DATA FROM SERVER ==========//
 
-  const { name, image } = region;
+  const { image } = imageList;
+  const { name } = region;
   const { description } = content;
   const invalidName = cx({ "is-invalid": !name.isValid });
 

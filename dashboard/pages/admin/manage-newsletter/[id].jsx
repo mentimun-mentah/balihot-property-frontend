@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { withAuth } from "../../../hoc/withAuth"
 import { Upload, message } from "antd";
 import { uploadButton, getBase64 } from "../../../lib/imageUploader";
-import { formNews, formDescription } from "../../../components/Newsletter/newsData";
-import { formIsValid, formDescIsValid } from "../../../lib/validateFormNews.js";
+import { formNews, formImage, formDescription } from "../../../components/Newsletter/newsData";
+import { formIsValid, formDescIsValid, formImageIsValid } from "../../../lib/validateFormNews.js";
 
 import _ from "lodash";
 import cx from "classnames";
@@ -24,6 +24,7 @@ const Editor = dynamic(import('../../../components/Editor'), { ssr: false })
 
 const EditNewsLetter = ({ dataNewsletter }) => {
   const [news, setNews] = useState(formNews);
+  const [imageList, setImageList] = useState(formImage);
   const [content, setContent] = useState(formDescription);
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -72,13 +73,14 @@ const EditNewsLetter = ({ dataNewsletter }) => {
     setShowPreview(true);
     setPreviewImage(data);
   };
-  
+
   // Function for image changing
   const imageChangeHandler = ({ fileList: newFileList }) => {
-    setNews({
-      ...news,
-      image: { value: newFileList, message: null, isValid: true }
-    });
+    const data = {
+      ...imageList,
+      image: {value: newFileList, isValid: true, message: null}
+    }
+    setImageList(data)
   };
 
   const inputChangeHandler = e => {
@@ -98,8 +100,11 @@ const EditNewsLetter = ({ dataNewsletter }) => {
 
   const submitHandler = e => {
     e.preventDefault();
-    if(formIsValid(news, setNews) && formDescIsValid(content, setContent)){
-      const { image, title } = news;
+    if (formIsValid(news, setNews) && 
+        formDescIsValid(content, setContent) && 
+        formImageIsValid(imageList, setImageList)){
+      const { image } = imageList;
+      const { title } = news;
       const { description } = content;
       const formData = new FormData();
       _.forEach(image.value, (file) => {
@@ -107,7 +112,7 @@ const EditNewsLetter = ({ dataNewsletter }) => {
           formData.append('image', file.originFileObj)
         }
       })
-      formData.append('title', title.value)
+      formData.append('title', title.value.charAt(0).toUpperCase() + title.value.slice(1));
       formData.append('description', description.value)
 
       axios.put(`/newsletter/crud/${dataNewsletter.id}`, formData, formHeaderHandler())
@@ -115,6 +120,7 @@ const EditNewsLetter = ({ dataNewsletter }) => {
           Router.replace("/admin/manage-newsletter", "/admin/manage-newsletter")
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
           setNews(formNews)
+          setImageList(formImage)
           setContent(formDescription);
         }) 
         .catch(err => {
@@ -122,14 +128,17 @@ const EditNewsLetter = ({ dataNewsletter }) => {
           const contentState = JSON.parse(JSON.stringify(content));
           if (err.response && err.response.data) {
             const { image, title, description } = err.response.data;
+            if(image){
+              const data = {
+                ...imageList, 
+                image: {...imageList.image, isValid: false, message: null}
+              }
+              message.error(image);
+              setImageList(data)
+            }
             if(title) {
               state.title.isValid = false;
               state.title.message = title;
-            }
-            if(image) {
-              state.image.isValid = false;
-              state.image.value = [];
-              message.error(image);
             }
             if(description) {
               contentState.description.isValid = false;
@@ -146,28 +155,33 @@ const EditNewsLetter = ({ dataNewsletter }) => {
   useEffect(() => {
     if(dataNewsletter){
       const { id, slug, title, description, image } = dataNewsletter;
-        const data = {
-          id: id,
-          image: { 
-            value: [{
-              uid: -Math.abs(id),
-              url: `${process.env.API_URL}/static/newsletters/${slug}/${image}`
-            }], 
-            isValid: true, 
-            message: null 
-          },
-          title: { value: title, isValid: true, message: null }
-        }
-        const dataDesc = {
-          description: { value: description, isValid: true, message: null }
-        }
-        setNews(data);
-        setContent(dataDesc);
+
+      const imageData = {
+        image: { 
+          value: [{
+            uid: -Math.abs(id),
+            url: `${process.env.API_URL}/static/newsletters/${slug}/${image}`
+          }], 
+          isValid: true, 
+          message: null 
+        },
+      }
+      const data = {
+        id: id,
+        title: { value: title, isValid: true, message: null }
+      }
+      const dataDesc = {
+        description: { value: description, isValid: true, message: null }
+      }
+      setNews(data);
+      setImageList(imageData);
+      setContent(dataDesc);
     }
   },[])
   //========= SET DATA FROM SERVER ==========//
 
-  const { image, title } = news;
+  const { image } = imageList;
+  const { title } = news;
   const { description } = content;
   const invalidTitle = cx({ "is-invalid": !title.isValid });
 

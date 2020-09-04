@@ -17,6 +17,8 @@ import PropertyCard from "../../../components/Card/CardProperty"
 
 const PropertyCardMemo = React.memo(PropertyCard);
 
+let qPage = '?per_page=6'
+
 const ManageProperty = () => {
   const dispatch = useDispatch();
   const dataProperty = useSelector((state) => state.property.property);
@@ -54,7 +56,7 @@ const ManageProperty = () => {
         axios
           .delete(`/property/crud/${id}`, jsonHeaderHandler() )
           .then((res) => {
-            dispatch(actions.getProperty(''))
+            dispatch(actions.getProperty(qPage))
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
           })
           .catch((err) => {
@@ -70,7 +72,6 @@ const ManageProperty = () => {
       }
     })
   }
-
 
   //====== PAGINATION ======//
   const pageHandler = (event) => {

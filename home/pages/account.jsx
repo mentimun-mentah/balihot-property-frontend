@@ -20,6 +20,8 @@ Account.getInitialProps = async ctx => {
       ctx.store.dispatch(actions.getUserSuccess(resUser.data));
       const resWishlist = await axios.get('/wishlist/user', headerCfg);
       ctx.store.dispatch(actions.getWishlistSuccess(resWishlist.data));
+      const resSubscribe = await axios.get('/subscribe/user', headerCfg);
+      ctx.store.dispatch(actions.getSubscribeSuccess(resSubscribe.data));
     }
     catch {}
   }

@@ -1,3 +1,7 @@
+export const formImage = {
+  image: { value: [], isValid: true, message: null }
+};
+
 export const formRegion = {
   id: null,
   image: {value:[], isValid: true, message: null},

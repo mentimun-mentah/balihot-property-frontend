@@ -15,6 +15,7 @@ module.exports = {
     BASE_URL: process.env.BASE_URL,
     DASHBOARD_URL: process.env.DASHBOARD_URL,
     BACKEND_URL: process.env.BACKEND_URL,
+    TEXT_URL: process.env.TEXT_URL,
     DOMAIN: process.env.DOMAIN,
     SECRET_KEY: process.env.SECRET_KEY,
   },

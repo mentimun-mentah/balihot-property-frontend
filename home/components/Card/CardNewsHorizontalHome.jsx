@@ -49,7 +49,7 @@ const CardNewsHorizontalHome = ({ order, slug, title, thumbnail, description, cr
           <img 
             src={`${process.env.API_URL}/static/newsletters/${slug}/${thumbnail}`} 
             className="card-img img-fit rounded-0" 
-            width="100%" height="100%"
+            width="100%" height="245px"
             alt={title}
           />
         </Col>

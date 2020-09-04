@@ -273,10 +273,22 @@ const App = ({ Component, pageProps, store }) => {
 };
 
 App.getInitialProps = async ({ Component, ctx }) => {
+  const text = {
+    discover: '',
+    newsletter: '',
+    need_to_do: { choose: '', find: '', move: '' },
+    contact_us: { location: '', email: '', phone: '' },
+    social_media: { facebook: '', twitter: '', instagram: '' }
+  }
+
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-  await ctx.store.dispatch(actions.authCheckState(ctx))
-  const resText = await axios.get(process.env.TEXT_URL);
-  await ctx.store.dispatch(actions.getTextSuccess(resText.data)); 
+  try{
+    await ctx.store.dispatch(actions.authCheckState(ctx))
+    const resText = await axios.get(process.env.TEXT_URL);
+    await ctx.store.dispatch(actions.getTextSuccess(resText.data)); 
+  } catch {
+    await ctx.store.dispatch(actions.getTextSuccess(text)); 
+  }
   return { pageProps };
 };
 

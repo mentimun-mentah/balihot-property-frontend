@@ -4,6 +4,14 @@ import Router from "next/router";
 import axios, { cookieOptions } from "../../lib/axios";
 import Axios from 'axios';
 
+const text = {
+  discover: '',
+  newsletter: '',
+  need_to_do: { choose: '', find: '', move: '' },
+  contact_us: { location: '', email: '', phone: '' },
+  social_media: { facebook: '', twitter: '', instagram: '' }
+}
+
 /*** AUTH ***/
 export const authStart = () => {
   return { type: actionType.AUTH_START };
@@ -39,15 +47,42 @@ export const getUserFail = (error) => {
     error: error,
   };
 };
+
 /*** REFRESH_TOKEN ***/
 export const refreshTokenSuccess = (access_token) => {
   return { type: actionType.REFRESH_TOKEN, access_token: access_token };
 };
 
+/*** GET_SUBSCRIBE_USER ***/
+export const getSubscribeStart = () => {
+  return { type: actionType.GET_SUBSCRIBE_START }
+}
+export const getSubscribeSuccess = (subscribe) => {
+  return { type: actionType.GET_SUBSCRIBE, subscribe: subscribe }
+}
+export const getSubscribeFail = (error) => {
+  return { type: actionType.GET_SUBSCRIBE_FAIL, error: error }
+}
+
 /*** GET_DESCRIPTION ***/
 export const getTextSuccess = text => {
   return { type: actionType.GET_TEXT, text: text};
 };
+
+export const getSubscribe = (ctx) => {
+  return dispatch => {
+    dispatch(getSubscribeStart())
+    const { access_token } = cookies.get(ctx);
+    const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+    axios.get('/subscribe/user', headerCfg)
+    .then(res => {
+      dispatch(getSubscribeSuccess(res.data))
+    })
+    .catch(err => {
+      dispatch(getSubscribeFail(err.response))
+    })
+  }
+}
 
 export const authCheckState = (ctx) => {
   return (dispatch) => {
@@ -192,6 +227,9 @@ export const getText = () => {
     Axios.get(process.env.TEXT_URL)
       .then(res => {
         dispatch(getTextSuccess(res.data))
+      })
+      .catch(() => {
+        dispatch(getTextSuccess(text))
       })
   }
 }

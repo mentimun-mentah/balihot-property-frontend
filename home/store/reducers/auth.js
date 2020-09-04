@@ -10,6 +10,7 @@ const initialState = {
   loading: false,
   modal: true,
   text: null, 
+  subscribe: null,
 };
 
 const authStart = (state, action) => {
@@ -54,6 +55,21 @@ const getUserFail = (state, action) => {
     error: action.error,
   });
 };
+
+const getSubscribeStart = (state, action) => {
+  return updateObject(state, { error: null })
+}
+const getSubscribeSuccess = (state, action) => {
+  return updateObject(state, {
+    subscribe: action.subscribe,
+  })
+}
+const getSubscribeFail = (state, action) => {
+  return updateObject(state, {
+    error: action.error,
+  })
+}
+
 const refreshTokenSuccess = (state, action) => {
   return updateObject(state, { access_token: action.access_token });
 };
@@ -77,6 +93,12 @@ const reducer = (state = initialState, action) => {
       return getUserSuccess(state, action);
     case actionType.GET_USER_FAIL:
       return getUserFail(state, action);
+    case actionType.GET_SUBSCRIBE_START:
+      return getSubscribeStart(state, action);
+    case actionType.GET_SUBSCRIBE:
+      return getSubscribeSuccess(state, action);
+    case actionType.GET_SUBSCRIBE_FAIL:
+      return getSubscribeFail(state, action);
     case actionType.REFRESH_TOKEN:
       return refreshTokenSuccess(state, action);
     case actionType.GET_TEXT:

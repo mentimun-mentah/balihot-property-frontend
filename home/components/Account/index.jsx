@@ -1,21 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Container, Row, Col, Card, Nav } from "react-bootstrap";
 import { AnimatePresence } from "framer-motion";
+import { useRouter } from 'next/router';
 import MyAccount from "./Account";
 import Shortlist from "./Shortlist";
+import Notification from "./Notification";
+
+const ACCOUNT = 'account';
+const SHORTLIST = 'shortlist';
+const NOTIFICATION = 'notification';
 
 const Account = () => {
+  const router = useRouter();
   const userData = useSelector(state => state.auth.data);
-  const [select, setSelect] = useState("account");
+  const [select, setSelect] = useState(ACCOUNT);
   const selectHandler = e => { setSelect(e); }
+
+  useEffect(() => {
+    for(let key in router.query){
+      if(key === "unsubscribe" && router.query[key] ==="email"){
+        setSelect(NOTIFICATION)
+        router.replace(router.pathname)
+      }
+    }
+  },[])
+
   return (
     <>
       <Container className="mt-4k2rem bg-light" fluid>
         <Container fluid>
           <Row>
             <Nav
-              defaultActiveKey={select}
+              activeKey={select}
               className="flex-column col-md-2 d-none d-lg-block sidebar pl-2"
               onSelect={selectHandler}
             >
@@ -37,23 +54,29 @@ const Account = () => {
                     </Card.Body>
                   </Col>
                 </Row>
-                <Nav.Link eventKey="account" className="p-l-0-pro p-r-0-pro">
+                <Nav.Link eventKey={ACCOUNT} className="p-l-0-pro p-r-0-pro">
                   <span>
                     <i className="far fa-user-circle mr-2" />
                     My Account
                   </span>
                 </Nav.Link>
-                <Nav.Link eventKey="shortlist" className="p-l-0-pro p-r-0-pro">
+                <Nav.Link eventKey={SHORTLIST} className="p-l-0-pro p-r-0-pro">
                   <span>
                     <i className="far fa-heart mr-2" />
                     Shortlist
+                  </span>
+                </Nav.Link>
+                <Nav.Link eventKey={NOTIFICATION} className="p-l-0-pro p-r-0-pro">
+                  <span>
+                    <i className="far fa-bell mr-2" />
+                    Notification
                   </span>
                 </Nav.Link>
               </div>
             </Nav>
 
             <Row 
-              className="fixed-bottom pt-2 pb-2 pl-4 pr-4 bg-white shadow-menu border-top d-lg-none justify-content-center"
+            className="fixed-bottom pt-2 pb-2 pl-4 pr-4 bg-white shadow-menu border-top d-lg-none justify-content-center"
               >
               <Nav
                 variant="pills"
@@ -69,25 +92,33 @@ const Account = () => {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item className="fs-12 nav-mobile">
-                  <Nav.Link eventKey="account">
+                  <Nav.Link eventKey={ACCOUNT}>
                     <i className="far fa-user-circle fa-2x" />
                     <br />
                     My Account
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item className="fs-12 nav-mobile">
-                  <Nav.Link eventKey="shortlist">
+                  <Nav.Link eventKey={SHORTLIST}>
                     <i className="far fa-heart fa-2x" />
                     <br />
                     Shortlist
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item className="fs-12 nav-mobile">
+                  <Nav.Link eventKey={NOTIFICATION}>
+                    <i className="far fa-bell fa-2x" />
+                    <br />
+                    Notification
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
             </Row>
 
             <AnimatePresence exitBeforeEnter key={select}>
-              {select === "account" && <MyAccount />}
-              {select === "shortlist" && <Shortlist />}
+              {select === ACCOUNT && <MyAccount />}
+              {select === SHORTLIST && <Shortlist />}
+              {select === NOTIFICATION && <Notification />}
             </AnimatePresence>
           </Row>
         </Container>

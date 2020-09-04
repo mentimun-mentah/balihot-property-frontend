@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { parseCookies, destroyCookie } from "nookies";
 import swal from "sweetalert";
+import Router from "next/router";
 import axios from "../lib/axios";
 import * as actions from "../store/actions";
 import HomeContainer from "../components/Home";
 
-const Home = ({ username, fresh }) => {
+const loginBtn = () => document.getElementById("btn-login-navbar").click();
+
+const Home = ({ username, fresh, query }) => {
   useEffect(() => {
     if ((fresh && username !== undefined) || (username !== undefined)) {
       if(username !== "undefined" && fresh){
@@ -18,10 +21,36 @@ const Home = ({ username, fresh }) => {
     }
   }, [swal, destroyCookie]);
 
+  useEffect(() => {
+    var span = document.createElement("div");
+    span.innerHTML = "<span>Login with the same email to be able to turn off email notifications</span>";
+    span.className = "fs-12 text-secondary"
+
+    const cookies = parseCookies()                                                          
+    const { access_token, refresh_token } = cookies;
+    for(let key in query){
+      if(key === "unsubscribe" && query[key] ==="email"){
+        if(access_token && refresh_token){
+          Router.replace('/account?unsubscribe=email')
+        } else {
+          swal({
+            icon: "info", 
+            title: `You need to login first`, 
+            content: span,
+          }).then(() => {
+            Router.replace(Router.pathname)
+            loginBtn()
+          });
+        }
+      }
+    }
+  },[])
+
   return <HomeContainer />;
 };
 
 Home.getInitialProps = async (ctx) => {
+  const query = ctx.query;
   const { username, fresh, access_token, refresh_token } = parseCookies(ctx);
   const resRegion = await axios.get('/regions?listing=true');
   ctx.store.dispatch(actions.getRegionSuccess(resRegion.data)); 
@@ -55,7 +84,7 @@ Home.getInitialProps = async (ctx) => {
     ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
   }
 
-  return { username, fresh };
+  return { username, fresh, query };
 };
 
 export default Home;

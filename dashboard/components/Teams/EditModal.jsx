@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Upload } from "antd";
 import { useDispatch } from "react-redux";
 import { uploadButton } from "../../lib/imageUploader";
-import { formIsValid } from "../../lib/validateFormTeams";
+import { formIsValid, formImageIsValid } from "../../lib/validateFormTeams";
 
 import * as actions from "../../store/actions";
 import axios, { formHeaderHandler } from '../../lib/axios'
@@ -15,10 +15,12 @@ import InputGroup from "react-bootstrap/InputGroup";
 const EditModal = props => {
   const dispatch = useDispatch();
   const [team, setTeam] = useState(props.currentTeam);
+  const [imageList, setImageList] = useState(props.imageList);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setTeam(props.currentTeam);
+    setImageList(props.imageList);
   },[props])
 
   // Function for validating image to the backend
@@ -33,7 +35,6 @@ const EditModal = props => {
       .then(() => { resolve(file); setLoading(false); })
       .catch(err => {
         setLoading(false)
-        const state = JSON.parse(JSON.stringify(team));
         const status = err.response.status;
         if((status == 401 || status == 422) && (file.size / 1024 / 1024 > 4)){
           message.error("Image cannot grater than 4 Mb")
@@ -42,19 +43,12 @@ const EditModal = props => {
         }
         if (err.response && err.response.data) {
           const { image } = err.response.data;
-          for (let key in err.response.data) {
-            if (state[key]) {
-              state[key].value = state[key].value;
-              state[key].isValid = false;
-              state[key].message = err.response.data[key];
-            }
-          }
           if(image) {
             const data = {
-              ...team, 
+              ...imageList, 
               image: {value: [], isValid: false, message: image}
             }
-            setTeam(data); reject(file); setLoading(false);
+            setImageList(data); reject(file); setLoading(false);
           } else {
             resolve(file); setLoading(false);
           }
@@ -73,18 +67,20 @@ const EditModal = props => {
     setTeam(data);
   };
 
+  // Function for image changing
   const imageChangeHandler = ({ fileList: newFileList }) => {
     const data = {
-      ...team,
+      ...imageList,
       image: {value: newFileList, isValid: true, message: null}
     }
-    setTeam(data)
+    setImageList(data)
   };
 
   const submitHandler = e => {
     e.preventDefault()
-    if(formIsValid(team, setTeam)){
-      const { image, name, phone, title } = team;
+    if(formIsValid(team, setTeam) && formImageIsValid(imageList, setImageList)){
+      const { image } = imageList;
+      const { name, phone, title } = team;
       const formData = new FormData();
       _.forEach(image.value, (file) => {
         if(!file.hasOwnProperty('url')){
@@ -103,14 +99,16 @@ const EditModal = props => {
           const state = JSON.parse(JSON.stringify(team));
           if (err.response && err.response.data) {
             const { image, name, phone, title } = err.response.data;
+            if(image){
+              const data = {
+                ...imageList, 
+                image: {...imageList.image, isValid: false, message: image}
+              }
+              setImageList(data)
+            }
             if(name){
               state.name.isValid = false;
               state.name.message = name;
-            }
-            if(image){
-              state.image.isValid = false;
-              state.image.message = image;
-              state.image.value = [];
             }
             if(phone){
               state.phone.isValid = false;
@@ -126,7 +124,8 @@ const EditModal = props => {
     }
   }
 
-  const { image, name, phone, title } = team;
+  const { image } = imageList;
+  const { name, phone, title } = team;
   const invalidImage = cx({ "invalid-upload": !image.isValid });
   const invalidName = cx({ "is-invalid": !name.isValid });
   const invalidPhone = cx({ "is-invalid": !phone.isValid });

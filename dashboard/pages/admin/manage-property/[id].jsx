@@ -308,7 +308,7 @@ const EditProperty = ({dataProperty}) => {
           formData.append('images', file.originFileObj)
         }
       })
-      formData.append('name', name.value);
+      formData.append('name', name.value.charAt(0).toUpperCase() + name.value.slice(1));
       formData.append('type_id', +type_id.value);
       formData.append('region_id', +region_id.value);
       formData.append('property_for', property_for.value.join(","))
@@ -394,7 +394,7 @@ const EditProperty = ({dataProperty}) => {
       if(type_id.value === LAND_CHECK_ID && validator.isEmpty(building_size.value)) formData.append('building_size', 1);
       if(building_size.value) formData.append('building_size', +building_size.value);
 
-      formData.append('location', location.value);
+      formData.append('location', location.value.charAt(0).toUpperCase() + location.value.slice(1));
       formData.append('latitude', +latitude.value);
       formData.append('longitude', +longitude.value);
 

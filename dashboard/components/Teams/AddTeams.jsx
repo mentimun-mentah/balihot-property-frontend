@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Upload, message } from "antd";
-import { formTeam } from "./formTeams";
-import { formIsValid } from "../../lib/validateFormTeams";
+import { formImage, formTeam } from "./formTeams";
+import { formIsValid, formImageIsValid } from "../../lib/validateFormTeams";
 import { uploadButton, getBase64 } from "../../lib/imageUploader";
 
 import axios, { formHeaderHandler } from "../../lib/axios"
@@ -24,6 +24,7 @@ const PreviewImageMemo = React.memo(PreviewImage);
 const AddTeams = () => {
   const dispatch = useDispatch();
   const [team, setTeam] = useState(formTeam);
+  const [imageList, setImageList] = useState(formImage);
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewImage, setPreviewImage] = useState({ image: "", title: "" });
@@ -74,10 +75,11 @@ const AddTeams = () => {
 
   // Function for image changing
   const imageChangeHandler = ({ fileList: newFileList }) => {
-    setTeam({
-      ...team,
-      image: { value: newFileList, message: null, isValid: true }
-    });
+    const data = {
+      ...imageList,
+      image: {value: newFileList, isValid: true, message: null}
+    }
+    setImageList(data)
   };
 
   const inputChangeHandler = e => {
@@ -92,8 +94,9 @@ const AddTeams = () => {
   // Function for submitting value
   const submitHandler = e => {
     e.preventDefault();
-    if(formIsValid(team, setTeam)){
-      const {image, name, title, phone} = team
+    if(formIsValid(team, setTeam) && formImageIsValid(imageList, setImageList)){
+      const {image} = imageList 
+      const {name, title, phone} = team
       const formData = new FormData();
       _.forEach(image.value, (file) => {
         formData.append('image', file.originFileObj)
@@ -105,6 +108,7 @@ const AddTeams = () => {
       axios.post("/team/create", formData, formHeaderHandler())
         .then(res => {
           swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000 });
+          setImageList(formImage);
           setTeam(formTeam);
           dispatch(actions.getTeam())
         })
@@ -113,9 +117,12 @@ const AddTeams = () => {
           if(err.response && err.response.data) {
             const { image, name, title, phone } = err.response.data;
             if(image){
-              state.image.isValid = false;
-              state.image.value = [];
+              const data = {
+                ...imageList, 
+                image: {...imageList.image, isValid: false, message: null}
+              }
               message.error(image);
+              setImageList(data)
             }
             if(name){
               state.name.isValid = false;
@@ -135,7 +142,8 @@ const AddTeams = () => {
     }
   };
 
-  const { image, name, phone, title } = team;
+  const { image } = imageList;
+  const { name, phone, title } = team;
   const invalidName = cx({ "is-invalid": !name.isValid });
   const invalidPhone = cx({ "is-invalid": !phone.isValid });
   const invalidTitle = cx({ "is-invalid": !title.isValid });

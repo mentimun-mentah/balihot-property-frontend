@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { withAuth } from "../../../hoc/withAuth"
 import { useDispatch, useSelector } from "react-redux";
-import { formTeam } from "../../../components/Teams/formTeams";
+import { formTeam, formImage } from "../../../components/Teams/formTeams";
 import { Container, Row, Col } from "react-bootstrap";
 
 import swal from "sweetalert";
@@ -18,14 +18,14 @@ const Teams = () => {
   const dispatch = useDispatch();
   const [showEdit, setShowEdit] = useState(false);
   const [currentTeam, setCurrentTeam] = useState(formTeam);
+  const [imageList, setImageList] = useState(formImage);
   const dataTeam = useSelector((state) => state.team.team);
 
   const editTeamHandler = id => {
     axios.get(`/team/crud/${id}`, jsonHeaderHandler())
       .then(res => {
         const {id, image, name, title, phone} = res.data;
-        const data = {
-          id: id,
+        const imageData = {
           image: { 
             value: [{
               uid: -Math.abs(id),
@@ -34,10 +34,14 @@ const Teams = () => {
             isValid: true, 
             message: null 
           },
+        }
+        const data = {
+          id: id,
           name: { value: name, isValid: true, message: null },
           title: { value: title, isValid: true, message: null },
           phone: { value: phone, isValid: true, message: null },
         }
+        setImageList(imageData)
         setCurrentTeam(data)
         setShowEdit(true);
       })
@@ -106,6 +110,7 @@ const Teams = () => {
           show={showEdit}
           close={() => setShowEdit(false)}
           currentTeam={currentTeam}
+          imageList={imageList}
         />
       )}
 

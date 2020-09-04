@@ -16,6 +16,8 @@ import CardEmpty from '../../../components/Card/CardEmpty';
 import CardNews from "../../../components/Card/CardNews";
 const CardNewsMemo = React.memo(CardNews);
 
+let qPage = '?per_page=8'
+
 const ManageNews = () => {
   const dispatch = useDispatch();
   const dataNewsletter = useSelector(state => state.newsletter.newsletter);
@@ -56,7 +58,7 @@ const ManageNews = () => {
         axios
           .delete(`/newsletter/crud/${id}`, jsonHeaderHandler())
           .then((res) => {
-            dispatch(actions.getNewsletter(''))
+            dispatch(actions.getNewsletter(qPage))
             swal({ title: "Success", text: res.data.message, icon: "success", timer: 3000, });
           })
           .catch((err) => {

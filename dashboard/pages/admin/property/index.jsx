@@ -212,7 +212,7 @@ const Property = () => {
       imageList.image.value.forEach(file => {
         formData.append('images', file.originFileObj)
       })
-      formData.append('name', name.value);
+      formData.append('name', name.value.charAt(0).toUpperCase() + name.value.slice(1));
       formData.append('type_id', +type_id.value);
       formData.append('region_id', +region_id.value);
       formData.append('property_for', property_for.value.join(","))
@@ -235,7 +235,6 @@ const Property = () => {
          status.value.length < 1){
         formData.append('status', "Free Hold");
       }
-      //if(property_for.value.length < 1 && status.value.length < 1) formData.append('status', "Free Hold");
 
       if(freehold_price.value) formData.append('freehold_price', +freehold_price.value);
       if(validator.isEmpty(freehold_price.value === null ? "" : freehold_price.value.toString()) && 
@@ -299,7 +298,7 @@ const Property = () => {
       if(validator.isEmpty(building_size.value) && type_id.value === LAND_CHECK_ID) formData.append('building_size', 1);
       if(building_size.value) formData.append('building_size', +building_size.value);
 
-      formData.append('location', location.value);
+      formData.append('location', location.value.charAt(0).toUpperCase() + location.value.slice(1));
       formData.append('latitude', +latitude.value);
       formData.append('longitude', +longitude.value);
 

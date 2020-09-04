@@ -5,6 +5,7 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import * as actions from "../store/actions";
 import withReduxStore from "../lib/with-redux-store";
+import axios from "axios";
 
 import "antd/dist/antd.css";
 import "rc-slider/assets/index.css";
@@ -274,6 +275,8 @@ const App = ({ Component, pageProps, store }) => {
 App.getInitialProps = async ({ Component, ctx }) => {
   const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
   await ctx.store.dispatch(actions.authCheckState(ctx))
+  const resText = await axios.get(process.env.TEXT_URL);
+  await ctx.store.dispatch(actions.getTextSuccess(resText.data)); 
   return { pageProps };
 };
 

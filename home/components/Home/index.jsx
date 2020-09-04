@@ -26,6 +26,7 @@ const Home = () => {
   const property = useSelector(state => state.property.property)
   const newsletters = useSelector(state => state.newsletter.newsletter);
   const dataType = useSelector(state => state.types.types);
+  const text = useSelector(state => state.auth.text);
 
   let VILLA_CHECK_ID = null;
   let LAND_CHECK_ID = null;
@@ -62,9 +63,9 @@ const Home = () => {
   const newsContent = (
     <>
       <h3 className="text-white fs-24-s">Our Newsletter</h3>
-      <p className="text-white mt-5 text-justify p-l-10-s p-r-10-s">
-      As a Realtor, our first priority is to make our clients happy. we listen to our clients wants and needs to achieve the best outcome in every transaction and we strive to ensure that the home buying or selling process is fun, easy and stress-free. our clients can count on us any time of day when they have a question or concern.
-      </p>
+      {text && text.newsletter && (
+        <p className="text-white mt-5 text-justify p-l-10-s p-r-10-s">{text.newsletter}</p>
+      )}
       <Link href="/news" as="/news">
         <Button variant="outline-light" className="text-center rounded-0">Read More</Button>
       </Link>
@@ -192,28 +193,9 @@ const Home = () => {
         <Container>
           <div className="discover-text">
             <h3 className="fs-24-s">Discover a property where love to stay</h3>
-            <p className="fs-14-s">
-              Bali Hot Property network provides access to finest quality luxury
-              real estate and businesses for sale to buyers around the globe. We
-              help you with the process of finding, renting, or buying property
-              and businesses in Bali, whether a buyer, a seller, or an investor,
-              we think of our clients as family. Bali Hot Property has all types
-              of luxury villas, land and businesses available, from modern
-              beachfront villas with infinite pools seamlessly stretching
-              straight to the ocean to hillside villas with sprawling terraces
-              of green paddies right before the doorstep. Lean on us—we are here
-              to keep the process fluid, successful, and as low-stress as
-              possible. Not quite ready to buy or sell, but curious about
-              neighbourhood options, local schools, our techniques, or current
-              real estate “buzz”? Don’t be shy—reach out to us{" "}
-              <Link href="/#contact-us" as="/#contact-us">
-                <a className="text-reset">contact us</a>
-              </Link>
-              . Think of Bali Hot Property as your Bali Concierge. If we don’t
-              know the answer, we will find it. We are a One Stop Shop for
-              individuals, families and companies that have an interest in the
-              Island of the Gods.
-            </p>
+            {text && text.discover && (
+              <p className="fs-14-s">{text.discover}</p>
+            )}
           </div>
         </Container>
       </section>

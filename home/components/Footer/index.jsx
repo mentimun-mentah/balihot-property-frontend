@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useSelector } from "react-redux"
 import { Container, Row, Col, Modal, Button, InputGroup, FormControl, Form, Card } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { BackdropModal } from "../Transition";
@@ -17,6 +18,7 @@ const formSubscribe = {
 const Footer = () => {
   const [modalShow, setModalShow] = useState(false);
   const [subscribe, setSubscribe] = useState(formSubscribe)
+  const text = useSelector(state => state.auth.text);
 
   const showModalHandler = () => {
     setModalShow(true);
@@ -108,15 +110,19 @@ const Footer = () => {
             <Col sm={12} md={5} className="pl-ft-50 pl-md-2 pl-xl-5 pr-md-2">
               <h6>Contact Us</h6>
               <ul className="footer-links mt-3 fs-14-s">
-                <li className="mb-2">
-                  <i className="fal fa-map-marker-alt mr-2"></i> Jalan Raya Kerobokan 70 Kuta Utara, Kabupaten Badung, Bali, Indonesia
-                </li>
-                <li className="mb-2">
-                  <i className="fal fa-envelope mr-2"></i> balihotproperties@gmail.com
-                </li>
-                <li className="mb-2">
-                  <i className="fal fa-phone mr-2"></i> +62 822-3663-8529
-                </li>
+                {text && text.contact_us && (
+                  <>
+                  <li className="mb-2">
+                    <i className="fal fa-map-marker-alt mr-2" /> {text.contact_us.location}
+                  </li>
+                  <li className="mb-2">
+                    <i className="fal fa-envelope mr-2" /> {text.contact_us.email}
+                  </li>
+                  <li className="mb-2">
+                    <i className="fal fa-phone mr-2" /> +62 {text.contact_us.phone}
+                  </li>
+                  </>
+                )}
                 <li id="send-enquiry-btn" className="mt-2 mb-2 w-fit-content" onClick={showModalHandler}>
                   <Button className="rounded-0 btn-outline-enquiry">
                   <i className="fal fa-envelope-open-text mr-2"></i>
@@ -152,23 +158,25 @@ const Footer = () => {
               </p>
             </Col>
             <Col xs={12} sm={6} md={4}>
+              {text && text.social_media && (
               <ul className="social-icons">
                 <li>
-                  <a href="https://www.facebook.com/" target="_blank">
+                  <a href={text.social_media.facebook} target="_blank">
                     <i className="fab fa-facebook-f"></i>
                   </a>
                 </li>
                 <li>
-                  <a href="https://twitter.com/" target="_blank">
+                  <a href={text.social_media.twitter} target="_blank">
                     <i className="fab fa-twitter"></i>
                   </a>
                 </li>
                 <li>
-                  <a href="https://www.instagram.com/" target="_blank">
+                  <a href={text.social_media.instagram} target="_blank">
                     <i className="fab fa-instagram"></i>
                   </a>
                 </li>
               </ul>
+              )}
             </Col>
           </Row>
         </Container>

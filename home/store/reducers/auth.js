@@ -9,6 +9,7 @@ const initialState = {
   message: null,
   loading: false,
   modal: true,
+  text: null, 
 };
 
 const authStart = (state, action) => {
@@ -56,6 +57,9 @@ const getUserFail = (state, action) => {
 const refreshTokenSuccess = (state, action) => {
   return updateObject(state, { access_token: action.access_token });
 };
+const getTextSuccess = (state, action) => {
+  return updateObject(state, { text: action.text })
+}
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -75,6 +79,8 @@ const reducer = (state = initialState, action) => {
       return getUserFail(state, action);
     case actionType.REFRESH_TOKEN:
       return refreshTokenSuccess(state, action);
+    case actionType.GET_TEXT:
+      return getTextSuccess(state, action)
     default:
       return state;
   }

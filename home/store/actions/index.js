@@ -5,7 +5,9 @@ export {
   getUser,
   getUserSuccess,
   refreshToken,
-  refreshTokenSuccess
+  refreshTokenSuccess,
+  getText,
+  getTextSuccess
 } from "./auth";
 
 export {

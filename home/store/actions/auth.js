@@ -2,6 +2,7 @@ import * as actionType from "./actionTypes";
 import cookies from "nookies";
 import Router from "next/router";
 import axios, { cookieOptions } from "../../lib/axios";
+import Axios from 'axios';
 
 /*** AUTH ***/
 export const authStart = () => {
@@ -41,6 +42,11 @@ export const getUserFail = (error) => {
 /*** REFRESH_TOKEN ***/
 export const refreshTokenSuccess = (access_token) => {
   return { type: actionType.REFRESH_TOKEN, access_token: access_token };
+};
+
+/*** GET_DESCRIPTION ***/
+export const getTextSuccess = text => {
+  return { type: actionType.GET_TEXT, text: text};
 };
 
 export const authCheckState = (ctx) => {
@@ -180,3 +186,12 @@ export const refreshToken = (ctx) => {
     }
   };
 };
+
+export const getText = () => {
+  return dispatch => {
+    Axios.get(process.env.TEXT_URL)
+      .then(res => {
+        dispatch(getTextSuccess(res.data))
+      })
+  }
+}

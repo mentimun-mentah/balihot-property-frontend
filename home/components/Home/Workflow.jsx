@@ -1,6 +1,9 @@
+import { useSelector } from "react-redux";
 import { Container, Row, Col } from "react-bootstrap";
 
 const Workflow = () => {
+  const text = useSelector(state => state.auth.text);
+
   return (
     <>
       <section>
@@ -26,9 +29,9 @@ const Workflow = () => {
                   </div>
                   <div className="workflow_item_content text-center">
                     <div className="workflow_title fs-18-s">Choose a Location</div>
-                    <p className="workflow_text fs-14-s">
-                      Beach-front, mountain-top, city-view — these are all highly sought after property types.
-                    </p>
+                    {text && text.need_to_do && text.need_to_do.choose && (
+                      <p className="workflow_text fs-14-s">{text.need_to_do.choose}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -50,9 +53,9 @@ const Workflow = () => {
                   </div>
                   <div className="workflow_item_content text-center">
                     <div className="workflow_title fs-18-s">Find the Perfect Places</div>
-                    <p className="workflow_text fs-14-s">
-                      The land the house is on and the lifestyle that goes with it is location’s first interest.
-                    </p>
+                    {text && text.need_to_do && text.need_to_do.find && (
+                      <p className="workflow_text fs-14-s">{text.need_to_do.find}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -74,9 +77,9 @@ const Workflow = () => {
                   </div>
                   <div className="workflow_item_content text-center">
                     <div className="workflow_title fs-18-s">Move into a new life</div>
-                    <p className="workflow_text fs-14-s">
-                    whether it’s a quick elevator ride to a street full of restaurants or a sunset worthy of magazine photos. A lot may be forgiven if a property is close to or even within view of these things.
-                    </p>
+                    {text && text.need_to_do && text.need_to_do.move && (
+                      <p className="workflow_text fs-14-s">{text.need_to_do.move}</p>
+                    )}
                   </div>
                 </div>
               </div>

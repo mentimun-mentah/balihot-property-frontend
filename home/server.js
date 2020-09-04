@@ -10,12 +10,12 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
-  server.use(cookieParser("baliHotProperty"));
+  server.use(cookieParser(process.env.SECRET_KEY));
 
   //User Confirm
   server.get("/user-confirm/:token", async (req, res) => {
     const { token } = req.params;
-    await axios.put(`http://backend:5000/user-confirm/${token}`).then((response) => {
+    await axios.put(`${process.env.BACKEND_URL}/user-confirm/${token}`).then((response) => {
       res.cookie("access_token", response.data.access_token, { domain: process.env.DOMAIN });
       res.cookie("refresh_token", response.data.refresh_token, { domain: process.env.DOMAIN });
       res.cookie("username", response.data.username, { domain: process.env.DOMAIN });

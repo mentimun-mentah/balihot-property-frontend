@@ -15,6 +15,9 @@ const formSubscribe = {
   email: { value: "", isValid: true, message: null }
 }
 
+let year = new Date()
+year = year.getFullYear()
+
 const Footer = () => {
   const [modalShow, setModalShow] = useState(false);
   const [subscribe, setSubscribe] = useState(formSubscribe)
@@ -140,7 +143,7 @@ const Footer = () => {
                 <Link href="/news" as="/news">
                   <li className="mb-2 hov_pointer">News</li>
                 </Link>
-                <Link href="/#property" as="/#property">
+                <Link href="/all-properties" as="/all-properties">
                   <li className="hov_pointer">Property</li>
                 </Link>
               </ul>
@@ -153,7 +156,7 @@ const Footer = () => {
           <Row>
             <Col xs={12} sm={6} md={8}>
               <p className="copyright-text">
-                Copyright &copy; 2020 All Rights Reserved by{" "}
+                Copyright &copy; {year} All Rights Reserved by{" "}
                 <a href="#">BaliHotProperty</a>.
               </p>
             </Col>

@@ -80,33 +80,33 @@ const Account = () => {
               >
               <Nav
                 variant="pills"
-                defaultActiveKey={select}
+                activeKey={select}
                 className="justify-content-center text-center"
                 onSelect={selectHandler}
               >
                 <Nav.Item className="fs-12 nav-mobile">
-                  <Nav.Link href="/" className="btn-light-s">
+                  <Nav.Link href="/" className="btn-light-s mobile-btn-a">
                     <i className="far fa-home-alt fa-2x" />
                     <br />
                     Home
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item className="fs-12 nav-mobile">
-                  <Nav.Link eventKey={ACCOUNT}>
+                  <Nav.Link eventKey={ACCOUNT} className="mobile-btn-a">
                     <i className="far fa-user-circle fa-2x" />
                     <br />
                     My Account
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item className="fs-12 nav-mobile">
-                  <Nav.Link eventKey={SHORTLIST}>
+                  <Nav.Link eventKey={SHORTLIST} className="mobile-btn-a">
                     <i className="far fa-heart fa-2x" />
                     <br />
                     Shortlist
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item className="fs-12 nav-mobile">
-                  <Nav.Link eventKey={NOTIFICATION}>
+                  <Nav.Link eventKey={NOTIFICATION} className="mobile-btn-a">
                     <i className="far fa-bell fa-2x" />
                     <br />
                     Notification
@@ -214,6 +214,13 @@ const Account = () => {
         }
         :global(.ant-notification){
           z-index: 1030;
+        }
+
+        @media screen and (device-aspect-ratio: 40/71) {
+          :global(.mobile-btn-a){
+            padding-left: .5rem !important;
+            padding-right: .5rem !important;
+          }
         }
 
       `}</style>

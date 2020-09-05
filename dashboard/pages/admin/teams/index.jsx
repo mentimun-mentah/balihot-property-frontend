@@ -92,7 +92,7 @@ const Teams = () => {
           {dataTeam && dataTeam.map(data => {
             const {id, name, image, title, phone} = data;
             return(
-              <Col xl={3} lg={4} md={4} sm={6} xs={12} key={id} >
+              <Col xl={3} lg={4} md={6} sm={6} xs={12} key={id} >
                 <TeamCardMemo id={id} 
                   name={name} image={image} 
                   phone={phone} title={title}

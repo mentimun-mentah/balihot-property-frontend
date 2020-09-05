@@ -95,7 +95,7 @@ const Register = ({ viewed, closed }) => {
         <Container>
           <Row className="justify-content-md-center">
             <h2 className="text-center">Join Balihot Property.</h2>
-            <p className="text-center text-muted">
+            <p className="text-center text-muted mx-auto">
               <small>Sign up to get more feature from us.</small>
             </p>
           </Row>

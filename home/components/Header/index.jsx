@@ -269,12 +269,17 @@ const Header = () => {
                 <Option value="USD">USD</Option>
                 <Option value="IDR">IDR</Option>
               </Select>
-              <Nav.Link href="/" className={btnNavbar + " hov_pointer"}>
-                Home
-              </Nav.Link>
-              <Nav.Link href="/all-properties" className={btnNavbar + " hov_pointer"}>
-                Property
-              </Nav.Link>
+
+              <Link href="/#home" as="/#home">
+                <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
+                  Home
+                </Nav.Link>
+              </Link>
+              <Link href="/all-properties" as="/all-properties">
+                <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
+                  Property
+                </Nav.Link>
+              </Link>
               <Link href="#contact" as="#contact">
                 <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
                   Contact
@@ -367,12 +372,16 @@ const Header = () => {
         title={headerMobile}
       >
         <Nav defaultActiveKey="/home" className="flex-column">
-          <Nav.Link href="/" className="border-bottom nav-mobile" onClick={onClose}>
-            Home
-          </Nav.Link>
-          <Nav.Link href="/all-properties" className="border-bottom nav-mobile" onClick={onClose}>
-            Property
-          </Nav.Link>
+          <Link href="/#home" as="/#home">
+            <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
+              Home
+            </Nav.Link>
+          </Link>
+          <Link href="/all-properties" as="/all-properties">
+            <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
+              Property
+            </Nav.Link>
+          </Link>
           <Link href="#contact" as="#contact">
             <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
               Contact

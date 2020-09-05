@@ -6,6 +6,8 @@ import Layout from "../components/Layout";
 import * as actions from "../store/actions";
 import withReduxStore from "../lib/with-redux-store";
 import axios from "axios";
+import { useRouter } from 'next/router'
+import * as gtag from '../lib/gtag'
 
 import "antd/dist/antd.css";
 import "rc-slider/assets/index.css";
@@ -15,6 +17,17 @@ import "render-smooth-image-react/build/style.css";
 import "react-responsive-carousel/lib/styles/carousel.css";
 
 const App = ({ Component, pageProps, store }) => {
+  const router = useRouter()
+
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      gtag.pageview(url)
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.events])
 
   useEffect(() => {
     window.$crisp = [];

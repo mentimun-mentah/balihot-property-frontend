@@ -50,7 +50,7 @@ const App = ({ Component, pageProps, store }) => {
       <style global jsx>{`
         #nprogress .bar {
           background: #1890ff;
-          height: 4px;
+          height: 3px;
         }
 
         #nprogress .spinner-icon {

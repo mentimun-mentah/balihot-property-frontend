@@ -8,13 +8,21 @@ import withReduxStore from "../lib/with-redux-store";
 import axios from "axios";
 import { useRouter } from 'next/router'
 import * as gtag from '../lib/gtag'
+import Router from "next/router";
+import NProgress from 'nprogress'; //nprogress module
 
+import 'nprogress/nprogress.css'; //styles of nprogress
 import "antd/dist/antd.css";
 import "rc-slider/assets/index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-multi-carousel/lib/styles.css";
 import "render-smooth-image-react/build/style.css";
 import "react-responsive-carousel/lib/styles/carousel.css";
+
+NProgress.configure({ showSpinner: false });
+Router.events.on('routeChangeStart', () => NProgress.start()); 
+Router.events.on('routeChangeComplete', () => NProgress.done()); 
+Router.events.on('routeChangeError', () => NProgress.done());
 
 const App = ({ Component, pageProps, store }) => {
   const router = useRouter()
@@ -50,7 +58,7 @@ const App = ({ Component, pageProps, store }) => {
         <meta name="robots" content="index, follow" />
 
         <link rel="icon" href="/static/images/balihot-property.png" />
-        <link rel="stylesheet" href="/static/fontawesome/css/all.css" />
+        <link rel="stylesheet" href="/static/fontawesome/css/all.min.css" />
         <link rel="stylesheet" href="/static/css/utility.css" />
         <link rel="stylesheet" href="/static/css/placeholder-loading.css" />
         <link rel="stylesheet" href="/static/css/image-galery.css" />
@@ -61,6 +69,16 @@ const App = ({ Component, pageProps, store }) => {
         </Layout>
       </Provider>
       <style global jsx>{`
+        #nprogress .bar {
+          background: #1890ff;
+          height: 3px;
+        }
+
+        #nprogress .spinner-icon {
+          border-top-color: #1890ff;
+          border-left-color: #1890ff;
+        }
+
         blockquote {
           border-left: 5px solid #ebebeb;
           margin: 1.5em 0px;

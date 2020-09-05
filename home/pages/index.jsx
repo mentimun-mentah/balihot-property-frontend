@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { parseCookies, destroyCookie } from "nookies";
 import swal from "sweetalert";
 import Router from "next/router";
-import axios from "../lib/axios";
+import axios, { cookieOptions } from "../lib/axios";
 import * as actions from "../store/actions";
 import HomeContainer from "../components/Home";
 
@@ -77,6 +77,12 @@ Home.getInitialProps = async (ctx) => {
       ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
       if(err.response.data.msg === "Token has been revoked"){
         ctx.store.dispatch(actions.logout(ctx))
+      }
+      if(err.response.status == 500){
+        ctx.store.dispatch(actions.logout(ctx))
+        destroyCookie(ctx, "access_token", cookieOptions);
+        destroyCookie(ctx, "refresh_token", cookieOptions);
+        destroyCookie(ctx, "username", cookieOptions);
       }
     }
   } else {

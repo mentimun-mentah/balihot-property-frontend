@@ -138,6 +138,12 @@ export const getUser = (ctx) => {
       })
       .catch(err => {
         dispatch(getUserFail(err.response))
+        if(err.response.status == 500){
+          dispatch(authLogout())
+          cookies.destroy(ctx, "access_token", cookieOptions);
+          cookies.destroy(ctx, "refresh_token", cookieOptions);
+          cookies.destroy(ctx, "username", cookieOptions);
+        }
       })
     }
   }

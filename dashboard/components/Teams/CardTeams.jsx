@@ -15,7 +15,7 @@ const Team = ({name, image, title, phone, edit, onDelete}) => {
         <Card className="text-center">
           <Card.Img
             variant="top"
-            className="img-fit h-250"
+            className="img-fit size-teams"
             src={`${process.env.API_URL}/static/teams/${image}`}
           />
           <Card.Body>
@@ -33,6 +33,17 @@ const Team = ({name, image, title, phone, edit, onDelete}) => {
           </Card.Footer>
         </Card>
       </motion.div>
+      <style jsx>{`
+        :global(.size-teams){
+          width: auto !important;
+          height: 400px !important;
+        }
+        @media (min-width: 1024px) {
+          :global(.size-teams){
+            height: 300px !important;
+          }
+        }
+      `}</style>
     </>
   );
 };

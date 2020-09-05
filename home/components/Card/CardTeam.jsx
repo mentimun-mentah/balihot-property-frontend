@@ -29,6 +29,11 @@ const Teams = ({ name, image, title, phone }) => {
           width: auto !important;
           height: 250px !important;
         }
+        @media (min-width: 1024px) {
+          :global(.size-teams){
+            height: 320px !important;
+          }
+        }
       `}</style>
     </>
   );

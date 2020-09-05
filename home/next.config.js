@@ -17,5 +17,6 @@ module.exports = {
     TEXT_URL: process.env.TEXT_URL,
     DOMAIN: process.env.DOMAIN,
     SECRET_KEY: process.env.SECRET_KEY,
+    GA_TRACKING_ID: process.env.GA_TRACKING_ID,
   }
 };

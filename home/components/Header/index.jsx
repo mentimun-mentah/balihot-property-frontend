@@ -269,27 +269,12 @@ const Header = () => {
                 <Option value="USD">USD</Option>
                 <Option value="IDR">IDR</Option>
               </Select>
-
-              {/*
-                <Nav.Link>
-                  <img src={`${IMAGE}indonesia.png`} width="28" 
-                    className="hov_pointer mr-2" 
-                    onClick={() => changeCurrencyHandler("IDR")} 
-                  />
-                  {"/"}
-                  <img src={`${IMAGE}australia.png`} width="28" 
-                    className="hov_pointer ml-2" 
-                    onClick={() => changeCurrencyHandler("USD")} 
-                  />
-                </Nav.Link>
-              */}
-
-              <Link href="/#home" as="/#home">
+              <Link href="/">
                 <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
                   Home
                 </Nav.Link>
               </Link>
-              <Link href="/#property" as="/#property">
+              <Link href="/all-properties">
                 <Nav.Link as="a" className={btnNavbar + " hov_pointer"}>
                   Property
                 </Nav.Link>
@@ -386,12 +371,12 @@ const Header = () => {
         title={headerMobile}
       >
         <Nav defaultActiveKey="/home" className="flex-column">
-          <Link href="/#home" as="/#home">
+          <Link href="/">
             <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
               Home
             </Nav.Link>
           </Link>
-          <Link href="/#property" as="/#property">
+          <Link href="/all-properties">
             <Nav.Link as="a" className="border-bottom nav-mobile" onClick={onClose}>
               Property
             </Nav.Link>

@@ -25,6 +25,7 @@ import ContainerCardMarker from "../../components/Card/ContainerCardMarker";
 import ContainerCardPropertySimilar from "../../components/Card/ContainerCardPropertySimilar";
 import ShowMoreText from "react-show-more-text";
 import ShareModal from "../../components/Card/ShareModal";
+import formatNumber from "../../lib/formatNumber";
 
 import DetailPropertyStyle from "../../components/DetailProperty/style.js";
 
@@ -37,8 +38,6 @@ const prevCarousel = () => document.getElementById("prevCarouselClick").click();
 
 const showMoreText = () => document.getElementById("show-more-btn").click();
 const favLoginBtn = () => document.getElementById("btn-login-navbar").click();
-
-const formatter = new Intl.NumberFormat(["ban", "id"]);
 
 const Property = () => {
   const dispatch = useDispatch();
@@ -232,7 +231,8 @@ const Property = () => {
 
   useEffect(() => {
     setSelected(villaPrice[0]);
-  }, []);
+    setFav(love)
+  }, [propertyData, love]);
 
   if (villaPrice.length > 0 && selected !== undefined) {
     buttonPrice = villaPrice.map((data, i) => {
@@ -259,14 +259,14 @@ const Property = () => {
           <h4 className="fs-14 text-left">
             Price:
             <span className="font-weight-normal ml-1">
-              {currencySymbol} {formatter.format(data.price * currencyValue)}
+              {currencySymbol} {formatNumber(data.price * currencyValue)}
               <small className="fs-14 fs-12-s"> / are</small>
             </span>
           </h4>
           <h4 className="fs-14 text-left">
             Total Price:
             <span className="font-weight-normal ml-1">
-              {currencySymbol} {formatter.format(land_total_price)}
+              {currencySymbol} {formatNumber(land_total_price)}
             </span>
           </h4>
         </div>
@@ -287,14 +287,14 @@ const Property = () => {
           <h4 className="fs-14 text-left">
             Price:
             <span className="font-weight-normal ml-1">
-              {currencySymbol} {formatter.format(data.price * currencyValue)}
+              {currencySymbol} {formatNumber(data.price * currencyValue)}
               <small className="fs-14 fs-12-s"> / are / year</small>
             </span>
           </h4>
           <h4 className="fs-14 text-left">
             Total Price:
             <span className="font-weight-normal ml-1">
-              {currencySymbol} {formatter.format(land_total_price)}
+              {currencySymbol} {formatNumber(land_total_price)}
             </span>
           </h4>
           <h4 className="fs-14 text-left">
@@ -839,7 +839,7 @@ const Property = () => {
                       <h4 className="fs-14 text-left">
                         Price:
                         <span className="font-weight-normal ml-1">
-                          {currencySymbol} {formatter.format(selected.price * currencyValue)}
+                          {currencySymbol} {formatNumber(selected.price * currencyValue)}
                         </span>
                       </h4>
                       {selected.period && (

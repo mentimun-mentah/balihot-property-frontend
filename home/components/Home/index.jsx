@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from "react";
 import { Card, Col, Container, Tabs, Tab, Button, Jumbotron, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
-import Router from "next/router";
 import Carousel from "react-multi-carousel";
 import SearchBox from "./NewSearch";
 import CardPlace from "../Card/CardPlace";
@@ -57,7 +56,7 @@ const Home = () => {
     if(check === "&") check = q.slice(0, -1)
     else check = q
 
-    Router.push(`/all-properties${check}`)
+    return `/all-properties${check}`
   }
 
   const newsContent = (
@@ -109,9 +108,11 @@ const Home = () => {
                     {property && property.data.length > 0 ? (
                       <>
                         <ContainerCardProperty dataProperty={property} horizontal={false} />
-                        <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
-                          Show All &nbsp;<i className="fas fa-chevron-right"></i>
-                        </Button>
+                        <a href={searchHandler()}>
+                          <Button variant="outline-dark" className="mt-4">
+                            Show All &nbsp;<i className="fas fa-chevron-right"></i>
+                          </Button>
+                        </a>
                       </>
                     ) : (
                       <Container>
@@ -136,9 +137,11 @@ const Home = () => {
                     {property && property.data.length > 0 ? (
                       <>
                         <ContainerCardProperty dataProperty={property} horizontal={false} />
-                        <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
-                          Show All &nbsp;<i className="fas fa-chevron-right"></i>
-                        </Button>
+                        <a href={searchHandler()}>
+                          <Button variant="outline-dark" className="mt-4">
+                            Show All &nbsp;<i className="fas fa-chevron-right"></i>
+                          </Button>
+                        </a>
                       </>
                     ) : (
                       <Container>
@@ -163,9 +166,11 @@ const Home = () => {
                     {property && property.data.length > 0 ? (
                       <>
                         <ContainerCardProperty dataProperty={property} horizontal={false} />
-                        <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
-                          Show All &nbsp;<i className="fas fa-chevron-right"></i>
-                        </Button>
+                        <a href={searchHandler()}>
+                          <Button variant="outline-dark" className="mt-4">
+                            Show All &nbsp;<i className="fas fa-chevron-right"></i>
+                          </Button>
+                        </a>
                       </>
                     ) : (
                       <Container>

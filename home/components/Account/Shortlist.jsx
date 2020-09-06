@@ -20,6 +20,9 @@ const formFilter = {
   status: { value: [] },
 }
 
+const period_data = ["Annually", "Monthly", "Weekly", "Daily"];
+const status_data = ["Free Hold", "Lease Hold"];
+
 const Shortlist = () => {
   const dispatch = useDispatch()
 
@@ -30,6 +33,7 @@ const Shortlist = () => {
   const [active, setActive] = useState(property.page);
 
   const type_list = []; renderOptions(type_list, dataType, true);
+  const status_list = []; renderOptions(status_list, status_data.concat(period_data))
 
   const searchChangeHandler = (e, category) => {
     if (category === "type_id") {
@@ -54,9 +58,16 @@ const Shortlist = () => {
 
   useEffect(() => {
     let q = '?'
-    if(active) q = q + `page=${active}&`
+    if(active) q = q + `page=${active}&per_page=6&`
     if(type_id.value) if(type_id.value.length !== 0) q = q + `type_id=${type_id.value}&`
-    if(status.value) if(status.value.length !== 0) q = q + `status=${status.value}`
+    if(status.value) if(status.value.length !== 0) {
+      if(status_data.includes(status.value)){
+        q = q + `status=${status.value}`
+      }
+      if(period_data.includes(status.value)){
+        q = q + `period=${status.value}`
+      }
+    }
     dispatch(actions.getWishlist(q))
   },[type_id.value, status.value, active])
 
@@ -112,14 +123,13 @@ const Shortlist = () => {
                   </Col>
                   <Col>
                     <Select size="large" style={{ width: "100%" }}
-                      placeholder="Select status"
+                      placeholder="Select status or period"
                       onChange={e => searchChangeHandler(e, "status")}
                       value={status.value}
                       allowClear
                     >
                       <Option value="">All</Option>
-                      <Option value="Free Hold">Free Hold</Option>
-                      <Option value="Lease Hold">Lease Hold</Option>
+                      {status_list}
                     </Select>
                   </Col>
                 </Form.Row>

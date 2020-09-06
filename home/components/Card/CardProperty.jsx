@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Modal, Button } from 'antd';
@@ -31,6 +31,10 @@ const CardContainer = ({
   const currency = useSelector(state => state.currency.currency)
   let currencySymbol = null
   let currencyValue = 1
+
+  useEffect(() => {
+    setFav(love)
+  },[love])
 
   if(currency){
     currencySymbol = Object.keys(currency.rates)

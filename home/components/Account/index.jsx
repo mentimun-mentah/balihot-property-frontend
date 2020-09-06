@@ -85,13 +85,6 @@ const Account = () => {
                 onSelect={selectHandler}
               >
                 <Nav.Item className="fs-12 nav-mobile">
-                  <Nav.Link href="/" className="btn-light-s mobile-btn-a">
-                    <i className="far fa-home-alt fa-2x" />
-                    <br />
-                    Home
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item className="fs-12 nav-mobile">
                   <Nav.Link eventKey={ACCOUNT} className="mobile-btn-a">
                     <i className="far fa-user-circle fa-2x" />
                     <br />

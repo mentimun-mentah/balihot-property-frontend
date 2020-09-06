@@ -302,8 +302,9 @@ const AllProperties = ({ searchQuery }) => {
 
   //====== SEARCH ======//
   const type_list = []; renderOptions(type_list, dataType, true);
-  const status_list = []; renderOptions(status_list, status_data)
   const period_list = []; renderOptions(period_list, period_data)
+  const status_list = []; 
+  if (property_for.value) renderOptions(status_list, status_data)
   const for_list = [];
   if (type_id.value !== LAND_CHECK_ID) renderOptions(for_list, for_data.villa); // 1 for villa
   if (type_id.value == LAND_CHECK_ID) renderOptions(for_list, for_data.land); // 2 for land

@@ -9,8 +9,8 @@ import { LoadingOutlined, DownOutlined } from '@ant-design/icons';
 import { motion } from "framer-motion";
 import { Fade } from "../components/Transition";
 import { renderOptions } from "../lib/renderOptions";
-
 import { parseCookies, setCookie } from 'nookies';
+
 import Router from 'next/router'
 import axios from "../lib/axios";
 import validator from 'validator';
@@ -302,8 +302,9 @@ const AllProperties = ({ searchQuery }) => {
 
   //====== SEARCH ======//
   const type_list = []; renderOptions(type_list, dataType, true);
-  const status_list = []; renderOptions(status_list, status_data)
   const period_list = []; renderOptions(period_list, period_data)
+  const status_list = []; 
+  if (property_for.value) renderOptions(status_list, status_data)
   const for_list = [];
   if (type_id.value !== LAND_CHECK_ID) renderOptions(for_list, for_data.villa); // 1 for villa
   if (type_id.value == LAND_CHECK_ID) renderOptions(for_list, for_data.land); // 2 for land
@@ -652,12 +653,12 @@ const AllProperties = ({ searchQuery }) => {
 
           <div className="d-block d-sm-block d-md-block d-lg-none d-xl-none">
             <h5 className="pt-3">
-              {property.data && property.data.length > 0 ? property.data.length : '0'} Result for {PROPERTY_TYPE ? PROPERTY_TYPE : 'all'}
+              {property.data && property.data.length > 0 ? property.total : '0'} Result for {PROPERTY_TYPE ? PROPERTY_TYPE : 'all'}
             </h5>
           </div>
 
           <p className="pt-3 mb-2 font-weight-bold d-none d-sm-none d-md-none d-lg-block d-xl-block">
-            {property.data && property.data.length > 0 ? property.data.length : "0"} results
+            {property.data && property.data.length > 0 ? property.total : "0"} results
           </p>
 
           {property.data && property.data.length > 0 ? (
@@ -1104,20 +1105,22 @@ AllProperties.getInitialProps = async ctx => {
   const resFacilities = await axios.get('/facilities');
   ctx.store.dispatch(actions.getFacilitySuccess(resFacilities.data));
 
-  if(access_token && refresh_token){
-    try{
-      const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
-      const resProperty = await axios.get(`/properties?${dataQueryString}`, headerCfg);
-      ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
-    }
-    catch (err){
+  setTimeout( async () => {
+    if(access_token && refresh_token){
+      try{
+        const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+        const resProperty = await axios.get(`/properties?${dataQueryString}`, headerCfg);
+        ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+      }
+      catch (err){
+        const resProperty = await axios.get(`/properties?${dataQueryString}`);
+        ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+      }
+    } else {
       const resProperty = await axios.get(`/properties?${dataQueryString}`);
       ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
     }
-  } else {
-    const resProperty = await axios.get(`/properties?${dataQueryString}`);
-    ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
-  }
+  }, 2000)
 
   return { searchQuery: searchQuery }
 }

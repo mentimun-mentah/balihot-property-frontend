@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Input, AutoComplete, Select, Slider, Checkbox, Collapse, Switch, Radio } from 'antd';
+import { Input, AutoComplete, Select, Slider, Checkbox, Collapse, Radio } from 'antd';
 import { renderOptions } from "../../lib/renderOptions";
 import { parseCookies } from "nookies";
 
@@ -221,7 +221,7 @@ const MobileFilter = ({search, hotdealHandler, onChange}) => {
           </Panel>
         </Collapse>
       </Col>
-      <Col sm={12} className="mb-3">
+      <Col sm={12} className="mb-3 mt-2">
         <Checkbox
           checked={hotdeal.value} 
           onChange={hotdealHandler}

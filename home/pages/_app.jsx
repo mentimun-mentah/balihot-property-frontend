@@ -112,6 +112,9 @@ const App = ({ Component, pageProps, store }) => {
         .ant-upload-list-picture .ant-upload-list-item-error, .ant-upload-list-picture-card .ant-upload-list-item-error{
           border: 1px solid #d9d9d9;
         }
+        .ant-tooltip{
+          z-index: 1029 !important;
+        }
         .ant-tooltip-placement-top{
           display: none;
         }

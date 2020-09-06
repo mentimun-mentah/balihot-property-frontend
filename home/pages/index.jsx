@@ -69,12 +69,16 @@ Home.getInitialProps = async (ctx) => {
       ctx.store.dispatch(actions.authSuccess(access_token, refresh_token, username));
       const resUser = await axios.get('/user', headerCfg);
       ctx.store.dispatch(actions.getUser(resUser.data));
-      const resProp = await axios.get(`/properties?property_for=Sale&per_page=3`, headerCfg)
-      ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
+      setTimeout(async() => {
+        const resProp = await axios.get(`/properties?property_for=Sale&per_page=3`, headerCfg)
+        ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
+      }, 2000)
     }
     catch (err){
-      const resProp = await axios.get(`/properties?property_for=Sale&per_page=3`)
-      ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
+      setTimeout(async() => {
+        const resProp = await axios.get(`/properties?property_for=Sale&per_page=3`)
+        ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
+      }, 2000)
       if(err.response.data.msg === "Token has been revoked"){
         ctx.store.dispatch(actions.logout(ctx))
       }
@@ -86,8 +90,10 @@ Home.getInitialProps = async (ctx) => {
       }
     }
   } else {
-    const resProp = await axios.get(`/properties?property_for=Sale&per_page=3`)
-    ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
+    setTimeout(async() => {
+      const resProp = await axios.get(`/properties?property_for=Sale&per_page=3`)
+      ctx.store.dispatch(actions.getPropertySuccess(resProp.data)); 
+    }, 2000)
   }
 
   return { username, fresh, query };

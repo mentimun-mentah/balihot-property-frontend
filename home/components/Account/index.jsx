@@ -22,7 +22,7 @@ const Account = () => {
 
   const selectHandler = async e => { 
     if(e === SHORTLIST){
-      const resWishlist = await axios.get('/wishlist/user', jsonHeaderHandler());
+      const resWishlist = await axios.get('/wishlist/user?per_page=6', jsonHeaderHandler());
       dispatch(actions.getWishlistSuccess(resWishlist.data));
       if(resWishlist) setSelect(e); 
       else setSelect(e);

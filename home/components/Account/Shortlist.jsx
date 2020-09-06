@@ -12,6 +12,7 @@ import { Select } from 'antd';
 import { motion } from "framer-motion";
 import { Fade } from "../Transition";
 import { renderOptions } from "../../lib/renderOptions";
+import { pagination_iter } from "../../lib/paginationIter";
 
 const { Option } = Select;
 
@@ -81,20 +82,22 @@ const Shortlist = () => {
   const nextHandler = () => {
     setActive(property.next_num);
   };
-  let pagination = [];
-  let iter_data;
-  if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.length
-  if(property.length === 0) iter_data = property.length
-  for (let n = 1; n <= iter_data ; n++) {
+  let pagination = []; let iter_data;
+  if(property.iter_pages && property.iter_pages.length > 0) iter_data = property.iter_pages.slice(-1)[0]
+  for (let n of pagination_iter(property.page, iter_data)) {
     let click = pageHandler;
-    if (n === +active) {
-      click = null;
+    if (n === +active) click = null;
+    if(n === "..."){
+      pagination.push(
+        <Pagination.Ellipsis key={n + Math.random} disabled />
+      )
+    } else {
+      pagination.push(
+        <Pagination.Item key={n + Math.random} active={n === +active} text={n} onClick={click}>
+          {n}
+        </Pagination.Item>,
+      );
     }
-    pagination.push(
-      <Pagination.Item key={n} active={n === +active} text={+n} onClick={click}>
-        {n}
-      </Pagination.Item>
-    );
   }
   //====== PAGINATION ======//
   

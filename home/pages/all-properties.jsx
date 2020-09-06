@@ -1085,7 +1085,7 @@ const AllProperties = ({ searchQuery }) => {
           and (orientation: landscape) 
           and (-webkit-min-device-pixel-ratio: 1.5) {
             :global(.price-menu-body){
-              width: 30vh;
+              width: 55vh;
             }
         }
         /* ----------- iPad Pro ----------- */

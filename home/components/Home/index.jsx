@@ -8,7 +8,7 @@ import SearchBox from "./NewSearch";
 import CardPlace from "../Card/CardPlace";
 import CardTeams from "../Card/CardTeam";
 import Workflow from "./Workflow";
-import ContainerCardProperty from "../Card/ContainerCardProperty";
+import ContainerCardPropertyHome from "../Card/ContainerCardPropertyHome";
 import * as actions from "../../store/actions";
 import HomeStyle, {responsive, responsivePlace, ButtonGroupPlace} from "./style";
 import CardsNewHorizontal from "../../components/Card/CardNewsHorizontalHome";
@@ -108,7 +108,7 @@ const Home = () => {
                   <Container className="mt-4 px-0">
                     {property && property.data.length > 0 ? (
                       <>
-                        <ContainerCardProperty dataProperty={property} horizontal={false} />
+                        <ContainerCardPropertyHome dataProperty={property} horizontal={false} />
                         <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
                           Show All &nbsp;<i className="fas fa-chevron-right"></i>
                         </Button>
@@ -135,7 +135,7 @@ const Home = () => {
                   <Container className="mt-4 px-0">
                     {property && property.data.length > 0 ? (
                       <>
-                        <ContainerCardProperty dataProperty={property} horizontal={false} />
+                        <ContainerCardPropertyHome dataProperty={property} horizontal={false} />
                         <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
                           Show All &nbsp;<i className="fas fa-chevron-right"></i>
                         </Button>
@@ -162,7 +162,7 @@ const Home = () => {
                   <Container className="mt-4 px-0">
                     {property && property.data.length > 0 ? (
                       <>
-                        <ContainerCardProperty dataProperty={property} horizontal={false} />
+                        <ContainerCardPropertyHome dataProperty={property} horizontal={false} />
                         <Button variant="outline-dark" className="mt-4" onClick={searchHandler}>
                           Show All &nbsp;<i className="fas fa-chevron-right"></i>
                         </Button>

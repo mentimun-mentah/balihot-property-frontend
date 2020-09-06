@@ -229,7 +229,7 @@ const Header = () => {
     )
 
     headerMobile = (
-      <div className="text-truncate mr-2">
+      <div className="text-truncate mr-4">
         <img
           className="img-profile mr-2"
           src={`${process.env.API_URL}/static/avatars/${user.avatar}`}

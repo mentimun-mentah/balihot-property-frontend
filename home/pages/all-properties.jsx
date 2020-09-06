@@ -1105,22 +1105,20 @@ AllProperties.getInitialProps = async ctx => {
   const resFacilities = await axios.get('/facilities');
   ctx.store.dispatch(actions.getFacilitySuccess(resFacilities.data));
 
-  setTimeout( async () => {
-    if(access_token && refresh_token){
-      try{
-        const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
-        const resProperty = await axios.get(`/properties?${dataQueryString}`, headerCfg);
-        ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
-      }
-      catch (err){
-        const resProperty = await axios.get(`/properties?${dataQueryString}`);
-        ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
-      }
-    } else {
+  if(access_token && refresh_token){
+    try{
+      const headerCfg = { headers: { Authorization: `Bearer ${access_token}` } };
+      const resProperty = await axios.get(`/properties?${dataQueryString}`, headerCfg);
+      ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+    }
+    catch (err){
       const resProperty = await axios.get(`/properties?${dataQueryString}`);
       ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
     }
-  }, 2000)
+  } else {
+    const resProperty = await axios.get(`/properties?${dataQueryString}`);
+    ctx.store.dispatch(actions.getPropertySuccess(resProperty.data)); 
+  }
 
   return { searchQuery: searchQuery }
 }

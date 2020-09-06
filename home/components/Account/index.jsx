@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Container, Row, Col, Card, Nav } from "react-bootstrap";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from 'next/router';
+import axios, { jsonHeaderHandler } from '../../lib/axios';
+
+import * as actions from '../../store/actions';
 import MyAccount from "./Account";
 import Shortlist from "./Shortlist";
 import Notification from "./Notification";
@@ -12,10 +15,21 @@ const SHORTLIST = 'shortlist';
 const NOTIFICATION = 'notification';
 
 const Account = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const userData = useSelector(state => state.auth.data);
   const [select, setSelect] = useState(ACCOUNT);
-  const selectHandler = e => { setSelect(e); }
+
+  const selectHandler = async e => { 
+    if(e === SHORTLIST){
+      const resWishlist = await axios.get('/wishlist/user', jsonHeaderHandler());
+      dispatch(actions.getWishlistSuccess(resWishlist.data));
+      if(resWishlist) setSelect(e); 
+      else setSelect(e);
+    }else{
+      setSelect(e); 
+    }
+  }
 
   useEffect(() => {
     for(let key in router.query){

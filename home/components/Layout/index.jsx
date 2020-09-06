@@ -22,19 +22,17 @@ const Layout = ({ children }) => {
 
   useEffect(() => {
     if(mounted) {
-      setTimeout(() => {
-        onTryGetUser();
-      }, 2000)
+      onTryGetUser();
     }
   }, []);
 
   useEffect(() => {
-      if(access_token && refresh_token){
-	setTimeout(() => {
+    if(access_token && refresh_token){
+	    setTimeout(() => {
     	  onTryAutoSignin();
-	  onTryGetUser();
-	}, 4000)
-      }
+	      onTryGetUser();
+	    }, 2000)
+    }
   }, [parseCookies]);
 
   return (

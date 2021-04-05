@@ -36,7 +36,6 @@ const Header = () => {
   let currencySymbol = null
   let currencyValue = 1
 
-  console.log(currencyState)
   if(currencyState){
     currencySymbol = Object.keys(currencyState.rates)
     currencyValue = (+Object.values(currencyState.rates)).toFixed()

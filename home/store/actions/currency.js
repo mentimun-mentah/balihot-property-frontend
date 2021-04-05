@@ -13,7 +13,6 @@ export const getCurrency = (e) => {
   return dispatch => {
     axios.get(`https://api.exchangerate.host/latest?base=USD&symbols=${e}`)
       .then(res => {
-        console.log(res.data)
         cookies.set(null, "currency", e, {
           maxAge: 30 * 24 * 60 * 60,
           path: "/",
